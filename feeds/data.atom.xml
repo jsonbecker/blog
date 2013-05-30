@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>jasonpbecker</title><link href="http://blog.jsonbecker.com/" rel="alternate"></link><link href="http://blog.jsonbecker.com/feeds/data.atom.xml" rel="self"></link><id>http://blog.jsonbecker.com/</id><updated>2012-08-22T09:55:00-04:00</updated><entry><title>There must be an easier way... survey questions in R</title><link href="http://blog.jsonbecker.com/2012/08/there-must-be-an-easier-way-survey-questions-in-r.html" rel="alternate"></link><updated>2012-08-22T09:55:00-04:00</updated><author><name>Jason</name></author><id>tag:blog.jsonbecker.com,2012-08-22:2012/08/there-must-be-an-easier-way-survey-questions-in-r.html</id><summary type="html">&lt;p&gt;So I have this great little custom function I've used when looking at survey data in R. I call this function &lt;code&gt;pull()&lt;/code&gt;. The goal of &lt;code&gt;pull()&lt;/code&gt; is to quickly produce frequency tables with n sizes from individual-level survey data.&lt;/p&gt;
+&lt;p&gt;Before using &lt;code&gt;pull()&lt;/code&gt;, I create a big table that includes information about the survey questions I want to pull. The data are structured like this:&lt;/p&gt;
+&lt;table align="center"&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;tbody&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;tr&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;td&gt;
+quest
+
+&lt;/td&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;td&gt;
+survey
+
+&lt;/td&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;td&gt;
+year
+
+&lt;/td&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;td&gt;
+break
+
+&lt;/td&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;/tr&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;tr&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;td&gt;
+ss01985
+
+&lt;/td&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;td&gt;
+elementary
+
+&lt;/td&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;td&gt;
+2011\_12
+
+&lt;/td&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;td&gt;
+schoolcode
+
+&lt;/td&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;/tr&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;/tbody&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;/table&gt;
+
+&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;quest represents the question coding in the raw survey data.&lt;/li&gt;
+&lt;li&gt;survey is the name of the survey (in my case, the elementary school students, middle school students, high school students, parents, teachers, or administrators).&lt;/li&gt;
+&lt;li&gt;year is the year that the survey data are collected.&lt;/li&gt;
+&lt;li&gt;break is the ID I want to aggregate on like schoolcode or districtcode.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;They key is that &lt;code&gt;paste(survey, year,sep='')&lt;/code&gt; produces the name of the &lt;code&gt;data.frame&lt;/code&gt; where I store the relevant survey data. Both quest and break are columns in the survey data.frame. Using a data.frame with this data allows me to apply through the rows and produce the table for all the relevant questions at once. &lt;code&gt;pull()&lt;/code&gt; does the work of taking one row of this &lt;code&gt;data.frame&lt;/code&gt; and producing the output that I'm looking for. I also use &lt;code&gt;pull()&lt;/code&gt; one row at a time to save a data.frame that contains these data and do other things (like the visualizations in this post).&lt;/p&gt;
+&lt;p&gt;In some sense, &lt;code&gt;pull()&lt;/code&gt; is really just a fancy version of &lt;code&gt;prop.table&lt;/code&gt; that takes in passed paramaters and adds an "n" to each row and adding a "total" row. I feel as though there must be an implementation of an equivalent function in a popular package (or maybe even base) that I should be using rather than this technique. It would probably be more maintainable and easier for collaborators to work with this more common implementation, but I have no idea where to find it. So, please feel free to use the code below, but I'm actually hoping that someone will chime in and tell me I've wasted my time and I should just be using some function foo::bar.&lt;/p&gt;
+&lt;p&gt;P.S. This post is a great example of why I really need to change this blog to Markdown/R-flavored Markdown. All those inline references to functions, variables, or code should really be formatted in-line which the syntax highlighter plug-in used on this blog does not support. I'm nervous that using WP-Markdown plugin will botch formatting on older posts, so I may just need to setup a workflow where I pump out HTML from the Markdown and upload the posts from there. If anyone has experience with Markdown + Wordpress, advice is appreciated.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;pull &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;rows&lt;span class="p"&gt;){&lt;/span&gt;
+  &lt;span class="c1"&gt;# Takes in a vector with all the information required to create crosstab with&lt;/span&gt;
+  &lt;span class="c1"&gt;# percentages for a specific question for all schools.&lt;/span&gt;
+  &lt;span class="c1"&gt;# Args:&lt;/span&gt;
+  &lt;span class="c1"&gt;#  rows: Consists of a vector with four objects.&lt;/span&gt;
+  &lt;span class="c1"&gt;#        quest: the question code from SurveyWorks&lt;/span&gt;
+  &lt;span class="c1"&gt;#        level: the &amp;quot;level&amp;quot; of the survey, i.e.: elem, midd, high, teac, admn,&lt;/span&gt;
+  &lt;span class="c1"&gt;#        pare, etc.&lt;/span&gt;
+  &lt;span class="c1"&gt;#        year: the year the survey was administered, i.e. 2011_12&lt;/span&gt;
+  &lt;span class="c1"&gt;#        sch_lea: the &amp;quot;break&amp;quot; indicator, i.e. schoolcode, districtcode, etc.&lt;/span&gt;
+  &lt;span class="c1"&gt;# Returns:&lt;/span&gt;
+  &lt;span class="c1"&gt;# A data.frame with a row for each &amp;quot;break&amp;quot;, i.e. school, attributes for&lt;/span&gt;
+  &lt;span class="c1"&gt;# each possible answer to quest, i.e. Agree and Disagree, and N size for each&lt;/span&gt;
+  &lt;span class="c1"&gt;# break based on how many people responded to that question, not the survey as&lt;/span&gt;
+  &lt;span class="c1"&gt;# a whole, i.e.&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# Break each component of the vector rows into separate single-element vectors&lt;/span&gt;
+  &lt;span class="c1"&gt;# for convenience and clarity.&lt;/span&gt;
+  quest &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; as.character&lt;span class="p"&gt;(&lt;/span&gt;rows&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+  survey &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; as.character&lt;span class="p"&gt;(&lt;/span&gt;rows&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+  year  &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; as.character&lt;span class="p"&gt;(&lt;/span&gt;rows&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+  &lt;span class="kr"&gt;break&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; as.character&lt;span class="p"&gt;(&lt;/span&gt;rows&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+  data &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; get&lt;span class="p"&gt;(&lt;/span&gt;paste&lt;span class="p"&gt;(&lt;/span&gt;level&lt;span class="p"&gt;,&lt;/span&gt;year&lt;span class="p"&gt;,&lt;/span&gt;sep&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="c1"&gt;# Data is an alias for the data.frame described by level and year.&lt;/span&gt;
+  &lt;span class="c1"&gt;# This alias reduces the number of &amp;quot;get&amp;quot; calls to speed up code and increase&lt;/span&gt;
+  &lt;span class="c1"&gt;# clarity.&lt;/span&gt;
+  results &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; with&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;,&lt;/span&gt;
+                  dcast&lt;span class="p"&gt;(&lt;/span&gt;data.frame&lt;span class="p"&gt;(&lt;/span&gt;prop.table&lt;span class="p"&gt;(&lt;/span&gt;table&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="kr"&gt;break&lt;/span&gt;&lt;span class="p"&gt;]],&lt;/span&gt;
+                                                    data&lt;span class="p"&gt;[[&lt;/span&gt;quest&lt;span class="p"&gt;]]),&lt;/span&gt;
+                                              &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+                        &lt;span class="p"&gt;,&lt;/span&gt;Var1&lt;span class="o"&gt;~&lt;/span&gt;Var2&lt;span class="p"&gt;,&lt;/span&gt;value.var&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Freq&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="c1"&gt;# Produces a table with the proportions for each response in wide format.&lt;/span&gt;
+  n &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; data.frame&lt;span class="p"&gt;(&lt;/span&gt;Var1&lt;span class="o"&gt;=&lt;/span&gt;rle&lt;span class="p"&gt;(&lt;/span&gt;sort&lt;span class="p"&gt;(&lt;/span&gt;
+    subset&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;,&lt;/span&gt; 
+           is.na&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;[[&lt;/span&gt;quest&lt;span class="p"&gt;]])&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="k-Variable"&gt;F&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; is.na&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="kr"&gt;break&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="k-Variable"&gt;F&lt;/span&gt;&lt;span class="p"&gt;)[[&lt;/span&gt;&lt;span class="kr"&gt;break&lt;/span&gt;&lt;span class="p"&gt;]]))&lt;/span&gt;&lt;span class="o"&gt;$&lt;/span&gt;values&lt;span class="p"&gt;,&lt;/span&gt;
+                  n&lt;span class="o"&gt;=&lt;/span&gt;rle&lt;span class="p"&gt;(&lt;/span&gt;sort&lt;span class="p"&gt;(&lt;/span&gt;
+                    subset&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;,&lt;/span&gt;
+                           is.na&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;[[&lt;/span&gt;quest&lt;span class="p"&gt;]])&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="k-Variable"&gt;F&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;
+                             is.na&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="kr"&gt;break&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="k-Variable"&gt;F&lt;/span&gt;&lt;span class="p"&gt;)[[&lt;/span&gt;&lt;span class="kr"&gt;break&lt;/span&gt;&lt;span class="p"&gt;]]))&lt;/span&gt;&lt;span class="o"&gt;$&lt;/span&gt;lengths&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="c1"&gt;# Generates a data frame with each break element and the &amp;quot;length&amp;quot; of that break&lt;/span&gt;
+  &lt;span class="c1"&gt;# element. rle counts the occurrences of a value in a vector in order. So first&lt;/span&gt;
+  &lt;span class="c1"&gt;# you sort the vector so all common break values are adjacent then you use rle&lt;/span&gt;
+  &lt;span class="c1"&gt;# to count their uninterupted appearance. The result is an rle object with &lt;/span&gt;
+  &lt;span class="c1"&gt;# two components: [[values]] which represent the values in the original, sorted&lt;/span&gt;
+  &lt;span class="c1"&gt;# vector and [[length]] which is the count of their uninterupted repeated&lt;/span&gt;
+  &lt;span class="c1"&gt;# appearance in that vector.&lt;/span&gt;
+  results &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; merge&lt;span class="p"&gt;(&lt;/span&gt;results&lt;span class="p"&gt;,&lt;/span&gt; n&lt;span class="p"&gt;,&lt;/span&gt; by&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Var1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="c1"&gt;# Combines N values with the results table.&lt;/span&gt;
+
+  state &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; data.frame&lt;span class="p"&gt;(&lt;/span&gt;t&lt;span class="p"&gt;(&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;Var1&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Rhode Island&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
+                          prop.table&lt;span class="p"&gt;(&lt;/span&gt;table&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;[[&lt;/span&gt;quest&lt;span class="p"&gt;]])),&lt;/span&gt;
+                          n&lt;span class="o"&gt;=&lt;/span&gt;dim&lt;span class="p"&gt;(&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;,&lt;/span&gt;is.na&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;[[&lt;/span&gt;quest&lt;span class="p"&gt;]])&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="k-Variable"&gt;F&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;])))&lt;/span&gt;
+  names&lt;span class="p"&gt;(&lt;/span&gt;state&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; names&lt;span class="p"&gt;(&lt;/span&gt;results&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="kr"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;i &lt;span class="kr"&gt;in&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;dim&lt;span class="p"&gt;(&lt;/span&gt;state&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]){&lt;/span&gt;
+    state&lt;span class="p"&gt;[,&lt;/span&gt;i&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; as.numeric&lt;span class="p"&gt;(&lt;/span&gt;as.character&lt;span class="p"&gt;(&lt;/span&gt;state&lt;span class="p"&gt;[,&lt;/span&gt;i&lt;span class="p"&gt;]))&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="c1"&gt;# Because the state data.frame has only one row, R coerces to type factor.&lt;/span&gt;
+  &lt;span class="c1"&gt;# If I rbind() a factor to a numeric attribute, R will coerce them both to&lt;/span&gt;
+  &lt;span class="c1"&gt;# characters and refuses to convert back to type numeric.&lt;/span&gt;
+  results &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; rbind&lt;span class="p"&gt;(&lt;/span&gt;results&lt;span class="p"&gt;,&lt;/span&gt; state&lt;span class="p"&gt;)&lt;/span&gt;
+  results
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="code"></category><category term="markdown"></category><category term="r"></category><category term="rstats"></category><category term="survey"></category></entry><entry><title>Ranked Likert-Scale Visualization</title><link href="http://blog.jsonbecker.com/2012/07/ranked-likert-scale-visualization.html" rel="alternate"></link><updated>2012-07-10T00:24:00-04:00</updated><author><name>Jason</name></author><id>tag:blog.jsonbecker.com,2012-07-10:2012/07/ranked-likert-scale-visualization.html</id><summary type="html">&lt;h2&gt;Update&lt;/h2&gt;
+&lt;p&gt;See below for more information now that Ethan Brown has &lt;a href="http://statisfactions.com/2012/improved-net-stacked-distribution-graphs-via-ggplot2-trickery/"&gt;weighed in with some great code&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;A &lt;a href="http://blog.ouseful.info/2012/07/09/fumblings-with-ranked-likert-scale-data-in-r/"&gt;recent post&lt;/a&gt; I came across on &lt;a href="http://www.r-bloggers.com/"&gt;r-bloggers&lt;/a&gt; asked for input on visualizing ranked &lt;a href="http://en.wikipedia.org/wiki/Likert_scale"&gt;Likert-scale data&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I happen to be working on a substantial project using very similarly structured data so I thought I would share some code. In my efforts to be generic as possible, I decided to generate some fake data from scratch. As I peeled away the layers of context-specific aspects of my nearing-production level code, I ran into all kinds of trouble. So I apologize for the somewhat sloppy and unfinished code&lt;sup id="fnref:1"&gt;&lt;a class="footnote-ref" href="#fn:1" rel="footnote"&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Greaterthan" src="http://blog.jsonbecker.com/static/images/rankedlikert.png" title="Example of a Net Stacked Likert" /&gt; &lt;sup id="fnref:netstacked"&gt;&lt;a class="footnote-ref" href="#fn:netstacked" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;My preferred method for visualizing Likert-scale data from surveys is using &lt;a href="http://www.organizationview.com/net-stacked-distribution-a-better-way-to-visualize-likert-data"&gt;net stacked distribution graphs&lt;/a&gt;. There are two major benefits of these kinds of graphs. First, they immediately draw attention to &lt;em&gt;how strongly&lt;/em&gt; respondents feel about a question, particularly when multiple questions are visualized at once. The total width of any bar is equal to the total number of responded who had a non-neutral answer. Second, these graphs make it very easy to distinguish between positive and negative responses. In some cases, it is critical to view the distribution of data to visualize the differences in responses to one question or another. However, most of the time it is informative enough to simply know how positive or negative responses are. I find this is particularly true with 3, 4, and 5-point Likert scales, the most common I come across in education research.&lt;/p&gt;
+&lt;p&gt;Anyway, without further ado, some starter code for producing net stacked distribution graphs.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;require&lt;span class="p"&gt;(&lt;/span&gt;ggplot2&lt;span class="p"&gt;)&lt;/span&gt;
+require&lt;span class="p"&gt;(&lt;/span&gt;scales&lt;span class="p"&gt;)&lt;/span&gt;
+require&lt;span class="p"&gt;(&lt;/span&gt;plyr&lt;span class="p"&gt;)&lt;/span&gt;
+dataSet &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; data.frame&lt;span class="p"&gt;(&lt;/span&gt;
+  q1&lt;span class="o"&gt;=&lt;/span&gt;as.ordered&lt;span class="p"&gt;(&lt;/span&gt;round&lt;span class="p"&gt;(&lt;/span&gt;runif&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1500&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; runif&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1500&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;15&lt;/span&gt;&lt;span class="p"&gt;))),&lt;/span&gt;
+  q2&lt;span class="o"&gt;=&lt;/span&gt;as.ordered&lt;span class="p"&gt;(&lt;/span&gt;round&lt;span class="p"&gt;(&lt;/span&gt;runif&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1500&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; runif&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1500&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;15&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; with&lt;span class="p"&gt;(&lt;/span&gt;dataSet&lt;span class="p"&gt;,&lt;/span&gt; ifelse&lt;span class="p"&gt;(&lt;/span&gt;q1&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                       ifelse&lt;span class="p"&gt;(&lt;/span&gt;q1&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; q1&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="m"&gt;13&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                             ifelse&lt;span class="p"&gt;(&lt;/span&gt;q1&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="m"&gt;13&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; q1&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="m"&gt;20&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                                   ifelse&lt;span class="p"&gt;(&lt;/span&gt;q1&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="m"&gt;20&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; q1&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="m"&gt;26&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; with&lt;span class="p"&gt;(&lt;/span&gt;dataSet&lt;span class="p"&gt;,&lt;/span&gt; ifelse&lt;span class="p"&gt;(&lt;/span&gt;q2&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                       ifelse&lt;span class="p"&gt;(&lt;/span&gt;q2&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; q2&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="m"&gt;14&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                             ifelse&lt;span class="p"&gt;(&lt;/span&gt;q2&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="m"&gt;14&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; q2&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="m"&gt;26&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                                   ifelse&lt;span class="p"&gt;(&lt;/span&gt;q2&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="m"&gt;26&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; q2&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="m"&gt;28&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; as.ordered&lt;span class="p"&gt;(&lt;/span&gt;dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;
+dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; as.ordered&lt;span class="p"&gt;(&lt;/span&gt;dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;
+levels&lt;span class="p"&gt;(&lt;/span&gt;dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                             &lt;span class="s"&gt;&amp;#39;Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                             &lt;span class="s"&gt;&amp;#39;Neither Agree or Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                             &lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                             &lt;span class="s"&gt;&amp;#39;Strongly Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+levels&lt;span class="p"&gt;(&lt;/span&gt;dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                             &lt;span class="s"&gt;&amp;#39;Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                             &lt;span class="s"&gt;&amp;#39;Neither Agree or Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                             &lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                             &lt;span class="s"&gt;&amp;#39;Strongly Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# Convert the integer levels to have meaning.&lt;/span&gt;
+q1Proportions &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; data.frame&lt;span class="p"&gt;(&lt;/span&gt;Name&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; prop.table&lt;span class="p"&gt;(&lt;/span&gt;table&lt;span class="p"&gt;(&lt;/span&gt;dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]])))&lt;/span&gt;
+q2Proportions &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; data.frame&lt;span class="p"&gt;(&lt;/span&gt;Name&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; prop.table&lt;span class="p"&gt;(&lt;/span&gt;table&lt;span class="p"&gt;(&lt;/span&gt;dataSet&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;q2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]])))&lt;/span&gt;
+&lt;span class="c1"&gt;# Produces a data frame with the proportions of respondents in each level.&lt;/span&gt;
+
+&lt;span class="c1"&gt;# ggplot2 function for graphs&lt;/span&gt;
+visualize &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;,&lt;/span&gt;
+                      responses&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                  &lt;span class="s"&gt;&amp;#39;Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                  &lt;span class="s"&gt;&amp;#39;Neither Agree or Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                  &lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                  &lt;span class="s"&gt;&amp;#39;Strongly Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+                      desc&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Title&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                      rm.neutral&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;TRUE&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+  &lt;span class="c1"&gt;# This function will create net stacked distribution graphs. These are&lt;/span&gt;
+  &lt;span class="c1"&gt;# a particularly useful visualization of Likert data when there is a neutral&lt;/span&gt;
+  &lt;span class="c1"&gt;# option available and/or when emphasizing the difference between positive and&lt;/span&gt;
+  &lt;span class="c1"&gt;# negative responses is a goal.&lt;/span&gt;
+  &lt;span class="c1"&gt;# Args:&lt;/span&gt;
+  &lt;span class="c1"&gt;#   data: This is a dataframe with percentages labeled with responses.&lt;/span&gt;
+  &lt;span class="c1"&gt;#   responses: This is a vector with the response labels.&lt;/span&gt;
+  &lt;span class="c1"&gt;#   desc: This is the title of the output ggplot2 graphic, typically the&lt;/span&gt;
+  &lt;span class="c1"&gt;#         question text.&lt;/span&gt;
+  &lt;span class="c1"&gt;#   rm.neutral: This is a single element logical vector that determines if the&lt;/span&gt;
+  &lt;span class="c1"&gt;#               neutral response should be removed from the data. The default&lt;/span&gt;
+  &lt;span class="c1"&gt;#               value is TRUE.&lt;/span&gt;
+  &lt;span class="kr"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;i &lt;span class="kr"&gt;in&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;ceiling&lt;span class="p"&gt;(&lt;/span&gt;length&lt;span class="p"&gt;(&lt;/span&gt;responses&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+      &lt;span class="c1"&gt;# This loop negates all the negative, non-neutral responses regardless of&lt;/span&gt;
+      &lt;span class="c1"&gt;# the number of possible responses. This will center the non-neutral&lt;/span&gt;
+      &lt;span class="c1"&gt;# responses around 0.&lt;/span&gt;
+      data&lt;span class="p"&gt;[&lt;/span&gt;i&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;data&lt;span class="p"&gt;[&lt;/span&gt;i&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;rm.neutral&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="k-Variable"&gt;T&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    data &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; ddply&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;,&lt;/span&gt;.&lt;span class="p"&gt;(&lt;/span&gt;Name&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;x&lt;span class="p"&gt;)&lt;/span&gt; x&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;ceiling&lt;span class="p"&gt;(&lt;/span&gt;length&lt;span class="p"&gt;(&lt;/span&gt;responses&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)),])&lt;/span&gt;
+    responses &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; responses&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;ceiling&lt;span class="p"&gt;(&lt;/span&gt;length&lt;span class="p"&gt;(&lt;/span&gt;responses&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))]&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="kr"&gt;else&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  print&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="p"&gt;)&lt;/span&gt;
+  stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                  layer&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="o"&gt;=&lt;/span&gt;data&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,],&lt;/span&gt;
+                        mapping&lt;span class="o"&gt;=&lt;/span&gt;aes&lt;span class="p"&gt;(&lt;/span&gt;Name&lt;span class="p"&gt;,&lt;/span&gt;Freq&lt;span class="p"&gt;,&lt;/span&gt;fill&lt;span class="o"&gt;=&lt;/span&gt;Var1&lt;span class="p"&gt;,&lt;/span&gt;order&lt;span class="o"&gt;=-&lt;/span&gt;as.numeric&lt;span class="p"&gt;(&lt;/span&gt;Var1&lt;span class="p"&gt;)),&lt;/span&gt;
+                        geom&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;bar&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                        position&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;stack&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                        stat&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;identity&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; stackedchart &lt;span class="o"&gt;+&lt;/span&gt;
+                  layer&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="o"&gt;=&lt;/span&gt;data&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,],&lt;/span&gt;
+                        mapping&lt;span class="o"&gt;=&lt;/span&gt;aes&lt;span class="p"&gt;(&lt;/span&gt;Name&lt;span class="p"&gt;,&lt;/span&gt;Freq&lt;span class="p"&gt;,&lt;/span&gt;fill&lt;span class="o"&gt;=&lt;/span&gt;Var1&lt;span class="p"&gt;,&lt;/span&gt;order&lt;span class="o"&gt;=&lt;/span&gt;Var1&lt;span class="p"&gt;),&lt;/span&gt;
+                        geom&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;bar&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                        position&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;stack&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                        stat&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;identity&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; stackedchart &lt;span class="o"&gt;+&lt;/span&gt;
+                  geom_hline&lt;span class="p"&gt;(&lt;/span&gt;yintercept&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                  opts&lt;span class="p"&gt;(&lt;/span&gt;legend.title&lt;span class="o"&gt;=&lt;/span&gt;theme_blank&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                  opts&lt;span class="p"&gt;(&lt;/span&gt;axis.title.x&lt;span class="o"&gt;=&lt;/span&gt;theme_blank&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                  opts&lt;span class="p"&gt;(&lt;/span&gt;axis.title.y&lt;span class="o"&gt;=&lt;/span&gt;theme_blank&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                  opts&lt;span class="p"&gt;(&lt;/span&gt;title&lt;span class="o"&gt;=&lt;/span&gt;desc&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                  scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;labels&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;,&lt;/span&gt;
+                                     limits&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+                                     breaks&lt;span class="o"&gt;=&lt;/span&gt;seq&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;.2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                  scale_fill_manual&lt;span class="p"&gt;(&lt;/span&gt;limits&lt;span class="o"&gt;=&lt;/span&gt;responses&lt;span class="p"&gt;,&lt;/span&gt;
+                                    values&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#AA1111&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                             &lt;span class="s"&gt;&amp;#39;#BB6666&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                             &lt;span class="s"&gt;&amp;#39;#66BB66&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                             &lt;span class="s"&gt;&amp;#39;#11AA11&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                  coord_flip&lt;span class="p"&gt;()&lt;/span&gt;
+  stackedchart
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And the results of all that?&lt;/p&gt;
+&lt;p&gt;&lt;img alt="I wish it were prettier, but this is where I got." src="http://blog.jsonbecker.com/static/images/fakeexample.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;UPDATE:&lt;/h2&gt;
+&lt;p&gt;So now that Ethan has weighed in with his code I thought I would add some things to make this post better reflect my production code. Below, I have included my comment on his blog as well as an actual copy of my current production code (which definitely is not sufficiently refactored for easy use across multiple projects). Again, excuse what I consider to be incomplete work on my part. I do intend on refactoring this code and eventually including it in my broader set of custom functions available across all of my projects. I suspect along that path that I will be "stealing" some of Ethan's ideas.&lt;/p&gt;
+&lt;h3&gt;Comment&lt;/h3&gt;
+&lt;p&gt;Hi Ethan! Super excited to see this post. This is exactly why I put up my code-- so others could run with it. There are a few things that you do here that I actually already had implemented into my code and removed in an attempt to be more neutral to scale that I really like.&lt;/p&gt;
+&lt;p&gt;For starters, in my actual production code I also separate out the positive and negative responses. In my code, I have a parameter called &lt;code&gt;scaleName&lt;/code&gt; that allows me to switch between all of the scales that are available in my survey data. This includes Strongly Disagree to Strongly Agree (&lt;code&gt;scaleName=='sdsa'&lt;/code&gt;), Never -&gt; Always (&lt;code&gt;scaleName=='sdsa'&lt;/code&gt;) and even simple yes/no (&lt;code&gt;scaleName=='ny'&lt;/code&gt;). This is not ideal because it does require 1) knowing all possible scales and including some work in the function to treat them differently 2) including an additional parameter. However, because I use this work to analyze just a few surveys, the upfront work of including this as a parameter has made this very flexible in dealing with multiple scales. As a result, I do not need to require that the columns are ordered in any particular way, just that the titles match existing scales. So I have a long set of if elseif statements that look something like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;sdsa&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+scale &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+pos &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+neg &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This is actually really helpful for producing negative values and including some scales in my function which do not have values that are negative (so that it can be used for general stacked charts instead of just net-stacked):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;length&lt;span class="p"&gt;(&lt;/span&gt;neg&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+quest&lt;span class="p"&gt;[,&lt;/span&gt;names&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;neg&lt;span class="p"&gt;)]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[,&lt;/span&gt;names&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;neg&lt;span class="p"&gt;)])&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;(Recall that quest is what I call the dataframe and is equivalent to x in your code)&lt;/p&gt;
+&lt;p&gt;Another neat trick that I have instituted is having dynamic x-axis limits rather than always going from -100 to 100. I generally like to keep my scales representing the full logical range of data (0 - 100 for percentages, etc) so I might consider this a manipulation. However, after getting many charts with stubby centers, I found I was not really seeing sufficient variation by sticking to my -100 to 100 setup. So I added this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;pos_lims &lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+1&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,]),&lt;/span&gt;
+sum&lt;span class="p"&gt;(&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;select&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;which&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+1&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,])))&lt;/span&gt;
+neg_lims &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; max&lt;span class="p"&gt;(&lt;/span&gt;abs&lt;span class="p"&gt;(&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;sum&lt;span class="p"&gt;(&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt; 
+                                 select&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;which&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,]),&lt;/span&gt;
+sum&lt;span class="p"&gt;(&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;select&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;which&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+1&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,]))))&lt;/span&gt;
+x_axis_lims &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; max&lt;span class="p"&gt;(&lt;/span&gt;pos_lims&lt;span class="p"&gt;,&lt;/span&gt;neg_lims&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Which helps to determine the value furthest from 0 in either direction across the data frame (I have to admit, this code looks a bit like magic reading it back. My comments actually are quite helpful:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;# pos_lims and neg_lims subset each row of the data based on sign, then&lt;/span&gt;
+&lt;span class="c1"&gt;# sums the values that remain (gettting the total positive or negative&lt;/span&gt;
+&lt;span class="c1"&gt;# percentage for each row). Then, the max of the rows is saved as a candidate&lt;/span&gt;
+&lt;span class="c1"&gt;# for the magnitude of the axis.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;To make this more generalizable (my production code always compares two bars at once) , it would be fairly trivial to loop over all the rows (or use the apply functions which I'm still trying to get a hang of).&lt;/p&gt;
+&lt;p&gt;I then pad the &lt;code&gt;x_limits&lt;/code&gt; value by some percent inside the &lt;code&gt;limits&lt;/code&gt; attribute.&lt;/p&gt;
+&lt;p&gt;In my production code I also have the &lt;code&gt;scale_fill_manual&lt;/code&gt; attribute
+added separately to the ggplot object. However, rather than add this
+after the fact like at the point of rendering, I include this in my
+function again set by &lt;code&gt;scaleName&lt;/code&gt;. However, I think the best organization
+is probably to have a separate function that makes it easy to select the
+color scheme you want and apply it so that your final call could be
+something like &lt;code&gt;colorNetStacked(net_stacked(x), 'blues')&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;My actual final return looks like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kr"&gt;return&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;stackedchart &lt;span class="o"&gt;+&lt;/span&gt; scale_fill_manual&lt;span class="p"&gt;(&lt;/span&gt;limits&lt;span class="o"&gt;=&lt;/span&gt;scale&lt;span class="p"&gt;,&lt;/span&gt;
+values&lt;span class="o"&gt;=&lt;/span&gt;colors&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+coord_flip&lt;span class="p"&gt;())&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Where colors is set by a line like: &lt;code&gt;colors &amp;lt;- brewer.pal(name='Blues',n=7)[3:7]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Seriously though, I am super excited you found my post and thought it was useful and improved what I presented!&lt;/p&gt;
+&lt;h3&gt;Current production code:&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;visualize &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;scaleName&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;sdsa&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;desc&lt;span class="p"&gt;){&lt;/span&gt;
+  &lt;span class="c1"&gt;# Produces the main net-stacked Likert graphic used for survey data in the&lt;/span&gt;
+  &lt;span class="c1"&gt;# diagnostic tool&lt;/span&gt;
+  &lt;span class="c1"&gt;# Args:&lt;/span&gt;
+  &lt;span class="c1"&gt;#  quest: data.frame from pull() or pullByLevel() output&lt;/span&gt;
+  &lt;span class="c1"&gt;#  scaleName: string code for the type of scale that is used for the question.&lt;/span&gt;
+  &lt;span class="c1"&gt;#  desc: string for the title that will be displayed on the graphic.&lt;/span&gt;
+  &lt;span class="c1"&gt;# Returns:&lt;/span&gt;
+  &lt;span class="c1"&gt;# Net-Stacked Likert chart with a bar/row for each row in quest. Most scales&lt;/span&gt;
+  &lt;span class="c1"&gt;# center around 0 with a distinct positive and negative set of responses.&lt;/span&gt;
+  &lt;span class="c1"&gt;# The graphs are custom colored based on what best reflects the scale.&lt;/span&gt;
+  &lt;span class="c1"&gt;# The x-axis limits are set dynamically based on a 10% buffer of the largest&lt;/span&gt;
+  &lt;span class="c1"&gt;# magnitude to either the positive or negative responses.&lt;/span&gt;
+
+  &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;sdsa&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    scale &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    pos   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    neg   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Strongly Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;da&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    scale &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    pos   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    neg   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Disagree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;neal&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    scale &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Never&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Sometimes&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Usually&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Always&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    pos   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Usually&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Always&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    neg   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Never&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Sometimes&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;noalot&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    scale &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;None&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;A Little&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Some&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;A Lot&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    pos   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;None&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;A Little&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Some&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;A Lot&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    neg   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;noall&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    scale &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;None of them&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Some&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Most&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;All of them&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    pos   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;None of them&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Some&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Most&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;All of them&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    neg   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;neda&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    scale &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Never&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;A Few Times a Year&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Monthly&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Weekly&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Daily&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    pos   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Never&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;A Few Times a Year&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Monthly&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Weekly&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Daily&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    neg   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;ny&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    scale &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;No&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Yes&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    pos   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Yes&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    neg   &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;No&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    print&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Unrecognized Scale Name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="c1"&gt;# Remove neutral and non-response based values in the pull tables like&lt;/span&gt;
+  &lt;span class="c1"&gt;# n-size, Not Applicable, etc.&lt;/span&gt;
+  quest &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; quest&lt;span class="p"&gt;[,&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;names&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%in%&lt;/span&gt;
+    c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;n&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Not Applicable&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;I don&amp;#39;t know&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# Produce values less than 0 for negative responses&lt;/span&gt;
+  &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;length&lt;span class="p"&gt;(&lt;/span&gt;neg&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+  quest&lt;span class="p"&gt;[,&lt;/span&gt;names&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;neg&lt;span class="p"&gt;)]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt;
+    &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[,&lt;/span&gt;names&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;neg&lt;span class="p"&gt;)])&lt;/span&gt;
+  &lt;span class="c1"&gt;# pos_lims and neg_lims subset each row of the data based on sign, then&lt;/span&gt;
+  &lt;span class="c1"&gt;# sums the values that remain (gettting the total positive or negative&lt;/span&gt;
+  &lt;span class="c1"&gt;# percentage for each row). Then, the max of the rows is saved as a candidate&lt;/span&gt;
+  &lt;span class="c1"&gt;# for the magnitude of the axis.&lt;/span&gt;
+  pos_lims &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; max&lt;span class="p"&gt;(&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;sum&lt;span class="p"&gt;(&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;select&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;which&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+1&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,]),&lt;/span&gt;
+                    sum&lt;span class="p"&gt;(&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;select&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;which&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+1&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,])))&lt;/span&gt;
+  neg_lims &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; max&lt;span class="p"&gt;(&lt;/span&gt;abs&lt;span class="p"&gt;(&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;sum&lt;span class="p"&gt;(&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;select&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;which&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+1&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,]),&lt;/span&gt;
+                        sum&lt;span class="p"&gt;(&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;select&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;which&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+1&lt;/span&gt;&lt;span class="p"&gt;))[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,]))))&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# The actual magnitude of the axis is the largest magnitude listed in pos_lims&lt;/span&gt;
+  &lt;span class="c1"&gt;# or neg_lims, and will be inflated by .1 in each direction in the scale later&lt;/span&gt;
+  x_axis_lims &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; max&lt;span class="p"&gt;(&lt;/span&gt;pos_lims&lt;span class="p"&gt;,&lt;/span&gt;neg_lims&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="c1"&gt;# Reshape the data so that each row has one value with a variable label.&lt;/span&gt;
+  quest &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; melt&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;id.vars&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Var1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# Factoring and ordering the response label ensures they are listed in the&lt;/span&gt;
+  &lt;span class="c1"&gt;# proper order in the legend and on the stacked chart, i.e. strongly disagree&lt;/span&gt;
+  &lt;span class="c1"&gt;# is furthest left and strongly agree is furthest right.&lt;/span&gt;
+  quest&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;variable&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; factor&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;variable&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]],&lt;/span&gt;
+                                levels&lt;span class="o"&gt;=&lt;/span&gt;scale&lt;span class="p"&gt;,&lt;/span&gt;
+                                ordered&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;TRUE&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="c1"&gt;# Build the plot using ggplot(). Layers are used so that positive and negative&lt;/span&gt;
+  &lt;span class="c1"&gt;# can be drawn separately. This is important because the order of the negative&lt;/span&gt;
+  &lt;span class="c1"&gt;# values needs to be switched.&lt;/span&gt;
+
+  &lt;span class="c1"&gt;##### Control flow required to change the behavior for the questions that&lt;/span&gt;
+  &lt;span class="c1"&gt;##### business requirements call for 0-100 scale with no indication of&lt;/span&gt;
+  &lt;span class="c1"&gt;##### positive or negative, i.e. the neda, noalot, and noall scaleName.&lt;/span&gt;
+  stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    layer&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="o"&gt;=&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;
+                      variable &lt;span class="o"&gt;%in%&lt;/span&gt; pos&lt;span class="p"&gt;),&lt;/span&gt;
+          mapping&lt;span class="o"&gt;=&lt;/span&gt;aes&lt;span class="p"&gt;(&lt;/span&gt;Var1&lt;span class="p"&gt;,&lt;/span&gt;
+                      value&lt;span class="p"&gt;,&lt;/span&gt;
+                      fill&lt;span class="o"&gt;=&lt;/span&gt;factor&lt;span class="p"&gt;(&lt;/span&gt;variable&lt;span class="p"&gt;)),&lt;/span&gt;
+          geom&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;bar&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          stat&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;identity&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          position&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;stack&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    geom_hline&lt;span class="p"&gt;(&lt;/span&gt;yintercept&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    opts&lt;span class="p"&gt;(&lt;/span&gt;legend.title&lt;span class="o"&gt;=&lt;/span&gt;theme_blank&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    opts&lt;span class="p"&gt;(&lt;/span&gt;axis.title.x&lt;span class="o"&gt;=&lt;/span&gt;theme_blank&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    opts&lt;span class="p"&gt;(&lt;/span&gt;axis.title.y&lt;span class="o"&gt;=&lt;/span&gt;theme_blank&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    opts&lt;span class="p"&gt;(&lt;/span&gt;title&lt;span class="o"&gt;=&lt;/span&gt;desc&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;length&lt;span class="p"&gt;(&lt;/span&gt;neg&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; stackedchart &lt;span class="o"&gt;+&lt;/span&gt;
+      layer&lt;span class="p"&gt;(&lt;/span&gt;data&lt;span class="o"&gt;=&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;,&lt;/span&gt;
+                        variable &lt;span class="o"&gt;%in%&lt;/span&gt; neg&lt;span class="p"&gt;),&lt;/span&gt;
+            mapping&lt;span class="o"&gt;=&lt;/span&gt;aes&lt;span class="p"&gt;(&lt;/span&gt;Var1&lt;span class="p"&gt;,&lt;/span&gt;
+                        value&lt;span class="p"&gt;,&lt;/span&gt;
+                        fill&lt;span class="o"&gt;=&lt;/span&gt;factor&lt;span class="p"&gt;(&lt;/span&gt;variable&lt;span class="p"&gt;),&lt;/span&gt;
+                        order&lt;span class="o"&gt;=-&lt;/span&gt;as.numeric&lt;span class="p"&gt;(&lt;/span&gt;variable&lt;span class="p"&gt;)),&lt;/span&gt;
+            geom&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;bar&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            stat&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;identity&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            position&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;stack&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;sdsa&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;neal&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)){&lt;/span&gt;
+    colors &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#AA1111&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#BB6666&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#66BB66&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#11AA11&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt;  stackedchart &lt;span class="o"&gt;+&lt;/span&gt;
+      scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;labels&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;,&lt;/span&gt;
+                         limits&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;x_axis_lims&lt;span class="m"&gt;-.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; x_axis_lims&lt;span class="m"&gt;+.1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+                         breaks&lt;span class="o"&gt;=&lt;/span&gt;seq&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;round&lt;span class="p"&gt;(&lt;/span&gt;x_axis_lims&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;-.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                    round&lt;span class="p"&gt;(&lt;/span&gt;x_axis_lims&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                    &lt;span class="m"&gt;.2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;ny&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;da&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)){&lt;/span&gt;
+    colors &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#BB6666&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#66BB66&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt;  stackedchart &lt;span class="o"&gt;+&lt;/span&gt;
+      scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;labels&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;,&lt;/span&gt;
+                         limits&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;x_axis_lims&lt;span class="m"&gt;-.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; x_axis_lims&lt;span class="m"&gt;+.1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+                         breaks&lt;span class="o"&gt;=&lt;/span&gt;seq&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;round&lt;span class="p"&gt;(&lt;/span&gt;x_axis_lims&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;-.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                    round&lt;span class="p"&gt;(&lt;/span&gt;x_axis_lims&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                    &lt;span class="m"&gt;.2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;noalot&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;noall&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)){&lt;/span&gt;
+    colors &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; brewer.pal&lt;span class="p"&gt;(&lt;/span&gt;name&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Blues&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;n&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+    stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt;  stackedchart &lt;span class="o"&gt;+&lt;/span&gt;
+      scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;labels&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;,&lt;/span&gt;
+                         limits&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1.05&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+                         breaks&lt;span class="o"&gt;=&lt;/span&gt;seq&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;.1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;neda&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)){&lt;/span&gt;
+    colors &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; brewer.pal&lt;span class="p"&gt;(&lt;/span&gt;name&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Blues&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;n&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+    stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt;  stackedchart &lt;span class="o"&gt;+&lt;/span&gt;
+      scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;labels&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;,&lt;/span&gt;
+                         limits&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1.05&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+                         breaks&lt;span class="o"&gt;=&lt;/span&gt;seq&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;.1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    print&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Unrecognized scaleName&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="kr"&gt;return&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;stackedchart &lt;span class="o"&gt;+&lt;/span&gt; scale_fill_manual&lt;span class="p"&gt;(&lt;/span&gt;limits&lt;span class="o"&gt;=&lt;/span&gt;scale&lt;span class="p"&gt;,&lt;/span&gt;
+                                          values&lt;span class="o"&gt;=&lt;/span&gt;colors&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                        coord_flip&lt;span class="p"&gt;())&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="footnote"&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id="fn:netstacked"&gt;
+&lt;p&gt;Net Stacked Likert graphs are excellent for comparing how different groups responded to the same question. There is both high information density and clarity.&amp;#160;&lt;a class="footnote-backref" href="#fnref:netstacked" rev="footnote" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn:1"&gt;
+&lt;p&gt;Mainly, I would like to abstract this code further. I am only about halfway there to assuring that I can use Likert-scale data of any size. I also would like to take in more than one question simultaneously with the visualize function. The latter is already possible in my production code and is particularly high impact for these kinds of graphics&amp;#160;&lt;a class="footnote-backref" href="#fnref:1" rev="footnote" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</summary><category term="data"></category><category term="data analysis"></category><category term="ggplot2"></category><category term="likert-scale"></category><category term="plyr"></category><category term="r-bloggers"></category><category term="rstats"></category><category term="survey analysis"></category></entry></feed>
