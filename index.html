@@ -25,157 +25,48 @@
       <div class=separator></div>                
         <div class=body>
         
-            <h1 class="title">The Slow Trek to Pelican<a href="./2012/12/the-slow-trek-to-pelican.html" class=perma>&#8734;</a></h1>
-      <p class=date> 2012-12-20 </p>
-      <p><em>Update: Please see below for two solutions.</em></p>
-<p>I have grown increasingly unhappy with Wordpress lately. My blog is simple. My design tastes are simple. My needs are simple. I like control. I am a geek. And I really need an excuse to learn Python, which seems to be rapidly growing into one of the most important programming languages for a data analyst.</p>
-<p>I have decided to migrate this blog over to <a href="http://docs.getpelican.com/en/3.1.1/">Pelican</a>, a static site generator written in Python. Static sites are the "classic" way to do a webpage-- just upload a bunch of HTML and CSS files, maybe some Javascript. But no databases and no constructing the page a user sees in the browser as they request it. This puts substantially less strain on a web server and makes it far easier to export and move a webpage since all you need to do is duplicate files. What makes static sites a real pain is that there is a lot of repetition. Folks adopted dynamic sites that use content management system so that they can write a page called "post.php" one time, and for each unique post just query a database for the unique content. The frame around the post, layout, components, etc are all just written once. Static site generators allow you to build a webpage using a similar, but far more stripped down, layout system. However, rather than generate each page on the web server, you generate each page by running a script locally that transforms plain text documents into well-formed HTML/CSS. Then you can just upload a directory and the whole site is ready to go.</p>
-<p>Pelican comes with a pretty good script that will take Wordpress XML that's available via the built-in export tools and transform each post into a <a href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> files, a format similar to <a href="http://daringfireball.net/projects/markdown/">Markdown</a>. I prefer Markdown so I used <a href="http://johnmacfarlane.net/pandoc/">pandoc</a> to convert all my *.rst posts into *.md files.</p>
-<p>So far, so good.</p>
-<p>But one of the really big problems I had with Wordpress was a growing dependency on plugins that added non-standard, text-based markup in my posts that would be rendered a particular way. For example, text surrounded by two parenthesis, '[^0]', became a footnote. For code syntax highlighting, I use a "short code", which puts "sourcecode language='r'", for example, between brackets []. All of these plugins have been great, but now when you try to export a post you get the non-standard markup in-line as part of your posts. It makes it very difficult to recreate a post the way it looks today.</p>
-<p>This presents a great opportunity to learn a little Python. So I have begun to scrounge together some basic Python knowledge to write some scripts to clean up my Markdown files and convert the syntax of the short codes that I have used to properly formatted Markdown so that when I run the pelican script it will accurately reproduce each post.</p>
-<p>Unfortunately, I've hit a snag with my very first attempt. Footnotes are a big deal to me and have standard Markdown interpretation. In Markdown, footnotes are inserted in the text where "[\^#]" appears in the text, where # = the footnote identifier/key. Then, at the end of the document, surrounded by new lines, the footnote text is found with "[\^#]: footnote text" where # is the same identifier. So I needed to write a script that found each instance of text surrounded by two parentheses, insert the [\^#] part in place of the footnote, and then add the footnote at the bottom of the post in the right format.</p>
-<p>I created a test text file:</p>
-<div class="highlight"><pre><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">test</span> <span class="p">((</span><span class="n">test</span> <span class="n">footnote</span><span class="p">)).</span>
-<span class="n">And</span> <span class="n">here</span> <span class="n">is</span> <span class="n">another</span> <span class="n">test</span> <span class="p">((</span><span class="n">footnote2</span><span class="p">)).</span> <span class="n">Why</span> <span class="n">not</span> <span class="n">add</span> <span class="n">a</span> <span class="n">third</span><span class="o">?</span> <span class="p">((</span><span class="n">Three</span>
-<span class="n">Three</span><span class="p">)).</span>
-</pre></div>
+            <h1 class="title">Cleaning URLs with TextExpander<a href="./2013/05/cleaning-urls-with-textexpander.html" class=perma>&#8734;</a></h1>
+      <p class=date> 2013-05-30 </p>
+      <p>One thing I really dislike about Google Reader is it replaces the links to posts in my RSS feed. My <a href="http://pinboard.in/u:jasonpbecker">Pinboard account</a> is littered with links that start with <code>http://feedproxy.google.com</code>. I am quite concerned that with the demise of <a href="http://googlereader.blogspot.com/2013/03/powering-down-google-reader.html">Google Reader</a> on July 1, 2013, these redirects will no longer work.</p>
+<p>It's not just Google that obscures the actually address of links on the internet. The popularity of using link shortening services, both to save characters on Twitter and to collect analytics, has proliferated the <em>Internet of Redirects</em>.</p>
+<p>Worse still, after I am done cutting through redirects, I often find that the ultimate link include all kinds of extraneous attributes, most especially a barrage of <code>utm_*</code> campaign tracking.</p>
+<p>Now, I understand why all of this is happening and the importance of the services and analytics this link cruft provides. I am quite happy to click on shortened links, move through all the redirects, and let sites know just how I found them. But quite often, like when using a bookmarking service or writing a blog post, I just want the simple, plain text URL that gets me directly to the permanent home of the content.</p>
+<p>One part of my workflow to deal with link cruft is a TextExpander snippet I call <code>cleanURL</code>. It triggers a simple Python script that grabs the URL in my clipboard, traces through the redirects to the final destination, then strips links of campaign tracking attributes, and ultimately pastes a new URL that is much "cleaner".</p>
+<p>Below I have provided the script. I hope it is useful to some other folks, and I would love some recommendations for additional "cleaning" that could be performed.</p>
+<p>My next task is expanding this script to work with <a href="http://pinboard.in">Pinboard</a> so that I can clean up all my links before the end of the month when Google Reader goes belly up.</p>
+<div class="highlight"><pre><span class="c">#!/usr/bin/python</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="n">search</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">check_output</span>
 
+<span class="n">url</span> <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&#39;pbpaste&#39;</span><span class="p">)</span>
 
-<p>The goal was to end up with a file like this:</p>
-<div class="highlight"><pre><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">test</span> <span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">].</span> <span class="n">And</span> <span class="n">here</span> <span class="n">is</span> <span class="n">another</span>
-<span class="n">test</span> <span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">].</span> <span class="n">Why</span> <span class="n">not</span> <span class="n">add</span> <span class="n">a</span> <span class="n">third</span><span class="o">?</span> <span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">].</span>
+<span class="c"># Go through the redirects to get the destination URL</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
-<span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="n">test</span> <span class="n">footnote</span>
+<span class="c"># Look for utm attributes</span>
+<span class="n">match</span> <span class="o">=</span>  <span class="n">search</span><span class="p">(</span><span class="s">r&#39;[?&amp;#]utm_&#39;</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
 
-<span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">footnote2</span>
+<span class="c"># Because I&#39;m not smart and trigger this with</span>
+<span class="c"># already clean URLs</span>
+<span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+  <span class="n">cleanURL</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">cleanURL</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">url</span>
 
-<span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="n">Three</span> <span class="n">Three</span>
-</pre></div>
-
-
-<p>Unfortunately, the output isn't quite right. My best attempt resulted in
-a file like this:</p>
-<div class="highlight"><pre><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">test</span> <span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">]</span> <span class="n">And</span> <span class="n">here</span> <span class="n">is</span> <span class="n">another</span> <span class="n">te</span><span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">])).</span> <span class="n">Why</span> <span class="n">not</span> <span class="n">add</span> <span class="n">a</span>
-<span class="n">t</span><span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">]</span><span class="n">ree</span><span class="p">)).</span>
-
-<span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="p">((</span><span class="n">test</span> <span class="n">footnote</span><span class="p">))</span>
-
-<span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="p">((</span><span class="n">footnote2</span><span class="p">))</span>
-
-<span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="p">((</span><span class="n">Three</span> <span class="n">Three</span><span class="p">))</span>
-</pre></div>
-
-
-<p>Ugh.</p>
-<p>So I am turning to the tiny slice of my readership that might actually know Python or just code in general to help me out. Where did I screw up? The source to my Python script is below so feel free to comment here or on this <a href="https://gist.github.com/4342554#file-wpfootnotestomarkdown-py">Gist</a>. I am particularly frustrate that the regex appears to be capturing the parenthesis, because that's not how the same code behaves on <a href="http://www.pythonregex.com">PythonRegex.com</a>.</p>
-<p>If anyone can help me with the next step, which will be creating arguments that will understand an input like <em>.rst and set the output to creating a file that's </em>.md, that would be appreciated as well. </p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">re</span>
-
-<span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&quot;\(\(([^\(\(\)\)]+)\)\)&quot;</span><span class="p">)</span>
-<span class="n">file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">raw_input</span><span class="p">(</span><span class="s">&#39;File Name &gt;&#39;</span><span class="p">))</span>
-<span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
-<span class="n">footnoteMatches</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-<span class="n">coordinates</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">footnotes</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="c"># Print span of matches</span>
-<span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">footnoteMatches</span><span class="p">:</span>
-    <span class="n">coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">())</span>
-    <span class="n">footnotes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">())</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)):</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="s">&#39;[^&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span> <span class="s">&#39;]&#39;</span> <span class="o">+</span>
-            <span class="n">text</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
-    <span class="n">shift</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">):</span>
-        <span class="n">coordinates</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">coordinates</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">shift</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">shift</span><span class="p">)</span>
-        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
-
-<span class="n">referenceLinkList</span> <span class="o">=</span> <span class="p">[</span><span class="n">text</span> <span class="mi">1</span><span class="o">=</span><span class="s">&quot;&#39;</span>
-<span class="s">&#39;&quot; language=&quot;,&quot;][/text]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">footnotes</span><span class="p">)):</span>
-    <span class="n">insertList</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;[^&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="s">&#39;]: &#39;</span><span class="p">,</span> <span class="n">footnotes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">])</span>
-    <span class="n">referenceLinkList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">insertList</span><span class="p">)</span>
-
-<span class="n">text</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">referenceLinkList</span><span class="p">)</span>
-
-<span class="n">newFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-<span class="n">newFile</span><span class="o">.</span><span class="n">truncate</span><span class="p">()</span>
-<span class="n">newFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-<span class="n">newFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
-
-
-<h2>Update with solutions:</h2>
-<p>I am happy to report I now have two working solutions. The first one comes courtesy of <a href="https://github.com/ilikepi">James Blanding</a> who was kind enough to <a href="https://gist.github.com/4355865">fork</a> the gist I put up. While I was hoping to take a look tonight at his fork tonight, <a href="http://news.ycombinator.com/item?id=4957935">Github was experiencing some downtime</a>.  So I ended up fixing the script myself a slightly different way (seen below). I think James's approach is superior for a few reasons, not the least of which was avoiding the ugly if/elif/else found in my code by using a global counter. He also used .format() a lot better than I did, which I didn't know existed until I found it tonight.</p>
-<p>I made two other changes before coming to my solution. First, I realized my regex was completely wrong. I didn't want to capture anything within the two parenthesis when no parenthesis were contained, as the original regex did. Instead, I wanted to make sure to preserve any parenthetical comments contained within my footnotes. So the resulting regex looks a bit different. I also switched from using user input to taking in the filepath as an argument.</p>
-<p>My next step will be to learn a bit more about the os module which seems to contain what I need so that this Python script can behave like a good Unix script and know what to do with one file or a list of files as a parameter (and of course, most importantly, a list generated from a wild card like *.rst). I will also be incorporating the bits of James's code that I feel confident I understand and that I like better.</p>
-<p>Without further ado, my solution (I updated the gist as well):</p>
-<div class="highlight"><pre><span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">argv</span>
-<span class="kn">import</span> <span class="nn">re</span>
-
-<span class="n">name</span><span class="p">,</span> <span class="n">file_path</span> <span class="o">=</span> <span class="n">argv</span>
-
-<span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;[\s]\(\((.*?[)]{0,1})\)\)[\s]{0,1}&quot;</span><span class="p">)</span>
-<span class="c"># The tricky part here is to match all text between &quot;((&quot;&quot;))&quot;, including as </span>
-<span class="c"># many as one set of (), which may even terminate ))). The {0,1} captures as</span>
-<span class="c"># many as one ). The trailing space is there because I often surrounded the </span>
-<span class="c"># &quot;((&quot;&quot;))&quot; with a space to make it clear in the WordPress editor.</span>
-
-<span class="c"># file_path = str(raw_input(&#39;File Name &gt;&#39;))</span>
-<span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
-<span class="n">footnoteMatches</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-<span class="n">coordinates</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">footnotes</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="c"># Print span of matches</span>
-<span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">footnoteMatches</span><span class="p">:</span>
-    <span class="n">coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">())</span>
-<span class="c"># Capture only group(1) so you get the content of the footnote, not the </span>
-<span class="c"># whole pattern which includes the parenthesis delimiter.</span>
-    <span class="n">footnotes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-
-<span class="n">newText</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)):</span>
-    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">newText</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">[:</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span>
-                               <span class="s">&#39; [^{}]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span>
-        <span class="n">newText</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span>
-                          <span class="s">&#39; [^{}]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">newText</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span>
-                          <span class="s">&#39; [^{}]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="c"># Accounts for text after the last footnote which only runs once.</span>
-        <span class="n">newText</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]:]</span><span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
-
-<span class="n">endNotes</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">footnotes</span><span class="p">)):</span>
-    <span class="n">insertList</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;[^{}]: &#39;</span><span class="p">,</span> <span class="n">footnotes</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">endNotes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">insertList</span><span class="p">)</span>
-
-<span class="n">newText</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">newText</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">endNotes</span><span class="p">)</span>
-
-<span class="n">newFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-<span class="n">newFile</span><span class="o">.</span><span class="n">truncate</span><span class="p">()</span>
-<span class="n">newFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">newText</span><span class="p">)</span>
-<span class="n">newFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">cleanURL</span>
 </pre></div>
       
-            <p class=tags style="margin-bottom: 15em;">This entry was tagged as
-                <a href="./tag/code.html">code</a>
-                <a href="./tag/pelican.html">pelican</a>
-                <a href="./tag/python.html">python</a>
-                <a href="./tag/regex.html">regex</a>
-                <a href="./tag/wordpress.html">wordpress</a>
-              </p>
                       <div class=entry-overview>
+        <div class=date>Dec 20, 2012</div>
+        <div class=detail>
+          <h1><a href="./2012/12/the-slow-trek-to-pelican.html">The Slow Trek to Pelican</a></h1>
+            <div class=summary><p><p><em>Update: Please see below for two solutions.</em></p>
+<p>I have grown increasingly unhappy with Wordpress lately. My blog is simple. My design tastes are simple. My needs are simple. I like control. I am a geek. And I really need an excuse to learn Python, which seems to be rapidly growing ...</p></p></div>
+        </div>
+      </div>
+                <div class=entry-overview>
         <div class=date>Nov 20, 2012</div>
         <div class=detail>
           <h1><a href="./2012/11/a-little-knowledge-is-a-wonderful-dangerous-thing.html">A little knowledge is a wonderful (dangerous) thing</a></h1>
@@ -257,13 +148,6 @@ to feeling as though ...</p></p></div>
           <h1><a href="./2012/08/there-must-be-an-easier-way-survey-questions-in-r.html">There must be an easier way... survey questions in R</a></h1>
             <div class=summary><p><p>So I have this great little custom function I've used when looking at survey data in R. I call this function <code>pull()</code>. The goal of <code>pull()</code> is to quickly produce frequency tables with n sizes from individual-level survey data.</p>
 <p>Before using <code>pull()</code>, I create a big table that includes ...</p></p></div>
-        </div>
-      </div>
-                <div class=entry-overview>
-        <div class=date>Aug 06, 2012</div>
-        <div class=detail>
-          <h1><a href="./2012/08/pay-for-quality-join-appnet.html">Pay For Quality: Join App.net</a></h1>
-            <div class=summary><p><p>I like paying for good software. There are applications I use every day, some for hours a day, that make my experience on the web and on my computers better. I have paid for <a href="http://reederapp.com/">Reeder</a> on three platforms, <a href="http://tapbots.com/software/tweetbot/">Tweetbot</a> on two<sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">1</a></sup>, <a href="http://pinboard.in">Pinboard</a>, and many others. I like to pay ...</p></p></div>
         </div>
       </div>
       

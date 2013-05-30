@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>jasonpbecker</title><link href="http://blog.jsonbecker.com/" rel="alternate"></link><link href="http://blog.jsonbecker.com/feeds/misc.atom.xml" rel="self"></link><id>http://blog.jsonbecker.com/</id><updated>2013-05-30T00:00:00-04:00</updated><entry><title>Cleaning URLs with TextExpander</title><link href="http://blog.jsonbecker.com/2013/05/cleaning-urls-with-textexpander.html" rel="alternate"></link><updated>2013-05-30T00:00:00-04:00</updated><author><name>Jason P. Becker</name></author><id>tag:blog.jsonbecker.com,2013-05-30:2013/05/cleaning-urls-with-textexpander.html</id><summary type="html">&lt;p&gt;One thing I really dislike about Google Reader is it replaces the links to posts in my RSS feed. My &lt;a href="http://pinboard.in/u:jasonpbecker"&gt;Pinboard account&lt;/a&gt; is littered with links that start with &lt;code&gt;http://feedproxy.google.com&lt;/code&gt;. I am quite concerned that with the demise of &lt;a href="http://googlereader.blogspot.com/2013/03/powering-down-google-reader.html"&gt;Google Reader&lt;/a&gt; on July 1, 2013, these redirects will no longer work.&lt;/p&gt;
+&lt;p&gt;It's not just Google that obscures the actually address of links on the internet. The popularity of using link shortening services, both to save characters on Twitter and to collect analytics, has proliferated the &lt;em&gt;Internet of Redirects&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Worse still, after I am done cutting through redirects, I often find that the ultimate link include all kinds of extraneous attributes, most especially a barrage of &lt;code&gt;utm_*&lt;/code&gt; campaign tracking.&lt;/p&gt;
+&lt;p&gt;Now, I understand why all of this is happening and the importance of the services and analytics this link cruft provides. I am quite happy to click on shortened links, move through all the redirects, and let sites know just how I found them. But quite often, like when using a bookmarking service or writing a blog post, I just want the simple, plain text URL that gets me directly to the permanent home of the content.&lt;/p&gt;
+&lt;p&gt;One part of my workflow to deal with link cruft is a TextExpander snippet I call &lt;code&gt;cleanURL&lt;/code&gt;. It triggers a simple Python script that grabs the URL in my clipboard, traces through the redirects to the final destination, then strips links of campaign tracking attributes, and ultimately pastes a new URL that is much "cleaner".&lt;/p&gt;
+&lt;p&gt;Below I have provided the script. I hope it is useful to some other folks, and I would love some recommendations for additional "cleaning" that could be performed.&lt;/p&gt;
+&lt;p&gt;My next task is expanding this script to work with &lt;a href="http://pinboard.in"&gt;Pinboard&lt;/a&gt; so that I can clean up all my links before the end of the month when Google Reader goes belly up.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/python&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;requests&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;re&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;search&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;subprocess&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;check_output&lt;/span&gt;
+
+&lt;span class="n"&gt;url&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;check_output&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;pbpaste&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c"&gt;# Go through the redirects to get the destination URL&lt;/span&gt;
+&lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;requests&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c"&gt;# Look for utm attributes&lt;/span&gt;
+&lt;span class="n"&gt;match&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;r&amp;#39;[?&amp;amp;#]utm_&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c"&gt;# Because I&amp;#39;m not smart and trigger this with&lt;/span&gt;
+&lt;span class="c"&gt;# already clean URLs&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;match&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;cleanURL&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;match&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;group&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;cleanURL&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;
+
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;cleanURL&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary></entry></feed>
