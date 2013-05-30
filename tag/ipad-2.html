@@ -1,0 +1,80 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>jasonpbecker <small>ipad 2</small></title>
+
+    <link rel="stylesheet" href="../theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/font-awesome.css" type="text/css"/>
+      </head>
+  <body>
+    <div class=container>
+                    
+      <div class=navigation>
+        <ul>
+                      <li><a href="../index.html">Blog</a> </li>
+                      <li><a href="../about.html">About</a> </li>
+                      <li><a href="../archives.html">Archive</a> </li>
+                  </ul>
+      </div>
+      <div class=separator></div>                
+        <div class=body>
+        
+            <h1 class="title">How to use Picasa with iOS5<a href="../2011/12/how-to-use-picasa-with-ios5.html" class=perma>&#8734;</a></h1>
+      <p class=date> 2011-12-11 </p>
+      <p>I'm mostly writing this post because I had a fairly hard time finding a resolution to a real pesky error. For some reason, my <a href="http://www.apple.com/iphone/">iPhone 4S</a> was recognized by <a href="http://picasa.google.com/">Picasa</a> but always failed to import photos. Whenever I tried, the Picasa was clearly scanning through the files and then presented this error:</p>
+<blockquote>
+<p>An error has occurred while attempting to import. Either the source is
+unavailable or the destination is full or read only (1).</p>
+</blockquote>
+<p>The resolution was found on <a href="http://www.google.com/support/forum/p/Picasa/thread?tid=36adf4b3d0209e55&amp;hl=en">this page</a> posted by <a href="http://www.google.com/support/forum/p/Picasa/user?userid=14055753863597455136&amp;hl=en">Tradeinstyle</a>. A slightly more thorough explanation of the solution below.</p>
+<p>If you are seeing this error, what appears to have happened is that several images are "corrupted" in some way on your iPhone. Unfortunately, this requires opening up <a href="http://www.apple.com/ilife/iphoto/">iPhoto</a>. Once in iPhoto, you should be at the import screen and see all the pictures available on your phone. Several of these pictures will have a thumbnail consisting only of a dotted-line forming a square-- a blank thumbnail. You'll want to import these photos and, after clicking import, be sure to select the option that removes them from your iPhone. Now move these imported photos from your newly create iPhoto library into your normal Pictures folder (or wherever you're watching for pictures in Picasa). They'll load just fine. Exit iPhoto, delete your iPhoto Library (probably located in \~/Pictures/iPhoto\ Library) to avoid duplicates and open Picasa. Because the "offending" pictures have now been removed, Picasa should be able to easily import your photos.</p>
+<p>This problem does not appear to be specific to the iPhone 4s and is probably applicable to <a href="http://www.apple.com/ipodtouch/">all</a> <a href="http://www.apple.com/ios/">iOS5</a> <a href="http://www.apple.com/ipad/">devices</a>.</p>
+      
+            <p class=tags style="margin-bottom: 15em;">This entry was tagged as
+                <a href="../tag/apple.html">Apple</a>
+                <a href="../tag/import-photos.html">import photos</a>
+                <a href="../tag/ios5.html">ios5</a>
+                <a href="../tag/ipad.html">ipad</a>
+                <a href="../tag/ipad-2.html">ipad 2</a>
+                <a href="../tag/iphone.html">iphone</a>
+                <a href="../tag/iphone-4s.html">iphone 4s</a>
+                <a href="../tag/iphone4s.html">iphone4s</a>
+                <a href="../tag/iphoto.html">iphoto</a>
+                <a href="../tag/ipod-touch.html">ipod touch</a>
+                <a href="../tag/picasa.html">picasa</a>
+                <a href="../tag/solved.html">solved</a>
+              </p>
+            
+
+        </div>
+        
+                    <div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'jason.paul.becker';
+          s = 'gmail.com';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/jasonpbecker" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://github.com/jasonpbecker" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="../feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>            </div>
+          </body>
+</html>
