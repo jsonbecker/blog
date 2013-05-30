@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title> jasonpbecker </title>
+
+    <link rel="stylesheet" href="../theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/font-awesome.css" type="text/css"/>
+      </head>
+  <body>
+    <div class=container>
+                    
+      <div class=navigation>
+        <ul>
+                      <li><a href="../index.html">Blog</a> </li>
+                      <li><a href="../about.html">About</a> </li>
+                      <li><a href="../archives.html">Archive</a> </li>
+                  </ul>
+      </div>
+      <div class=separator></div>                
+        <div class=body>
+        
+            <h1 class="title">There must be an easier way... survey questions in R<a href="../2012/08/there-must-be-an-easier-way-survey-questions-in-r.html" class=perma>&#8734;</a></h1>
+      <p class=date> 2012-08-22 </p>
+      <p>So I have this great little custom function I've used when looking at survey data in R. I call this function <code>pull()</code>. The goal of <code>pull()</code> is to quickly produce frequency tables with n sizes from individual-level survey data.</p>
+<p>Before using <code>pull()</code>, I create a big table that includes information about the survey questions I want to pull. The data are structured like this:</p>
+<table align="center">
+</p>
+<p>
+<tbody>
+</p>
+<p>
+<tr>
+</p>
+<p>
+<td>
+quest
+
+</td>
+</p>
+<p>
+<td>
+survey
+
+</td>
+</p>
+<p>
+<td>
+year
+
+</td>
+</p>
+<p>
+<td>
+break
+
+</td>
+</p>
+<p>
+</tr>
+</p>
+<p>
+<tr>
+</p>
+<p>
+<td>
+ss01985
+
+</td>
+</p>
+<p>
+<td>
+elementary
+
+</td>
+</p>
+<p>
+<td>
+2011\_12
+
+</td>
+</p>
+<p>
+<td>
+schoolcode
+
+</td>
+</p>
+<p>
+</tr>
+</p>
+<p>
+</tbody>
+</p>
+<p>
+</table>
+
+</p>
+
+<ul>
+<li>quest represents the question coding in the raw survey data.</li>
+<li>survey is the name of the survey (in my case, the elementary school students, middle school students, high school students, parents, teachers, or administrators).</li>
+<li>year is the year that the survey data are collected.</li>
+<li>break is the ID I want to aggregate on like schoolcode or districtcode.</li>
+</ul>
+<p>They key is that <code>paste(survey, year,sep='')</code> produces the name of the <code>data.frame</code> where I store the relevant survey data. Both quest and break are columns in the survey data.frame. Using a data.frame with this data allows me to apply through the rows and produce the table for all the relevant questions at once. <code>pull()</code> does the work of taking one row of this <code>data.frame</code> and producing the output that I'm looking for. I also use <code>pull()</code> one row at a time to save a data.frame that contains these data and do other things (like the visualizations in this post).</p>
+<p>In some sense, <code>pull()</code> is really just a fancy version of <code>prop.table</code> that takes in passed paramaters and adds an "n" to each row and adding a "total" row. I feel as though there must be an implementation of an equivalent function in a popular package (or maybe even base) that I should be using rather than this technique. It would probably be more maintainable and easier for collaborators to work with this more common implementation, but I have no idea where to find it. So, please feel free to use the code below, but I'm actually hoping that someone will chime in and tell me I've wasted my time and I should just be using some function foo::bar.</p>
+<p>P.S. This post is a great example of why I really need to change this blog to Markdown/R-flavored Markdown. All those inline references to functions, variables, or code should really be formatted in-line which the syntax highlighter plug-in used on this blog does not support. I'm nervous that using WP-Markdown plugin will botch formatting on older posts, so I may just need to setup a workflow where I pump out HTML from the Markdown and upload the posts from there. If anyone has experience with Markdown + Wordpress, advice is appreciated.</p>
+<div class="highlight"><pre>pull <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>rows<span class="p">){</span>
+  <span class="c1"># Takes in a vector with all the information required to create crosstab with</span>
+  <span class="c1"># percentages for a specific question for all schools.</span>
+  <span class="c1"># Args:</span>
+  <span class="c1">#  rows: Consists of a vector with four objects.</span>
+  <span class="c1">#        quest: the question code from SurveyWorks</span>
+  <span class="c1">#        level: the &quot;level&quot; of the survey, i.e.: elem, midd, high, teac, admn,</span>
+  <span class="c1">#        pare, etc.</span>
+  <span class="c1">#        year: the year the survey was administered, i.e. 2011_12</span>
+  <span class="c1">#        sch_lea: the &quot;break&quot; indicator, i.e. schoolcode, districtcode, etc.</span>
+  <span class="c1"># Returns:</span>
+  <span class="c1"># A data.frame with a row for each &quot;break&quot;, i.e. school, attributes for</span>
+  <span class="c1"># each possible answer to quest, i.e. Agree and Disagree, and N size for each</span>
+  <span class="c1"># break based on how many people responded to that question, not the survey as</span>
+  <span class="c1"># a whole, i.e.</span>
+
+  <span class="c1"># Break each component of the vector rows into separate single-element vectors</span>
+  <span class="c1"># for convenience and clarity.</span>
+  quest <span class="o">&lt;-</span> as.character<span class="p">(</span>rows<span class="p">[</span><span class="m">1</span><span class="p">])</span>
+  survey <span class="o">&lt;-</span> as.character<span class="p">(</span>rows<span class="p">[</span><span class="m">2</span><span class="p">])</span>
+  year  <span class="o">&lt;-</span> as.character<span class="p">(</span>rows<span class="p">[</span><span class="m">3</span><span class="p">])</span>
+  <span class="kr">break</span> <span class="o">&lt;-</span> as.character<span class="p">(</span>rows<span class="p">[</span><span class="m">4</span><span class="p">])</span>
+  data <span class="o">&lt;-</span> get<span class="p">(</span>paste<span class="p">(</span>level<span class="p">,</span>year<span class="p">,</span>sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">))</span>
+  <span class="c1"># Data is an alias for the data.frame described by level and year.</span>
+  <span class="c1"># This alias reduces the number of &quot;get&quot; calls to speed up code and increase</span>
+  <span class="c1"># clarity.</span>
+  results <span class="o">&lt;-</span> with<span class="p">(</span>data<span class="p">,</span>
+                  dcast<span class="p">(</span>data.frame<span class="p">(</span>prop.table<span class="p">(</span>table<span class="p">(</span>data<span class="p">[[</span><span class="kr">break</span><span class="p">]],</span>
+                                                    data<span class="p">[[</span>quest<span class="p">]]),</span>
+                                              <span class="m">1</span><span class="p">))</span>
+                        <span class="p">,</span>Var1<span class="o">~</span>Var2<span class="p">,</span>value.var<span class="o">=</span><span class="s">&#39;Freq&#39;</span><span class="p">))</span>
+  <span class="c1"># Produces a table with the proportions for each response in wide format.</span>
+  n <span class="o">&lt;-</span> data.frame<span class="p">(</span>Var1<span class="o">=</span>rle<span class="p">(</span>sort<span class="p">(</span>
+    subset<span class="p">(</span>data<span class="p">,</span> 
+           is.na<span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span> <span class="o">&amp;</span> is.na<span class="p">(</span>data<span class="p">[[</span><span class="kr">break</span><span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span><span class="p">)[[</span><span class="kr">break</span><span class="p">]]))</span><span class="o">$</span>values<span class="p">,</span>
+                  n<span class="o">=</span>rle<span class="p">(</span>sort<span class="p">(</span>
+                    subset<span class="p">(</span>data<span class="p">,</span>
+                           is.na<span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span> <span class="o">&amp;</span>
+                             is.na<span class="p">(</span>data<span class="p">[[</span><span class="kr">break</span><span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span><span class="p">)[[</span><span class="kr">break</span><span class="p">]]))</span><span class="o">$</span>lengths<span class="p">)</span>
+  <span class="c1"># Generates a data frame with each break element and the &quot;length&quot; of that break</span>
+  <span class="c1"># element. rle counts the occurrences of a value in a vector in order. So first</span>
+  <span class="c1"># you sort the vector so all common break values are adjacent then you use rle</span>
+  <span class="c1"># to count their uninterupted appearance. The result is an rle object with </span>
+  <span class="c1"># two components: [[values]] which represent the values in the original, sorted</span>
+  <span class="c1"># vector and [[length]] which is the count of their uninterupted repeated</span>
+  <span class="c1"># appearance in that vector.</span>
+  results <span class="o">&lt;-</span> merge<span class="p">(</span>results<span class="p">,</span> n<span class="p">,</span> by<span class="o">=</span><span class="s">&#39;Var1&#39;</span><span class="p">)</span>
+  <span class="c1"># Combines N values with the results table.</span>
+
+  state <span class="o">&lt;-</span> data.frame<span class="p">(</span>t<span class="p">(</span>c<span class="p">(</span>Var1<span class="o">=</span><span class="s">&#39;Rhode Island&#39;</span><span class="p">,</span> 
+                          prop.table<span class="p">(</span>table<span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])),</span>
+                          n<span class="o">=</span>dim<span class="p">(</span>subset<span class="p">(</span>data<span class="p">,</span>is.na<span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span><span class="p">))[</span><span class="m">1</span><span class="p">])))</span>
+  names<span class="p">(</span>state<span class="p">)</span> <span class="o">&lt;-</span> names<span class="p">(</span>results<span class="p">)</span>
+  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">2</span><span class="o">:</span>dim<span class="p">(</span>state<span class="p">)[</span><span class="m">2</span><span class="p">]){</span>
+    state<span class="p">[,</span>i<span class="p">]</span> <span class="o">&lt;-</span> as.numeric<span class="p">(</span>as.character<span class="p">(</span>state<span class="p">[,</span>i<span class="p">]))</span>
+  <span class="p">}</span>
+  <span class="c1"># Because the state data.frame has only one row, R coerces to type factor.</span>
+  <span class="c1"># If I rbind() a factor to a numeric attribute, R will coerce them both to</span>
+  <span class="c1"># characters and refuses to convert back to type numeric.</span>
+  results <span class="o">&lt;-</span> rbind<span class="p">(</span>results<span class="p">,</span> state<span class="p">)</span>
+  results
+<span class="p">}</span>
+</pre></div>
+      
+            <p class=tags style="margin-bottom: 15em;">This entry was tagged as
+                <a href="../tag/code.html">code</a>
+                <a href="../tag/markdown.html">markdown</a>
+                <a href="../tag/r.html">r</a>
+                <a href="../tag/rstats.html">rstats</a>
+                <a href="../tag/survey.html">survey</a>
+              </p>
+                      <div class=entry-overview>
+        <div class=date>Jul 10, 2012</div>
+        <div class=detail>
+          <h1><a href="../2012/07/ranked-likert-scale-visualization.html">Ranked Likert-Scale Visualization</a></h1>
+            <div class=summary><p><h2>Update</h2>
+<p>See below for more information now that Ethan Brown has <a href="http://statisfactions.com/2012/improved-net-stacked-distribution-graphs-via-ggplot2-trickery/">weighed in with some great code</a>.</p>
+<p>A <a href="http://blog.ouseful.info/2012/07/09/fumblings-with-ranked-likert-scale-data-in-r/">recent post</a> I came across on <a href="http://www.r-bloggers.com/">r-bloggers</a> asked for input on visualizing ranked <a href="http://en.wikipedia.org/wiki/Likert_scale">Likert-scale data</a>.</p>
+<p>I happen to be working on a substantial project using very similarly structured data so I thought ...</p></p></div>
+        </div>
+      </div>
+      
+
+        </div>
+        
+                    <div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'jason.paul.becker';
+          s = 'gmail.com';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/jasonpbecker" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://github.com/jasonpbecker" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="../feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>            </div>
+          </body>
+</html>

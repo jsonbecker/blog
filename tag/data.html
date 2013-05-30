@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>jasonpbecker <small>data</small></title>
+
+    <link rel="stylesheet" href="../theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/font-awesome.css" type="text/css"/>
+      </head>
+  <body>
+    <div class=container>
+                    
+      <div class=navigation>
+        <ul>
+                      <li><a href="../index.html">Blog</a> </li>
+                      <li><a href="../about.html">About</a> </li>
+                      <li><a href="../archives.html">Archive</a> </li>
+                  </ul>
+      </div>
+      <div class=separator></div>                
+        <div class=body>
+        
+            <h1 class="title">Using the Common Core Data on NCES<a href="../2012/07/using-the-common-core-data-on-nces.html" class=perma>&#8734;</a></h1>
+      <p class=date> 2012-07-12 </p>
+      <p>My analysis on <a href="http://blogs.wpri.com/?p=62059">Nesi's Notes</a> depended entirely on the <a href="http://nces.ed.gov/ccd/bat">National Center for Education Statistics' Common Core Data</a>. The per pupil amounts reported to NCES may look a bit different from state sources of this information. There are several explanations of this. First, the enrollment counts used to generate per pupil amounts are based on an October 1st headcount. In Rhode Island, we use something called "average daily membership" (ADM) as the denominator and not a headcount. The ADM of a district is calculated by taking all the students who attended the district at any point in the year and adding up the number of school days they were enrolled for. The total membership (i.e. all the student*days, for those who like to think about this in units) is divided by the number of school days per year, almost always 180 (so student*days / days/year = students/year). Additionally, NCES does not record the final three digits on most financial data. These rounding issues will also make the per pupil data seem different from state reports.</p>
+<p>I wanted to use the NCES to make sure that the data in my post was easily reproducible by any member of the public. I also thought using NCES would serve as a great learning opportunity for the wonks and nerds out there who never even realized how much rich data about schools and school finance are available through the federal government. That being said, I do believe that the state reported numbers are far more accurate than those available from the federal government. That is not to say that the federal data is bad. On the contrary, that data is substantially vetted and validated and is very useful for research. My concern was only that some of the tiny differences in the NCES data that deviated from what I would consider to be ideal data might reach the level where they affected the validity of the conclusions I wanted to draw.</p>
+<p>Although I was writing as a private citizen without the support of the Rhode Island Department of Education, I did use my access to RIDE data to ensure that differences in the federal reports were not significant enough to call into question my analysis. I found that both the direction and magnitude of all the trends that I describe in the Nesi's Notes post held up with the state data. While all of that information is publicly available, it is less easily accessible than NCES data and doesn't provide the same opportunity for analysis outside of financial data. For these reasons, I decided to stick with NCES.</p>
+<p>So how do you reproduce the data I used?</p>
+<p>First, go to  the <a href="http://nces.ed.gov/ccd/bat">NCES Common Core Data Build a Table</a> site. On the drop down, select "District" as the row variable and select the last fifteen years excluding 2009-10 (since there is no current financial data available for that year).</p>
+<p><img alt="1" src="../static/images/nces1.png" /></p>
+<p>After clicking next, hit "I Agree" on the pop-up.</p>
+<p><img alt="2" src="../static/images/nces2.png" /></p>
+<p>Now select "Finance Per Pupil Ratios" for the first column.</p>
+<p><img alt="3" src="../static/images/nces3.png" /></p>
+<p>Click the green arrow that selects all years for local sources per
+student and state sources per student.</p>
+<p><img alt="4" src="../static/images/nces4.png" /></p>
+<p>Click "Next>>" on the top right. Now select only RI-Rhode Island for
+your row variable.</p>
+<p><img alt="5" src="../static/images/nces5.png" /></p>
+<p>Finally, click view table to see the results. I recommend downloading
+the Test (.csv) file to work with.</p>
+<p><img alt="6" src="../static/images/nces6.png" /></p>
+<p>And finally, here's the R code to reshape/rejigger the data I used and
+produce the graphics from the Nesi's Notes post.</p>
+<div class="highlight"><pre><span class="c1">## Using NCES data to analyze education finances to Woonsocket over 15 years.</span>
+<span class="c1">## Initialize required packages</span>
+require<span class="p">(</span>plyr<span class="p">)</span>
+require<span class="p">(</span>reshape2<span class="p">)</span>
+require<span class="p">(</span>ggplot2<span class="p">)</span>
+require<span class="p">(</span>scales<span class="p">)</span>
+<span class="c1">## Best to ignore this function-- it&#39;s mostly magic to me too. Essentially,</span>
+<span class="c1">## multiplot takes in a bunch of plots and then puts them into one image</span>
+<span class="c1">## arranging them by columns equal to a paramter cols. Credit to:</span>
+<span class="c1">## http://wiki.stdout.org/rcookbook/Graphs/Multiple%20graphs%20on%20one%20page%20(    ggplot2)/</span>
+multiplot <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span><span class="kc">...</span><span class="p">,</span> plotlist<span class="o">=</span><span class="kc">NULL</span><span class="p">,</span> cols<span class="p">)</span> <span class="p">{</span>
+  require<span class="p">(</span>grid<span class="p">)</span>
+  <span class="c1"># Make a list from the ... arguments and plotlist</span>
+  plots <span class="o">&lt;-</span> c<span class="p">(</span>list<span class="p">(</span><span class="kc">...</span><span class="p">),</span> plotlist<span class="p">)</span>
+  numPlots <span class="o">=</span> length<span class="p">(</span>plots<span class="p">)</span>
+  <span class="c1"># Make the panel</span>
+  plotCols <span class="o">=</span> cols                          <span class="c1"># Number of columns of plots</span>
+  plotRows <span class="o">=</span> ceiling<span class="p">(</span>numPlots<span class="o">/</span>plotCols<span class="p">)</span> <span class="c1"># Number of rows needed, calculated from #    of cols</span>
+  <span class="c1"># Set up the page</span>
+  grid.newpage<span class="p">()</span>
+  pushViewport<span class="p">(</span>viewport<span class="p">(</span>layout <span class="o">=</span> grid.layout<span class="p">(</span>plotRows<span class="p">,</span> plotCols<span class="p">)))</span>
+  vplayout <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> y<span class="p">)</span>
+    viewport<span class="p">(</span>layout.pos.row <span class="o">=</span> x<span class="p">,</span> layout.pos.col <span class="o">=</span> y<span class="p">)</span>
+  <span class="c1"># Make each plot, in the correct location</span>
+  <span class="kr">for</span> <span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>numPlots<span class="p">)</span> <span class="p">{</span>
+    curRow <span class="o">=</span> ceiling<span class="p">(</span>i<span class="o">/</span>plotCols<span class="p">)</span>
+    curCol <span class="o">=</span> <span class="p">(</span>i<span class="m">-1</span><span class="p">)</span> <span class="o">%%</span> plotCols <span class="o">+</span> <span class="m">1</span>
+    print<span class="p">(</span>plots<span class="p">[[</span>i<span class="p">]],</span> vp <span class="o">=</span> vplayout<span class="p">(</span>curRow<span class="p">,</span> curCol <span class="p">))</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">## Load data from the modified CSV. I made the following changes from the NCES</span>
+<span class="c1">## downloaded file: 1) I removed all of the description header so that row one</span>
+<span class="c1">## of the CSV is the attribute names; 2) I pasted the transposed state values</span>
+<span class="c1">## to the final observation so that I have a state observation row analogous to</span>
+<span class="c1">## the other LEA rows.</span>
+
+raw_data <span class="o">&lt;-</span> read.csv<span class="p">(</span><span class="s">&#39;rawdata.csv&#39;</span><span class="p">)</span>
+<span class="c1">## Change name of first column to make things easier for later.</span>
+names<span class="p">(</span>raw_data<span class="p">)[</span><span class="m">1</span><span class="p">]</span> <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;distname&#39;</span><span class="p">)</span>
+<span class="c1">## Creating Time Series Data for each community of interest.</span>
+<span class="c1">## I&#39;m going to use a custom function to automate the steps required to create</span>
+<span class="c1">## district level data in a time series.</span>
+
+create_ts <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>name<span class="p">){</span>
+  <span class="c1"># First create a column vector with the local funding</span>
+  <span class="c1"># A few things to note: First, t() is the transpose function and helps to</span>
+  <span class="c1"># make my &quot;wide&quot; data (lots of columns) &quot;long&quot; (lots of rows). Second, R</span>
+  <span class="c1"># has a funny behavior that is very covenient for data anaylsts. It performs</span>
+  <span class="c1"># many common mathematical operations element-wise, so the simple division</span>
+  <span class="c1"># of two vectors below actually divides element by element through the</span>
+  <span class="c1"># vector, e.g. column 17 is divided by column 2 to provide the first element</span>
+  <span class="c1"># in the resulting vector. This makes calculating per pupil amounts very</span>
+  <span class="c1"># convenient.</span>
+  local <span class="o">&lt;-</span> t<span class="p">(</span>subset<span class="p">(</span>raw_data<span class="p">,</span>distname<span class="o">==</span>name<span class="p">)[,</span>c<span class="p">(</span><span class="m">17</span><span class="o">:</span><span class="m">31</span><span class="p">)]</span><span class="o">/</span>
+             subset<span class="p">(</span>raw_data<span class="p">,</span>distname<span class="o">==</span>name<span class="p">)[,</span>c<span class="p">(</span><span class="m">2</span><span class="o">:</span><span class="m">16</span><span class="p">)])</span>
+  <span class="c1"># Performing the same operation for state per pupil amounts.</span>
+  state <span class="o">&lt;-</span> t<span class="p">(</span>subset<span class="p">(</span>raw_data<span class="p">,</span>distname<span class="o">==</span>name<span class="p">)[,</span>c<span class="p">(</span><span class="m">32</span><span class="o">:</span><span class="m">46</span><span class="p">)]</span><span class="o">/</span>
+             subset<span class="p">(</span>raw_data<span class="p">,</span>distname<span class="o">==</span>name<span class="p">)[,</span>c<span class="p">(</span><span class="m">2</span><span class="o">:</span><span class="m">16</span><span class="p">)])</span>
+  <span class="c1"># Putting state and local data together and getting rid of the nasty</span>
+  <span class="c1"># attribute names from NCES by just naming the rows with a sequence</span>
+  <span class="c1"># of integers.</span>
+  results <span class="o">&lt;-</span> data.frame<span class="p">(</span>local<span class="p">,</span>state<span class="p">,</span>row.names<span class="o">=</span>seq<span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">15</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
+  <span class="c1"># Naming my two attributes</span>
+  names<span class="p">(</span>results<span class="p">)</span> <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;local&#39;</span><span class="p">,</span><span class="s">&#39;state&#39;</span><span class="p">)</span>
+  <span class="c1"># Generating the year attribute</span>
+  results<span class="p">[[</span><span class="s">&#39;year&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> seq<span class="p">(</span><span class="m">1995</span><span class="p">,</span> <span class="m">2009</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+  <span class="c1"># This command is a bit funky, but basically it makes my data as long as</span>
+  <span class="c1"># possible so that each line has an ID (year in this case) and one value</span>
+  <span class="c1"># (the dollars in this case). I also have a label that describes that value,</span>
+  <span class="c1"># which is local or state.</span>
+  results <span class="o">&lt;-</span> melt<span class="p">(</span>results<span class="p">,</span> id.vars<span class="o">=</span><span class="s">&#39;year&#39;</span><span class="p">)</span>
+  <span class="c1"># Returning my &quot;results&quot; object</span>
+  results
+<span class="p">}</span>
+<span class="c1">## Create the Woonsocket data-- note that R is case sensitive so I must use all</span>
+<span class="c1">## capitals to match the NCES convention.</span>
+woonsocket <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;WOONSOCKET&#39;</span><span class="p">)</span>
+pawtucket <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;PAWTUCKET&#39;</span><span class="p">)</span>
+providence <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;PROVIDENCE&#39;</span><span class="p">)</span>
+westwarwick <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;WEST WARWICK&#39;</span><span class="p">)</span>
+state <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;STATE&#39;</span><span class="p">)</span>
+
+<span class="c1">## Developing a plot of JUST local revenues for the selected communities</span>
+<span class="c1">## First I create a percentage change data frame. I think that looking at</span>
+<span class="c1">## percent change overtime is generally more fair. While the nominal dollar</span>
+<span class="c1">## changes are revealing, my analysis is drawing attention to the trend rather</span>
+<span class="c1">## than the initial values.</span>
+
+<span class="c1">## First, I pull out just the local dollars.</span>
+perwoonlocal <span class="o">&lt;-</span> subset<span class="p">(</span>woonsocket<span class="p">,</span>variable<span class="o">==</span><span class="s">&#39;local&#39;</span><span class="p">)</span>
+<span class="c1">## Now I modify the value to be divided by the starting value - 100%</span>
+perwoonlocal<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perwoonlocal<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+<span class="c1">## A little renaming for the combining step later</span>
+names<span class="p">(</span>perwoonlocal<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perwoonlocal<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;Woonsocket&#39;</span>
+
+<span class="c1">## I repeat this procedure for all the districts of interest.</span>
+perpawlocal <span class="o">&lt;-</span> subset<span class="p">(</span>pawtucket<span class="p">,</span>variable<span class="o">==</span><span class="s">&#39;local&#39;</span><span class="p">)</span>
+perpawlocal<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perpawlocal<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+names<span class="p">(</span>perpawlocal<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perpawlocal<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;Pawtucket&#39;</span>
+
+perprolocal <span class="o">&lt;-</span> subset<span class="p">(</span>providence<span class="p">,</span>variable<span class="o">==</span><span class="s">&#39;local&#39;</span><span class="p">)</span>
+perprolocal<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perprolocal<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+names<span class="p">(</span>perprolocal<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perprolocal<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;Providence&#39;</span>
+
+perwwlocal <span class="o">&lt;-</span> subset<span class="p">(</span>westwarwick<span class="p">,</span> variable<span class="o">==</span><span class="s">&#39;local&#39;</span><span class="p">)</span>
+perwwlocal<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perwwlocal<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+names<span class="p">(</span>perwwlocal<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perwwlocal<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;West Warwick&#39;</span>
+
+perrilocal <span class="o">&lt;-</span> subset<span class="p">(</span>state<span class="p">,</span>variable<span class="o">==</span><span class="s">&#39;local&#39;</span><span class="p">)</span>
+perrilocal<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perrilocal<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+names<span class="p">(</span>perrilocal<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perrilocal<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;State Average&#39;</span>
+
+<span class="c1">## The same process can be used for state data</span>
+perwoonstate <span class="o">&lt;-</span> subset<span class="p">(</span>woonsocket<span class="p">,</span>variable<span class="o">==</span><span class="s">&#39;state&#39;</span><span class="p">)</span>
+<span class="c1">## Now I modify the value to be divided by the starting value - 100%</span>
+perwoonstate<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perwoonstate<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+<span class="c1">## A little renaming for the combining step later</span>
+names<span class="p">(</span>perwoonstate<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perwoonstate<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;Woonsocket&#39;</span>
+
+<span class="c1">## I repeat this procedure for all the districts of interest.</span>
+perpawstate <span class="o">&lt;-</span> subset<span class="p">(</span>pawtucket<span class="p">,</span>variable<span class="o">==</span><span class="s">&#39;state&#39;</span><span class="p">)</span>
+perpawstate<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perpawstate<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+names<span class="p">(</span>perpawstate<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perpawstate<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;Pawtucket&#39;</span>
+
+perprostate <span class="o">&lt;-</span> subset<span class="p">(</span>providence<span class="p">,</span>variable<span class="o">==</span><span class="s">&#39;state&#39;</span><span class="p">)</span>
+perprostate<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perprostate<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+names<span class="p">(</span>perprostate<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perprostate<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;Providence&#39;</span>
+
+perwwstate <span class="o">&lt;-</span> subset<span class="p">(</span>westwarwick<span class="p">,</span> variable<span class="o">==</span><span class="s">&#39;state&#39;</span><span class="p">)</span>
+perwwstate<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perwwstate<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+names<span class="p">(</span>perwwstate<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perwwstate<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;West Warwick&#39;</span>
+
+perristate <span class="o">&lt;-</span> subset<span class="p">(</span>state<span class="p">,</span>variable<span class="o">==</span><span class="s">&#39;state&#39;</span><span class="p">)</span>
+perristate<span class="p">[[</span><span class="s">&#39;value&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>perristate<span class="p">,</span> <span class="p">(</span>value<span class="o">/</span>value<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="m">-1</span><span class="p">)</span>
+names<span class="p">(</span>perristate<span class="p">)</span> <span class="o">&lt;-</span>c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span><span class="s">&#39;disname&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+perristate<span class="p">[[</span><span class="s">&#39;disname&#39;</span><span class="p">]]</span><span class="o">&lt;-</span><span class="s">&#39;State Average&#39;</span>
+
+<span class="c1">## Pull together the data sets for the overall picture.</span>
+localfunding <span class="o">&lt;-</span> rbind<span class="p">(</span>perwoonlocal<span class="p">,</span> perpawlocal<span class="p">,</span>perprolocal<span class="p">,</span>perwwlocal<span class="p">,</span>perrilocal<span class="p">)</span>
+statefunding <span class="o">&lt;-</span> rbind<span class="p">(</span>perwoonstate<span class="p">,</span> perpawstate<span class="p">,</span>perprostate<span class="p">,</span>perwwstate<span class="p">,</span>perristate<span class="p">)</span>
+
+<span class="c1">## A little ggplot2 line plot magic...</span>
+localperplot <span class="o">&lt;-</span> ggplot<span class="p">(</span>localfunding<span class="p">,</span>aes<span class="p">(</span>year<span class="p">,</span> value<span class="p">,</span> color<span class="o">=</span>disname<span class="p">))</span> <span class="o">+</span>
+                geom_line<span class="p">()</span> <span class="o">+</span>
+                geom_text<span class="p">(</span>data<span class="o">=</span>subset<span class="p">(</span>localfunding<span class="p">,</span> year<span class="o">==</span><span class="m">2009</span><span class="p">),</span>
+                          mapping<span class="o">=</span>aes<span class="p">(</span>year<span class="p">,</span>value<span class="p">,</span>
+                                      label<span class="o">=</span>paste<span class="p">(</span><span class="m">100</span><span class="o">*</span>round<span class="p">(</span>value<span class="p">,</span><span class="m">3</span><span class="p">),</span><span class="s">&#39;%&#39;</span><span class="p">,</span>sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)),</span>
+                          vjust<span class="o">=</span><span class="m">-.4</span><span class="p">)</span> <span class="o">+</span>
+                scale_y_continuous<span class="p">(</span><span class="s">&#39;Percent Change from FY1995&#39;</span><span class="p">,</span>
+                                   label<span class="o">=</span>percent<span class="p">)</span> <span class="o">+</span>
+                scale_x_continuous<span class="p">(</span><span class="s">&#39;Year&#39;</span><span class="p">)</span> <span class="o">+</span>
+                opts<span class="p">(</span>title<span class="o">=</span><span class="s">&#39;Percent Change in Local Per Pupil Revenue, FY1995-    FY2009&#39;</span><span class="p">)</span> <span class="o">+</span>
+                opts<span class="p">(</span>plot.title<span class="o">=</span>theme_text<span class="p">(</span>size<span class="o">=</span><span class="m">16</span><span class="p">,</span>face<span class="o">=</span><span class="s">&#39;bold&#39;</span><span class="p">))</span> <span class="o">+</span>
+                opts<span class="p">(</span>legend.title<span class="o">=</span>theme_blank<span class="p">())</span> <span class="o">+</span>
+                opts<span class="p">(</span>legend.position<span class="o">=</span>c<span class="p">(</span><span class="m">.08</span><span class="p">,</span><span class="m">.82</span><span class="p">))</span>
+stateperplot <span class="o">&lt;-</span> ggplot<span class="p">(</span>statefunding<span class="p">,</span>aes<span class="p">(</span>year<span class="p">,</span> value<span class="p">,</span> color<span class="o">=</span>disname<span class="p">))</span> <span class="o">+</span>
+                geom_line<span class="p">()</span> <span class="o">+</span>
+                geom_text<span class="p">(</span>data<span class="o">=</span>subset<span class="p">(</span>statefunding<span class="p">,</span> year<span class="o">==</span><span class="m">2008</span> <span class="o">|</span> year<span class="o">==</span><span class="m">2009</span><span class="p">),</span>
+                          mapping<span class="o">=</span>aes<span class="p">(</span>year<span class="p">,</span>value<span class="p">,</span>
+                          label<span class="o">=</span>paste<span class="p">(</span><span class="m">100</span><span class="o">*</span>round<span class="p">(</span>value<span class="p">,</span><span class="m">3</span><span class="p">),</span><span class="s">&#39;%&#39;</span><span class="p">,</span>sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)),</span>
+                          vjust<span class="o">=</span><span class="m">-.4</span><span class="p">)</span> <span class="o">+</span>
+                scale_y_continuous<span class="p">(</span><span class="s">&#39;Percent Change from FY1995&#39;</span><span class="p">,</span>
+                                   label<span class="o">=</span>percent<span class="p">)</span> <span class="o">+</span>
+                scale_x_continuous<span class="p">(</span><span class="s">&#39;Year&#39;</span><span class="p">)</span> <span class="o">+</span>
+                opts<span class="p">(</span>title<span class="o">=</span><span class="s">&#39;Percent Change in State Per Pupil Revenue, FY1995-    FY2009&#39;</span><span class="p">)</span> <span class="o">+</span>
+                opts<span class="p">(</span>plot.title<span class="o">=</span>theme_text<span class="p">(</span>size<span class="o">=</span><span class="m">16</span><span class="p">,</span>face<span class="o">=</span><span class="s">&#39;bold&#39;</span><span class="p">))</span> <span class="o">+</span>
+                opts<span class="p">(</span>legend.title<span class="o">=</span>theme_blank<span class="p">())</span> <span class="o">+</span>
+                opts<span class="p">(</span>legend.position<span class="o">=</span>c<span class="p">(</span><span class="m">.08</span><span class="p">,</span><span class="m">.82</span><span class="p">))</span>
+ggsave<span class="p">(</span><span class="s">&#39;localperplot.png&#39;</span><span class="p">,</span>localperplot<span class="p">,</span>width<span class="o">=</span><span class="m">10</span><span class="p">,</span>height<span class="o">=</span><span class="m">8</span><span class="p">,</span>units<span class="o">=</span><span class="s">&#39;in&#39;</span><span class="p">,</span>dpi<span class="o">=</span><span class="m">72</span><span class="p">)</span>
+ggsave<span class="p">(</span><span class="s">&#39;stateperplot.png&#39;</span><span class="p">,</span>stateperplot<span class="p">,</span>width<span class="o">=</span><span class="m">10</span><span class="p">,</span>height<span class="o">=</span><span class="m">8</span><span class="p">,</span>units<span class="o">=</span><span class="s">&#39;in&#39;</span><span class="p">,</span>dpi<span class="o">=</span><span class="m">72</span><span class="p">)</span>
+
+<span class="c1">## Proportion of Aid</span>
+proportion <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>data<span class="p">){</span>
+  <span class="c1"># This reshapes the data so that there is a year, local, and state column.</span>
+  <span class="c1"># The mean function has no purpose, because this data is unique by year</span>
+  <span class="c1"># variable combinations.</span>
+  prop <span class="o">&lt;-</span> dcast<span class="p">(</span>data<span class="p">,</span>year<span class="o">~</span>variable<span class="p">,</span>mean<span class="p">)</span>
+  <span class="c1"># Adding local and state get our total non-federal dollars</span>
+  prop<span class="p">[[</span><span class="s">&#39;total&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> apply<span class="p">(</span>prop<span class="p">[,</span><span class="m">2</span><span class="o">:</span><span class="m">3</span><span class="p">],</span><span class="m">1</span><span class="p">,</span>sum<span class="p">)</span>
+  prop<span class="p">[[</span><span class="s">&#39;perlocal&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>prop<span class="p">,</span> local<span class="o">/</span>total<span class="p">)</span>
+  prop
+<span class="p">}</span>
+
+<span class="c1">## Prepare new data frames for proportion graphs</span>
+
+propwoon <span class="o">&lt;-</span> as.data.frame<span class="p">(</span>c<span class="p">(</span>disname<span class="o">=</span><span class="s">&#39;Woonsocket&#39;</span><span class="p">,</span>
+                            proportion<span class="p">(</span>woonsocket<span class="p">)))</span>
+proppaw <span class="o">&lt;-</span> as.data.frame<span class="p">(</span>c<span class="p">(</span>disname<span class="o">=</span><span class="s">&#39;Pawtucket&#39;</span><span class="p">,</span>
+                           proportion<span class="p">(</span>pawtucket<span class="p">)))</span>
+propprov <span class="o">&lt;-</span> as.data.frame<span class="p">(</span>c<span class="p">(</span>disname<span class="o">=</span><span class="s">&#39;Providence&#39;</span><span class="p">,</span>
+                            proportion<span class="p">(</span>providence<span class="p">)))</span>
+propww <span class="o">&lt;-</span> as.data.frame<span class="p">(</span>c<span class="p">(</span>disname<span class="o">=</span><span class="s">&#39;West Warwick&#39;</span><span class="p">,</span>
+                          proportion<span class="p">(</span>westwarwick<span class="p">)))</span>
+propri <span class="o">&lt;-</span> as.data.frame<span class="p">(</span>c<span class="p">(</span>disname<span class="o">=</span><span class="s">&#39;State Average&#39;</span><span class="p">,</span>
+                          proportion<span class="p">(</span>state<span class="p">)))</span>
+
+<span class="c1">## Note, I could have called proportion() inside of the rbind(), but I wanted</span>
+<span class="c1">## my code to be clearer and felt there may be some use for the independent</span>
+<span class="c1">## proportion data frames in further analysis. Sometimes more lines of code</span>
+<span class="c1">## and more objects is easier to maintain and more flexible for exploratory,</span>
+<span class="c1">## non-production code. This is especially true when handling such small</span>
+<span class="c1">## data sets that there is no impact on performance.</span>
+
+locprop <span class="o">&lt;-</span> rbind<span class="p">(</span>propwoon<span class="p">,</span> proppaw<span class="p">,</span>propprov<span class="p">,</span>propww<span class="p">,</span>propri<span class="p">)</span>
+
+<span class="c1">## Some ggplot2 magic time!</span>
+
+localpropplot <span class="o">&lt;-</span> ggplot<span class="p">(</span>locprop<span class="p">,</span>aes<span class="p">(</span>year<span class="p">,</span> perlocal<span class="p">,</span> color<span class="o">=</span>disname<span class="p">))</span> <span class="o">+</span>
+                 geom_line<span class="p">()</span> <span class="o">+</span>
+                 geom_text<span class="p">(</span>data<span class="o">=</span>subset<span class="p">(</span>locprop<span class="p">,</span> year<span class="o">==</span><span class="m">1995</span> <span class="o">|</span> year<span class="o">==</span><span class="m">2008</span> <span class="o">|</span>     year<span class="o">==</span><span class="m">2009</span><span class="p">),</span>
+                           mapping<span class="o">=</span>aes<span class="p">(</span>year<span class="p">,</span>perlocal<span class="p">,</span>
+                           label<span class="o">=</span>paste<span class="p">(</span><span class="m">100</span><span class="o">*</span>round<span class="p">(</span>perlocal<span class="p">,</span><span class="m">3</span><span class="p">),</span><span class="s">&#39;%&#39;</span><span class="p">,</span>sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)),</span>
+                           vjust<span class="o">=</span><span class="m">-.4</span><span class="p">)</span> <span class="o">+</span>
+                 scale_y_continuous<span class="p">(</span><span class="s">&#39;Percent Change from FY1995&#39;</span><span class="p">,</span>
+                                     label<span class="o">=</span>percent<span class="p">)</span> <span class="o">+</span>
+                 scale_x_continuous<span class="p">(</span><span class="s">&#39;Year&#39;</span><span class="p">)</span> <span class="o">+</span>
+                 opts<span class="p">(</span>title<span class="o">=</span><span class="s">&#39;Percent Change in Local Proportion of Per Pupil    Revenue\n Excluding Federal Funding, FY1995-FY2009&#39;</span><span class="p">)</span> <span class="o">+</span>
+                 opts<span class="p">(</span>plot.title<span class="o">=</span>theme_text<span class="p">(</span>size<span class="o">=</span><span class="m">16</span><span class="p">,</span>face<span class="o">=</span><span class="s">&#39;bold&#39;</span><span class="p">))</span> <span class="o">+</span>
+                 opts<span class="p">(</span>legend.title<span class="o">=</span>theme_blank<span class="p">())</span> <span class="o">+</span>
+                 opts<span class="p">(</span>legend.position<span class="o">=</span>c<span class="p">(</span><span class="m">.9</span><span class="p">,</span><span class="m">.65</span><span class="p">))</span>
+ggsave<span class="p">(</span><span class="s">&#39;localpropplot.png&#39;</span><span class="p">,</span>localpropplot<span class="p">,</span>width<span class="o">=</span><span class="m">10</span><span class="p">,</span>height<span class="o">=</span><span class="m">8</span><span class="p">,</span>units<span class="o">=</span><span class="s">&#39;in&#39;</span><span class="p">,</span>dpi<span class="o">=</span><span class="m">72</span><span class="p">)</span>
+</pre></div>
+
+
+<p><em>This post is the third of a three-part follow up on my <a href="http://blogs.wpri.com/category/nesis-notes/">guest post</a> for Nesi's Notes. Parts I and II can be found <a href="../2012/07/follow-up-to-nesis-notes-guest-post-woonsocket-school-funding.html">here</a>.</em></p>
+      
+            <p class=tags style="margin-bottom: 15em;">This entry was tagged as
+                <a href="../tag/ccd.html">ccd</a>
+                <a href="../tag/data.html">data</a>
+                <a href="../tag/education.html">education</a>
+                <a href="../tag/education-policy.html">education policy</a>
+                <a href="../tag/ggplot2.html">ggplot2</a>
+                <a href="../tag/nces.html">nces</a>
+                <a href="../tag/nesis-notes.html">nesi's notes</a>
+                <a href="../tag/politics.html">politics</a>
+                <a href="../tag/rhode-island.html">rhode island</a>
+                <a href="../tag/ri.html">ri</a>
+                <a href="../tag/rstats.html">rstats</a>
+                <a href="../tag/woonsocket.html">woonsocket</a>
+              </p>
+                      <div class=entry-overview>
+        <div class=date>Jul 10, 2012</div>
+        <div class=detail>
+          <h1><a href="../2012/07/ranked-likert-scale-visualization.html">Ranked Likert-Scale Visualization</a></h1>
+            <div class=summary><p><h2>Update</h2>
+<p>See below for more information now that Ethan Brown has <a href="http://statisfactions.com/2012/improved-net-stacked-distribution-graphs-via-ggplot2-trickery/">weighed in with some great code</a>.</p>
+<p>A <a href="http://blog.ouseful.info/2012/07/09/fumblings-with-ranked-likert-scale-data-in-r/">recent post</a> I came across on <a href="http://www.r-bloggers.com/">r-bloggers</a> asked for input on visualizing ranked <a href="http://en.wikipedia.org/wiki/Likert_scale">Likert-scale data</a>.</p>
+<p>I happen to be working on a substantial project using very similarly structured data so I thought ...</p></p></div>
+        </div>
+      </div>
+                <div class=entry-overview>
+        <div class=date>Mar 20, 2012</div>
+        <div class=detail>
+          <h1><a href="../2012/03/providence-needs-a-little-innovation.html">Providence needs a little innovation</a></h1>
+            <div class=summary><p><p>Have you ever tried to access public information about <a href="http://www.providenceri.com">Providence</a> on the web? Due to the recent, and new, requirement that residents reapply for their homestead tax exemption in Providence, I decided to poke around the Providence webpage to see what kind of <a href="http://providence.ias-clt.com/parcel.list.php">public information on property was available online ...</a></p></p></div>
+        </div>
+      </div>
+      
+
+        </div>
+        
+                    <div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'jason.paul.becker';
+          s = 'gmail.com';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/jasonpbecker" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://github.com/jasonpbecker" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="../feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>            </div>
+          </body>
+</html>
