@@ -3,8 +3,9 @@ author: Jason P. Becker
 email: jason.paul.becker@gmail.com
 date: 2013-05-30
 
-Jason Becker resides in Providence, Rhode Island with his partner in crime Elsa, and their sidekick, Gracie[^dog]. By day, his **wonkflag** flies high in his role as a [Strategic Data Fellow][]. At night, his **geekcred** is strengthened as his eyes and ears are engaged endlessly in film, television, books, comics, podcasts...
+[Jason Becker][] resides in Providence, Rhode Island with his partner in crime Elsa, and their sidekick, Gracie[^dog]. By day, his **wonkflag** flies high in his role as a [Strategic Data Fellow][]. At night, his **geekcred** is strengthened as his eyes and ears are engaged endlessly in film, television, books, comics, podcasts...
 
+[Jason Becker]: http://www.jsonbecker.com
 
 [Strategic Data Fellow]: http://www.gse.harvard.edu/sdp/
 
