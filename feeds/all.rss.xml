@@ -1180,7 +1180,7 @@ coord_flip&lt;span class="p"&gt;())&lt;/span&gt;
 &lt;p&gt;Mainly, I would like to abstract this code further. I am only about halfway there to assuring that I can use Likert-scale data of any size. I also would like to take in more than one question simultaneously with the visualize function. The latter is already possible in my production code and is particularly high impact for these kinds of graphics&amp;#160;&lt;a class="footnote-backref" href="#fnref:1" rev="footnote" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Jason</dc:creator><pubDate>Tue, 10 Jul 2012 00:24:00 -0400</pubDate><guid>tag:blog.jsonbecker.com,2012-07-10:2012/07/ranked-likert-scale-visualization.html</guid><category>data</category><category>data analysis</category><category>ggplot2</category><category>likert-scale</category><category>plyr</category><category>r-bloggers</category><category>rstats</category><category>survey analysis</category></item><item><title>Work Place Liberty in the Context of Education</title><link>http://blog.jsonbecker.com/2012/07/work-place-liberty-in-the-context-of-education.html</link><description>&lt;p&gt;&lt;em&gt;How can we tell if principal directives are fair to teachers?&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Jason</dc:creator><pubDate>Tue, 10 Jul 2012 00:24:00 -0400</pubDate><guid>tag:blog.jsonbecker.com,2012-07-10:2012/07/ranked-likert-scale-visualization.html</guid><category>data</category><category>data analysis</category><category>ggplot2</category><category>likert-scale</category><category>plyr</category><category>r-bloggers</category><category>rstats</category><category>survey analysis</category></item><item><title>Work Place Liberty in the Context of Education</title><link>http://blog.jsonbecker.com/2012/07/work-place-liberty-in-the-context-of-education.html</link><description>&lt;p&gt;How can we tell if principal directives are fair to teachers?&lt;/p&gt;
 &lt;p&gt;There has been a great conversation circling some blogs I read over the last week about liberty in the work place.&lt;sup id="fnref:1"&gt;&lt;a class="footnote-ref" href="#fn:1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;
 Issues of fairness in the work place are a constant in today's education conversation. Whether some view it as a form of metaphoric violence on teachers and their profession, while others see a concerted effort to change rigid, bureaucratic systems that prevent effective change&lt;sup id="fnref:2"&gt;&lt;a class="footnote-ref" href="#fn:2" rel="footnote"&gt;2&lt;/a&gt;&lt;/sup&gt;, at the heart of education reform &lt;em&gt;du jour&lt;/em&gt; are changes to workplace freedom. Improving human capital systems has meant dismantling questionable licensing requirements&lt;sup id="fnref:3"&gt;&lt;a class="footnote-ref" href="#fn:3" rel="footnote"&gt;3&lt;/a&gt;&lt;/sup&gt;, dramatic changes in &lt;a href="http://www.ride.ri.gov/EducatorQuality/EducatorEvaluation/Default.aspx"&gt;teacher&lt;/a&gt; &lt;a href="http://dcps.dc.gov/DCPS/In+the+Classroom/Ensuring+Teacher+Success/IMPACT+(Performance+Assessment)/An+Overview+of+IMPACT"&gt;evaluation&lt;/a&gt;, and other dramatic changes to who gets &lt;a href="http://www.commercialappeal.com/news/2012/may/11/reviews-to-favor-effective-teachers/?print=1"&gt;hired&lt;/a&gt; or &lt;a href="http://en.wikipedia.org/wiki/LIFO_(education)"&gt;fired&lt;/a&gt;. Using extended learning time, either through additional instructional days and/or longer school days, to increase student achievement is often considered too costly, because teachers demand more pay for more work. Additional professional development days are similarly costly; teachers are loath to give up additional days in the summer or during school vacations without receiving additional pay. I could go on.&lt;/p&gt;
 &lt;p&gt;All of these reforms seek to radically change terms and benefits in teacher contracts and state law that represent a string of hard-fought (and won) battles that teachers and their unions pursued for years. The political left, and more specifically the progressive movement, has generally picked up on these attempts as anti-union, anti-collective bargaining, anti-democratic, anti-teacher, and anti-education. There are even a host of conspiracy theories decrying the "corporate reformers" who are coming into the education realm to break down good, public, democratic systems that are good for Democrats, largely to hurt poor kids and make profits&lt;sup id="fnref:4"&gt;&lt;a class="footnote-ref" href="#fn:4" rel="footnote"&gt;4&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
@@ -1206,29 +1206,19 @@ Issues of fairness in the work place are a constant in today's education convers
 &lt;/ol&gt;
 &lt;p&gt;Each of these four points, if they are accepted as true, has some interesting applications to education. My translation for education colleagues would be:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Districts and states have little reason to make lives shitty for
-    teachers. ((Here I assume that the proper size unit for "The Firm"
-    is above the school. I think this generally holds because district
-    boards and state policy makers tend to be more directly accountable
-    to citizens than schools. The relationship here is much more like
-    shareholders and/or customers to business than the citizen to school
-    relationship.))&lt;/li&gt;
-&lt;li&gt;But some principals, department heads, and others may have the
-    ability to act in ways that are less than proper. ((Here, the
-    school-level administration represents the "underbosses". Given that
-    much of the debate over teacher evaluation and rules on hiring and
-    firing stem from debates about both principal quality and principal
-    power, I think this is the right assignment.))&lt;/li&gt;
-&lt;li&gt;Actions that restrict teacher rights should be judged on whether
-    they help the school achieve the district or school's pre-stated
-    mission.&lt;/li&gt;
-&lt;li&gt;Disputes between teachers and their bosses, should not be
-    adjudicated by a typical jury or judge. Instead, the actions of the
-    principal should be judged by other principals who have been
-    successful, preferably with some distance from the actual
-    organization (i.e. not principals who might compete for the
-    offending principals job or may want to hire or be stuck with that
-    teacher based on the proceedings).&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Districts and states have little reason to make lives shitty for
+    teachers. &lt;sup id="fnref:7"&gt;&lt;a class="footnote-ref" href="#fn:7" rel="footnote"&gt;7&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;But some principals, department heads, and others may have the ability to act in ways that are less than proper. &lt;sup id="fnref:8"&gt;&lt;a class="footnote-ref" href="#fn:8" rel="footnote"&gt;8&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Actions that restrict teacher rights should be judged on whether they help the school achieve the district or school's pre-stated mission.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Disputes between teachers and their bosses, should not be adjudicated by a typical jury or judge. Instead, the actions of the principal should be judged by other principals who have been successful, preferably with some distance from the actual organization (i.e. not principals who might compete for the offending principals job or may want to hire or be stuck with that teacher based on the proceedings).&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;I think that points 1 and 2 are fairly obvious. Points 3 and 4, however, are far more interesting.&lt;/p&gt;
 &lt;p&gt;Kimball is attempting to split the difference a fascinating way. I believe he would accept that employment contracts are, by necessity, "ambiguous" in the way that BRG defines that term. His argument is, therefore, that the mission and purpose of the organization &lt;strong&gt;should not&lt;/strong&gt;be ambiguous. So long as the organization's mission is clear, an employment contract becomes consent to do whatever has a rational basis for furthering those goals. In this way, there is an ethical standard by which we can judge new situations that could never have been anticipated directly at the contracting stage. For example, it may be perfectly reasonable for a principal to require a teacher to spend lunch in the student cafeteria so long as their is a rational basis for believing this would further the mission of the school.&lt;/p&gt;
@@ -1256,6 +1246,12 @@ Issues of fairness in the work place are a constant in today's education convers
 &lt;/li&gt;
 &lt;li id="fn:6"&gt;
 &lt;p&gt;or perhaps, if they do they feel that this would not be the case in a world that more generally matched BHLs principles &amp;#160;&lt;a class="footnote-backref" href="#fnref:6" rev="footnote" title="Jump back to footnote 6 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn:7"&gt;
+&lt;p&gt;Here I assume that the proper size unit for "The Firm" is above the school. I think this generally holds because district boards and state policy makers tend to be more directly accountable to citizens than schools. The relationship here is much more like shareholders and/or customers to business than the citizen to school relationship. &amp;#160;&lt;a class="footnote-backref" href="#fnref:7" rev="footnote" title="Jump back to footnote 7 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn:8"&gt;
+&lt;p&gt;Here, the school-level administration represents the "underbosses". Given that much of the debate over teacher evaluation and rules on hiring and firing stem from debates about both principal quality and principal power, I think this is the right assignment. &amp;#160;&lt;a class="footnote-backref" href="#fnref:8" rev="footnote" title="Jump back to footnote 8 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Jason</dc:creator><pubDate>Mon, 09 Jul 2012 09:40:00 -0400</pubDate><guid>tag:blog.jsonbecker.com,2012-07-09:2012/07/work-place-liberty-in-the-context-of-education.html</guid><category>bleeding heart libertarians</category><category>economics</category><category>education</category><category>libertarianism</category><category>liberty</category><category>political philosophy</category><category>public-sector unions</category><category>teacher evaluation</category><category>union</category></item><item><title>Algorithms: Design and Analysis Part I</title><link>http://blog.jsonbecker.com/2012/06/algorithms-design-and-analysis-part-i.html</link><description>&lt;p&gt;Tonight I started Coursera.org's &lt;a href="http://www.algo-class.org"&gt;Algorithms: Design and Analysis Part I&lt;/a&gt;. This class should pick up right about where I left off my computer science education. I took &lt;a href="http://www.cs.brown.edu/courses/csci0150.html"&gt;CS15&lt;/a&gt; as a sophomore in college but didn't have the time to take &lt;a href="http://www.cs.brown.du/courses/csci0160html"&gt;CS16: Introduction to Algorithms and Data Structures&lt;/a&gt;. So, while it's been almost 6 years since I have formally taken a computer science class, it is time to continue my education.&lt;/p&gt;

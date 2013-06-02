@@ -4,7 +4,7 @@ Author: Jason
 Category: Education, policy and politics
 Tags: bleeding heart libertarians, economics, education, libertarianism, liberty, political philosophy, public-sector unions, teacher evaluation, union
 
-*How can we tell if principal directives are fair to teachers?*
+How can we tell if principal directives are fair to teachers?
 
 There has been a great conversation circling some blogs I read over the last week about liberty in the work place.[^1]
 Issues of fairness in the work place are a constant in today's education conversation. Whether some view it as a form of metaphoric violence on teachers and their profession, while others see a concerted effort to change rigid, bureaucratic systems that prevent effective change[^2], at the heart of education reform *du jour* are changes to workplace freedom. Improving human capital systems has meant dismantling questionable licensing requirements[^3], dramatic changes in [teacher](http://www.ride.ri.gov/EducatorQuality/EducatorEvaluation/Default.aspx) [evaluation][], and other dramatic changes to who gets [hired][] or [fired][]. Using extended learning time, either through additional instructional days and/or longer school days, to increase student achievement is often considered too costly, because teachers demand more pay for more work. Additional professional development days are similarly costly; teachers are loath to give up additional days in the summer or during school vacations without receiving additional pay. I could go on.
@@ -36,28 +36,13 @@ However, it is macroeconomist Miles Kimball, a recent entrant into the [blogosph
 Each of these four points, if they are accepted as true, has some interesting applications to education. My translation for education colleagues would be:
 
 1.  Districts and states have little reason to make lives shitty for
-    teachers. ((Here I assume that the proper size unit for "The Firm"
-    is above the school. I think this generally holds because district
-    boards and state policy makers tend to be more directly accountable
-    to citizens than schools. The relationship here is much more like
-    shareholders and/or customers to business than the citizen to school
-    relationship.))
-2.  But some principals, department heads, and others may have the
-    ability to act in ways that are less than proper. ((Here, the
-    school-level administration represents the "underbosses". Given that
-    much of the debate over teacher evaluation and rules on hiring and
-    firing stem from debates about both principal quality and principal
-    power, I think this is the right assignment.))
-3.  Actions that restrict teacher rights should be judged on whether
-    they help the school achieve the district or school's pre-stated
-    mission.
-4.  Disputes between teachers and their bosses, should not be
-    adjudicated by a typical jury or judge. Instead, the actions of the
-    principal should be judged by other principals who have been
-    successful, preferably with some distance from the actual
-    organization (i.e. not principals who might compete for the
-    offending principals job or may want to hire or be stuck with that
-    teacher based on the proceedings).
+    teachers. [^7]
+
+2.  But some principals, department heads, and others may have the ability to act in ways that are less than proper. [^8]
+
+3.  Actions that restrict teacher rights should be judged on whether they help the school achieve the district or school's pre-stated mission.
+
+4.  Disputes between teachers and their bosses, should not be adjudicated by a typical jury or judge. Instead, the actions of the principal should be judged by other principals who have been successful, preferably with some distance from the actual organization (i.e. not principals who might compete for the offending principals job or may want to hire or be stuck with that teacher based on the proceedings).
 
 I think that points 1 and 2 are fairly obvious. Points 3 and 4, however, are far more interesting.
 
@@ -94,8 +79,17 @@ I am left with more questions than answers, but, for me, there is a rich appeal 
 [comments]: http://blog.supplysideliberal.com/post/26531357710/jobs
 
 [^1]:  [Here][] is the (socialist?) critique of libertarians and right to work that sparked the discussion. Then [two][] economists [jumped][] in. The [response][] from Bleeding Heart Libertarians, meanwhile, [continues][] [to][] [pour][] [in][] [rapidly][]. 
+
 [^2]: I lean toward the latter, even if I disagree sometimes both with the means and ends of the current reform movement.
+
 [^3]: I am skeptical about [licensing in general][]. I've seen substantially more [research][] to support experience than licensing requirements in education and/or additional education. Various [alternative][] [teacher][] [pathways][] now exist. 
+
 [^4]: Whereas I find some of the "anti-s" in the previous sentence worthy of discussion, I find the massive, corporate, right-wing conspiracy stuff to be 98% bullocks. 
+
 [^5]:  BRG= Bertram, Robin, and Gourevitch, authors of the Crooked Timber post. This acronym has been used in contrast with BHL, Bleeding Heart Libertarians, during this debate 
+
 [^6]:  or perhaps, if they do they feel that this would not be the case in a world that more generally matched BHLs principles 
+
+[^7]:  Here I assume that the proper size unit for "The Firm" is above the school. I think this generally holds because district boards and state policy makers tend to be more directly accountable to citizens than schools. The relationship here is much more like shareholders and/or customers to business than the citizen to school relationship. 
+
+[^8]:  Here, the school-level administration represents the "underbosses". Given that much of the debate over teacher evaluation and rules on hiring and firing stem from debates about both principal quality and principal power, I think this is the right assignment. 
