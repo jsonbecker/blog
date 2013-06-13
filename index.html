@@ -35,38 +35,64 @@
       <div class=separator></div>                
         <div class=body>
         
-            <h1 class="title">Linear Thinking<a href="./2013/06/linear-thinking.html" class=perma>&#8734;</a></h1>
-      <p class=date> 2013-06-02 </p>
-      <p>Apple will be revealing new details for both of its major operating systems at WWDC on June 10, 2013. The focus of much speculation has been how Apple will improve multi-tasking and inter-app communication in iOS7. As batteries have grown, CPUs have become increasingly powerful, and the application <a href="./2012/11/frictionless.html">ecosystem</a> has matured <sup id="fnref:viticci"><a class="footnote-ref" href="#fn:viticci" rel="footnote">1</a></sup>, the iOS sandboxing model has felt increasingly limiting and outdated.</p>
-<p>I think that there is a simple change that could dramatically increase the effectiveness of multitasking on iOS by re-examining how application switching works.</p>
-<p>Scrolling through a long list of applications, either through the basement shelf or via the four-finger gesture on an iPad, is both slow and lacking in contextual cues. In a simple case where I am working with two applications simultaneously, how do I switch between them? The list of open applications always places the current application in the first position. The previously used application sits in the second position. The first time I want to change to another application this is not so bad. I move to the "right" on the list to progress forward into the next application <sup id="fnref:next"><a class="footnote-ref" href="#fn:next" rel="footnote">2</a></sup>. </p>
-<p>The trouble comes when I want to return to where I was just working. The most natural mental model for this switch is to move "left" in the list. I moved "right" to get here and millions of years of evolution has taught me the the "undo button" for moving right is to move left <sup id="fnref:inform7"><a class="footnote-ref" href="#fn:inform7" rel="footnote">3</a></sup>. But of course, when I attempt to move "left", I find no destination <sup id="fnref:youcant"><a class="footnote-ref" href="#fn:youcant" rel="footnote">4</a></sup>. I can pop an application from anywhere on the list, but I can only prepend new applications to the list <sup id="fnref:ignorant"><a class="footnote-ref" href="#fn:ignorant" rel="footnote">5</a></sup>.</p>
-<p>Apple needs to move away from its linear thinking and enter the second dimension.</p>
-<p>What if I could drag apps in the switcher on top of each other to make a new stack, not unlike the option on the OS X launch bar? Throughout this stack, position is maintained regardless of which application is in use/was last used. I can always move <strong>up</strong> from Chrome to ByWord, and <strong>down</strong> to Good Reader, for example, if I was writing a report. Apple might call this a Stack, mirroring the term in OSX, but I would prefer this to be called a <em>Flow</em>.</p>
-<p>The goal of this feature is to organize a <em>Flow</em> for a particular task that requires using multiple apps. One feature might be saving a "Flow", this way each time I want to write a blog post, I tap the same home screen button and the same four apps in the same order launch in a <em>Flow</em>, ready for easy switching using the familiar four-finger swipe gesture up and down. I no longer have to worry about the sequence I have recently accessed applications which is confusing and requires me to look at the app switcher draw or needlessly and repeatedly swipe through applications. I never have to worry about lingering too long on one application while swiping through and switching to that app, changing my position to the origin of the list and starting over again. </p>
-<p>For all the calls for complex inter-app communication or having multiple apps active on the screen at the same time, it seems a simple interface change to application switching could complete change the way we multitask on iOS.</p>
+            <h1 class="title">Calculating Age in R<a href="./2013/06/calculating-age-in-r.html" class=perma>&#8734;</a></h1>
+      <p class=date> 2013-06-12 </p>
+      <p>A few months back I wrote some code to calculate age from a date of birth and arbitrary end date. It is not a real tricky task, but it is certainly one that comes up often when doing research on individual-level data.</p>
+<p>I was a bit surprised to only find bits and pieces of code and advice on how to best go about this task. After reading through some old R-help and Stack Overflow responses on various ways to do date math in R, this is the function I wrote <sup id="fnref:wrote"><a class="footnote-ref" href="#fn:wrote" rel="footnote">1</a></sup>:</p>
+<div class="highlight"><pre>age_calc <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dob<span class="p">,</span> enddate<span class="o">=</span>Sys.Date<span class="p">(),</span> units<span class="o">=</span><span class="s">&#39;months&#39;</span><span class="p">){</span>
+  <span class="kr">if</span> <span class="p">(</span><span class="o">!</span>inherits<span class="p">(</span>dob<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="o">!</span>inherits<span class="p">(</span>enddate<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">))</span>
+    stop<span class="p">(</span><span class="s">&quot;Both dob and enddate must be Date class objects&quot;</span><span class="p">)</span>
+  start <span class="o">&lt;-</span> as.POSIXlt<span class="p">(</span>dob<span class="p">)</span>
+  end <span class="o">&lt;-</span> as.POSIXlt<span class="p">(</span>enddate<span class="p">)</span>
+
+  years <span class="o">&lt;-</span> end<span class="o">$</span>year <span class="o">-</span> start<span class="o">$</span>year
+  <span class="kr">if</span><span class="p">(</span>units<span class="o">==</span><span class="s">&#39;years&#39;</span><span class="p">){</span>
+    result <span class="o">&lt;-</span> ifelse<span class="p">((</span>end<span class="o">$</span>mon <span class="o">&lt;</span> start<span class="o">$</span>mon<span class="p">)</span> <span class="o">|</span> 
+                      <span class="p">((</span>end<span class="o">$</span>mon <span class="o">==</span> start<span class="o">$</span>mon<span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>end<span class="o">$</span>mday <span class="o">&lt;</span> start<span class="o">$</span>mday<span class="p">)),</span>
+                      years <span class="o">-</span> <span class="m">1</span><span class="p">,</span> years<span class="p">)</span>    
+  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>units<span class="o">==</span><span class="s">&#39;months&#39;</span><span class="p">){</span>
+    months <span class="o">&lt;-</span> <span class="p">(</span>years<span class="m">-1</span><span class="p">)</span> <span class="o">*</span> <span class="m">12</span>
+    result <span class="o">&lt;-</span> months <span class="o">+</span> start<span class="o">$</span>mon
+  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>units<span class="o">==</span><span class="s">&#39;days&#39;</span><span class="p">){</span>
+    result <span class="o">&lt;-</span> difftime<span class="p">(</span>end<span class="p">,</span> start<span class="p">,</span> units<span class="o">=</span><span class="s">&#39;days&#39;</span><span class="p">)</span>
+  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+    stop<span class="p">(</span><span class="s">&quot;Unrecognized units. Please choose years, months, or days.&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="kr">return</span><span class="p">(</span>result<span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>A few notes on proper usage and the choices I made in writing this function: </p>
+<ul>
+<li>The parameters <code>dob</code> and <code>enddate</code> expect data that is already in one of the various classes that minimally inherits the base class <code>Date</code>. </li>
+<li>This function takes advantage of the way that R treats vectors, so both <code>dob</code> and <code>enddate</code> can be a single or multi-element vector. For example <code>enddate</code> is a single date, as is the default, then the function will return a vector that calculates the difference between <code>dob</code> and that single date for each element in <code>dob</code>. If <code>dob</code> and <code>enddate</code> are both vectors with n&gt;1, then the returned vector will contain the <a href="http://heather.cs.ucdavis.edu/~matloff/r.old.html#elementwise">element-wise</a> difference between <code>dob</code> and <code>enddate</code>. When the vectors are of different sizes, the shorter vector will be repeated over until it reaches the same length as the longer vector. This is known as <a href="http://cran.r-project.org/doc/manuals/R-intro.html#The-recycling-rule">recycling</a>, and it is the default behavior in R.</li>
+<li>This function always returns an integer. Calculating age in years will never return, say, 26.2. Instead, it assumes that the correct behavior for age calculations is something like a <code>floor</code> function. For examle, the function will only return 27 if <code>enddate</code> is minimally your 27th birthday. Up until that day you are considered 26. The same is true for age in months.</li>
+</ul>
+<p>This is probably the first custom function in almost 3 years using R that I wrote to be truly generalizable. I was inspired by three factors. First, this is a truly frequent task that I will have to apply to many data sets in the future that I don't want to have to revisit. Second, a professional acquaintance, <a href="http://jaredknowles.com/">Jared Knowles</a>, is putting together a CRAN package with various convenience functions for folks who are new to R and using it to analyze education data <sup id="fnref:eeptools"><a class="footnote-ref" href="#fn:eeptools" rel="footnote">2</a></sup>. This seemed like an appropriate addition to that package, so I wanted to write it to that standard. In fact, it was my first (and to date, only) submitted and accepted pull request on Github. Third, it is a tiny, simple function so it was easy to wrap my head around and write it well. I will let you be the judge of my success or failure <sup id="fnref:inspiration"><a class="footnote-ref" href="#fn:inspiration" rel="footnote">3</a></sup>.</p>
 <div class="footnote">
 <hr />
 <ol>
-<li id="fn:viticci">
-<p>And Federico Viticci has either shown us the light or gone completely mad.&#160;<a class="footnote-backref" href="#fnref:viticci" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<li id="fn:wrote">
+<p>I originally used <code>Sys.time()</code> not realizing there was a <code>Sys.Date()</code> function. Thanks to Jared Knowles for that edit in preparation for a CRAN check.&#160;<a class="footnote-backref" href="#fnref:wrote" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
-<li id="fn:next">
-<p>For now, lets assume the right application is next in the stack. I'll get to that issue with my second change.&#160;<a class="footnote-backref" href="#fnref:next" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<li id="fn:eeptools">
+<p>Check out <a href="https://github.com/jknowles/eeptools">eeptools</a> on Github.&#160;<a class="footnote-backref" href="#fnref:eeptools" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
-<li id="fn:inform7">
-<p><code>You are in a green room. &gt; Go east. You are in a red room. &gt; Go west. You are in a green room.</code>&#160;<a class="footnote-backref" href="#fnref:inform7" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
-</li>
-<li id="fn:youcant">
-<p><code>You can't go that way.</code>&#160;<a class="footnote-backref" href="#fnref:youcant" rev="footnote" title="Jump back to footnote 4 in the text">&#8617;</a></p>
-</li>
-<li id="fn:ignorant">
-<p>I don't know enough about data structures yet to name what's going on here. I am tempted to think that the challenge is they have presented a list to users, with a decidedly horizontal metaphor, when they actually have created something more akin to a stack, with a decidedly vertical metaphor. But a stack isn't quite the right way to understand the app switcher. You can "pop" an app from any arbitrary position on the app switcher, but funny enough can only push a new app on to the top of the switcher.&#160;<a class="footnote-backref" href="#fnref:ignorant" rev="footnote" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<li id="fn:inspiration">
+<p>Thanks to <a href="http://mcfromnz.wordpress.com/2013/06/12/updated-age-calculation-function/">Matt's Stats n Stuff</a> for getting me to write this post. When I saw another age calculation function pop up on the r-bloggers feed I immediately thought of this function. Matt pointed out that it was quite hard to Google for age calculations in R, lamenting that Google doesn't meaningfully crawl Github where I linked to find my code. So this post is mostly about providing some help to less experience R folks who are frantically Googling as both Matt and I did when faced with this need.&#160;<a class="footnote-backref" href="#fnref:inspiration" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
       
                       <div class=entry-overview>
+        <div class=date>Jun 02, 2013</div>
+        <div class=detail>
+          <h1><a href="./2013/06/linear-thinking.html">Linear Thinking</a></h1>
+            <div class=summary><p><p>Apple will be revealing new details for both of its major operating systems at WWDC on June 10, 2013. The focus of much speculation has been how Apple will improve multi-tasking and inter-app communication in iOS7. As batteries have grown, CPUs have become increasingly powerful, and the application <a href="./2012/11/frictionless.html">ecosystem</a> has ...</p></p></div>
+        </div>
+      </div>
+                <div class=entry-overview>
         <div class=date>May 30, 2013</div>
         <div class=detail>
           <h1><a href="./2013/05/cleaning-urls-with-textexpander.html">Cleaning URLs with TextExpander</a></h1>
@@ -144,17 +170,6 @@
           <h1><a href="./2012/10/thoughts-on-grit.html">Thoughts on Grit</a></h1>
             <div class=summary><p><p>I have not had the opportunity to read <a href="http://www.paultough.com/the-books/how-children-succeed/">Paul Tough's newest book</a> on "grit"<sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">2</a></sup>. I have, however, read Paul Tough's <a href="http://www.nytimes.com/2011/09/18/magazine/what-if-the-secret-to-success-is-failure.html">New York Times Magazine article on grit</a> and recently listened to an <a href="http://www.econtalk.org/archives/2012/09/paul_tough_on_h.html">EconTalk podcast</a> where he discussed <span style="text-decoration: underline;">How Children Succeed</span>.</p>
 <p>The thrust of Tough's argument, if ...</p></p></div>
-        </div>
-      </div>
-                <div class=entry-overview>
-        <div class=date>Sep 19, 2012</div>
-        <div class=detail>
-          <h1><a href="./2012/09/thoughts-on-grading.html">Thoughts on Grading</a></h1>
-            <div class=summary><p><p><a href="http://www.twitter.com/MrPABruno">Bruno</a> is a skeptic on <a href="http://scholasticadministrator.typepad.com/thisweekineducation/2012/09/bruno-is-standards-based-grading-a-good-idea.html">standards-based grading</a>. He seems to think
-that "mastery of content" is too abstract for students to work toward
-and rightly cites evidence that motivation and changed behavior are
-tightly linked to a sense of efficacy, which in turn is tightly linked
-to feeling as though ...</p></p></div>
         </div>
       </div>
       
