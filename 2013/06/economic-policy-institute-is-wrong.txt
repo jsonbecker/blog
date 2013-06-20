@@ -34,11 +34,11 @@ Mr. Hiltonsmith also claims that, "Over the long term, RIRSA may cost the state 
 
 We can have a serious debate about whether there is value in the state goals of a defined contribution plan. In my view, the purpose of switching to this structure is about: 
 
-  1. Portability of plans for more mobile workers, potentially serving to attract younger and more highly skilled employees
+  1. Portability of plans for more mobile workers, potentially serving to attract younger and more highly skilled employees. 
   2. Stability in government expenditures on retiree benefits from year to year that are less susceptible to market forces. This includes avoiding the temptation to reduce payments when there are strong market returns as well as the crushing difficulty of increasing payments when the market (and almost certainly government receipts) are down.
   3. Insulating workers from a government that perpetually writes checks they can cash, as was the case with the current system.
 
-This paper does not address any of these objectives or others I might have forgotten. In essence, the brief looks at only one subset of the perceived costs of this structural change, but it is far from a comprehensive analysis of the potential universe of both costs and benefits. In fact, it fails to even address the most commonly cited benefits. That is why I view it as heavily biased and flawed, even if I might draw similar ultimate conclusions from a more thorough analysis.
+This paper does not address any of these objectives or others I might have forgotten. In essence, the brief looks at only one subset of the perceived costs of this structural change, but it is far from a comprehensive analysis of the potential universe of both costs and benefits. In fact, it fails to even address the most commonly cited benefits. That is why I view it as heavily biased and flawed, even if I might draw similar conclusions from a more thorough analysis.
 
 [^normal cost]: Definition: Active participants earn new benefits each year. Actuaries call that the normal cost. The normal cost is always reflected in the cash and accounting cost of the plan. [Source](http://www.actuary.org/pdf/pension/fundamentals_0704.pdf) In other words, the normal cost only looks at the new benefits added to the liability, not the existing liability.
 
