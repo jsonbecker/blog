@@ -30,7 +30,8 @@ div.navigation a            { text-decoration: none;
                               font-size: 22px; 
                               padding: 10px;
                             }
-
+div.navigation a:visited    { color: #00997C; }
+div.navigation a:hover      { color: #3b185f;}
 div.separator               {
                               border-bottom: 1px dotted #ddd; 
                               padding-bottom: 42px;
