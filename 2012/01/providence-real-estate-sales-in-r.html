@@ -14,7 +14,7 @@
                 <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title> Providence Real Estate Sales in R | jasonpbecker </title>
+    <title> Providence Real Estate Sales in&nbsp;R | jasonpbecker </title>
 
     <link rel="stylesheet" href="../../theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../../theme/css/pygments.css" type="text/css" />
@@ -52,12 +52,12 @@
       </div>
       <div class=separator></div>                
         <div class=body>
-            <h1 class="title"> Providence Real Estate Sales in R</h1>
+            <h1 class="title"> Providence Real Estate Sales in&nbsp;R</h1>
     <p class=date> 2012-01-23 </p>
-    <p>The past few months I've been learning how to use R. This morning, I decided to try out two first-- importing a table of data that is being read of the web and overlaying location data onto a map.</p>
-<p>With a little bit of Google skills and just enough R know-how I was able to produce this image:</p>
+    <p>The past few months I&#8217;ve been learning how to use R. This morning, I decided to try out two first&#8212; importing a table of data that is being read of the web and overlaying location data onto a&nbsp;map.</p>
+<p>With a little bit of Google skills and just enough R know-how I was able to produce this&nbsp;image:</p>
 <p><img alt="Providence Home Sales 9-12-11 to 12-27-11" src="../../static/images/homesales.png" title="Providence Home Sales 9-12-11 to 12-27-11" /></p>
-<p>There were a few things that were kind of tricky for me. First, for sometime I couldn't get latitude and longitude components for the addresses. I figured there was something wrong with the way I was using the *apply class of functions in R. apply() (and the related class of functions lapply, sapply, etc.) are really handy if a bit tricky for beginning R users. This function permits quickly "applying" a function across multiple elements. Traditionally this is done with a loop, but the apply() functions "vectorize" this process (R folks always talk about making your code more vectorized which has something to do with the structure of objects in R but is beyond my computer science skills-- essentially, vectorized code runs much faster and more efficiency than loops because of some underlying feature of the language). After playing around with apply, lapply, and sapply, I decided to move back into my "old" way of thinking and just write a loop:</p>
+<p>There were a few things that were kind of tricky for me. First, for sometime I couldn&#8217;t get latitude and longitude components for the addresses. I figured there was something wrong with the way I was using the *apply class of functions in R. apply() (and the related class of functions lapply, sapply, etc.) are really handy if a bit tricky for beginning R users. This function permits quickly &#8220;applying&#8221; a function across multiple elements. Traditionally this is done with a loop, but the apply() functions &#8220;vectorize&#8221; this process (R folks always talk about making your code more vectorized which has something to do with the structure of objects in R but is beyond my computer science skills&#8212; essentially, vectorized code runs much faster and more efficiency than loops because of some underlying feature of the language). After playing around with apply, lapply, and sapply, I decided to move back into my &#8220;old&#8221; way of thinking and just write a&nbsp;loop:</p>
 <div class="highlight"><pre>latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">){</span>
   lat <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
   lng <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
@@ -71,7 +71,7 @@
 </pre></div>
 
 
-<p>This still didn't work-- I kept on getting a strange out-of-bounds call. So I decided to go down the rabbit hole of regular expressions and try and see if I could clean up my addresses any further (I couldn't). So, now seemed as good a time as any to figure out how to print to the console while a loop is running to keep track of progress and where exactly my function was stopped. This turned out to be a bit tricky because I didn't know you had to include a tricky line, <code>r flush.console()</code> in order to get the prints to work. When I figured this out I found out my loop was being caught on my 7th element, a perfectly well formed address. When I ran gGeoCode() on that address only it worked fine. So I thought, maybe Google is bouncing me out because I'm hitting it too fast? And bingo, the final (working version):</p>
+<p>This still didn&#8217;t work&#8212; I kept on getting a strange out-of-bounds call. So I decided to go down the rabbit hole of regular expressions and try and see if I could clean up my addresses any further (I couldn&#8217;t). So, now seemed as good a time as any to figure out how to print to the console while a loop is running to keep track of progress and where exactly my function was stopped. This turned out to be a bit tricky because I didn&#8217;t know you had to include a tricky line, <code>r flush.console()</code> in order to get the prints to work. When I figured this out I found out my loop was being caught on my 7th element, a perfectly well formed address. When I ran gGeoCode() on that address only it worked fine. So I thought, maybe Google is bouncing me out because I&#8217;m hitting it too fast? And bingo, the final (working&nbsp;version):</p>
 <div class="highlight"><pre>latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">){</span>
  lat <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
  lng <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
@@ -88,16 +88,16 @@
 </pre></div>
 
 
-<p>Other than that, the whole process was pretty straight forward. I have to thank Tony Breyal for <a href="http://stackoverflow.com/questions/3257441/geocoding-in-r-with-google-maps">posting the functions I used</a> to get latitude and longitude on <a href="http://stackoverflow.com/">Stack Overflow</a>. Also, I found the <a href="http://cran.r-project.org/web/packages/RgoogleMaps/vignettes/RgoogleMaps-intro.pdf">RgoogleMaps vignette</a> to be very helpful, although I wish it had slightly better explained what was going on in qbbox().</p>
-<p>Finally, my full source for the above:</p>
+<p>Other than that, the whole process was pretty straight forward. I have to thank Tony Breyal for <a href="http://stackoverflow.com/questions/3257441/geocoding-in-r-with-google-maps">posting the functions I used</a> to get latitude and longitude on <a href="http://stackoverflow.com/">Stack Overflow</a>. Also, I found the <a href="http://cran.r-project.org/web/packages/RgoogleMaps/vignettes/RgoogleMaps-intro.pdf">RgoogleMaps vignette</a> to be very helpful, although I wish it had slightly better explained what was going on in&nbsp;qbbox().</p>
+<p>Finally, my full source for the&nbsp;above:</p>
 <div class="highlight"><pre><span class="c1"># Providence Real Estate Transactions over the last 40 days.</span>
 <span class="c1"># Required Packages</span>
-require<span class="p">(</span><span class="s">&#39;XML&#39;</span><span class="p">)</span>
+require<span class="p">(</span><span class="s">&#39;<span class="caps">XML</span>&#39;</span><span class="p">)</span>
 require<span class="p">(</span><span class="s">&#39;RCurl&#39;</span><span class="p">)</span>
-require<span class="p">(</span><span class="s">&#39;RJSONIO&#39;</span><span class="p">)</span>
+require<span class="p">(</span><span class="s">&#39;<span class="caps">RJSONIO</span>&#39;</span><span class="p">)</span>
 require<span class="p">(</span><span class="s">&quot;RgoogleMaps&quot;</span><span class="p">)</span>
 <span class="c1"># Functions</span>
-<span class="c1"># Construct URL required to get the Lat and Long from Google Maps</span>
+<span class="c1"># Construct <span class="caps">URL</span> required to get the Lat and Long from Google Maps</span>
 construct.geocode.url <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">,</span> return.call <span class="o">=</span> <span class="s">&quot;json&quot;</span><span class="p">,</span> sensor <span class="o">=</span> <span class="s">&quot;false&quot;</span>   <span class="p">)</span> <span class="p">{</span>
  root <span class="o">&lt;-</span> <span class="s">&quot;http://maps.google.com/maps/api/geocode/&quot;</span>
  u <span class="o">&lt;-</span> paste<span class="p">(</span>root<span class="p">,</span> return.call<span class="p">,</span> <span class="s">&quot;?address=&quot;</span><span class="p">,</span> address<span class="p">,</span> <span class="s">&quot;&amp;sensor=&quot;</span><span class="p">,</span> sensor<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;&quot;</span>   <span class="p">)</span>
@@ -107,7 +107,7 @@ construct.geocode.url <span class="o">&lt;-</span> <span class="kr">function</sp
 gGeoCode <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">)</span> <span class="p">{</span>
  u <span class="o">&lt;-</span> construct.geocode.url<span class="p">(</span>address<span class="p">)</span>
  doc <span class="o">&lt;-</span> getURL<span class="p">(</span>u<span class="p">)</span>
- x <span class="o">&lt;-</span> fromJSON<span class="p">(</span>doc<span class="p">,</span>simplify <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+ x <span class="o">&lt;-</span> fromJSON<span class="p">(</span>doc<span class="p">,</span>simplify <span class="o">=</span> <span class="kc"><span class="caps">FALSE</span></span><span class="p">)</span>
  lat <span class="o">&lt;-</span> x<span class="o">$</span>results<span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span>geometry<span class="o">$</span>location<span class="o">$</span>lat
  lng <span class="o">&lt;-</span> x<span class="o">$</span>results<span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span>geometry<span class="o">$</span>location<span class="o">$</span>lng
  <span class="kr">return</span><span class="p">(</span>c<span class="p">(</span>lat<span class="p">,</span> lng<span class="p">))</span>

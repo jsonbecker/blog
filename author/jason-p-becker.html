@@ -38,9 +38,9 @@
       <div class=separator></div>                
         <div class=body>
         
-            <h1 class="title">Calculating Age in R<a href="../2013/06/calculating-age-in-r.html" class=perma>&#8734;</a></h1>
+            <h1 class="title">Calculating Age in&nbsp;R<a href="../2013/06/calculating-age-in-r.html" class=perma>&#8734;</a></h1>
       <p class=date> 2013-06-12 </p>
-      <p>A few months back I wrote some code to calculate age from a date of birth and arbitrary end date. It is not a real tricky task, but it is certainly one that comes up often when doing research on individual-level data.</p>
+      <p>A few months back I wrote some code to calculate age from a date of birth and arbitrary end date. It is not a real tricky task, but it is certainly one that comes up often when doing research on individual-level&nbsp;data.</p>
 <p>I was a bit surprised to only find bits and pieces of code and advice on how to best go about this task. After reading through some old R-help and Stack Overflow responses on various ways to do date math in R, this is the function I wrote <sup id="fnref:wrote"><a class="footnote-ref" href="#fn:wrote" rel="footnote">1</a></sup>:</p>
 <div class="highlight"><pre>age_calc <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dob<span class="p">,</span> enddate<span class="o">=</span>Sys.Date<span class="p">(),</span> units<span class="o">=</span><span class="s">&#39;months&#39;</span><span class="p">){</span>
   <span class="kr">if</span> <span class="p">(</span><span class="o">!</span>inherits<span class="p">(</span>dob<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="o">!</span>inherits<span class="p">(</span>enddate<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">))</span>
@@ -66,24 +66,24 @@
 </pre></div>
 
 
-<p>A few notes on proper usage and the choices I made in writing this function: </p>
+<p>A few notes on proper usage and the choices I made in writing this&nbsp;function: </p>
 <ul>
 <li>The parameters <code>dob</code> and <code>enddate</code> expect data that is already in one of the various classes that minimally inherits the base class <code>Date</code>. </li>
-<li>This function takes advantage of the way that R treats vectors, so both <code>dob</code> and <code>enddate</code> can be a single or multi-element vector. For example <code>enddate</code> is a single date, as is the default, then the function will return a vector that calculates the difference between <code>dob</code> and that single date for each element in <code>dob</code>. If <code>dob</code> and <code>enddate</code> are both vectors with n&gt;1, then the returned vector will contain the <a href="http://heather.cs.ucdavis.edu/~matloff/r.old.html#elementwise">element-wise</a> difference between <code>dob</code> and <code>enddate</code>. When the vectors are of different sizes, the shorter vector will be repeated over until it reaches the same length as the longer vector. This is known as <a href="http://cran.r-project.org/doc/manuals/R-intro.html#The-recycling-rule">recycling</a>, and it is the default behavior in R.</li>
-<li>This function always returns an integer. Calculating age in years will never return, say, 26.2. Instead, it assumes that the correct behavior for age calculations is something like a <code>floor</code> function. For examle, the function will only return 27 if <code>enddate</code> is minimally your 27th birthday. Up until that day you are considered 26. The same is true for age in months.</li>
+<li>This function takes advantage of the way that R treats vectors, so both <code>dob</code> and <code>enddate</code> can be a single or multi-element vector. For example <code>enddate</code> is a single date, as is the default, then the function will return a vector that calculates the difference between <code>dob</code> and that single date for each element in <code>dob</code>. If <code>dob</code> and <code>enddate</code> are both vectors with n&gt;1, then the returned vector will contain the <a href="http://heather.cs.ucdavis.edu/~matloff/r.old.html#elementwise">element-wise</a> difference between <code>dob</code> and <code>enddate</code>. When the vectors are of different sizes, the shorter vector will be repeated over until it reaches the same length as the longer vector. This is known as <a href="http://cran.r-project.org/doc/manuals/R-intro.html#The-recycling-rule">recycling</a>, and it is the default behavior in&nbsp;R.</li>
+<li>This function always returns an integer. Calculating age in years will never return, say, 26.2. Instead, it assumes that the correct behavior for age calculations is something like a <code>floor</code> function. For examle, the function will only return 27 if <code>enddate</code> is minimally your 27th birthday. Up until that day you are considered 26. The same is true for age in&nbsp;months.</li>
 </ul>
-<p>This is probably the first custom function in almost 3 years using R that I wrote to be truly generalizable. I was inspired by three factors. First, this is a truly frequent task that I will have to apply to many data sets in the future that I don't want to have to revisit. Second, a professional acquaintance, <a href="http://jaredknowles.com/">Jared Knowles</a>, is putting together a CRAN package with various convenience functions for folks who are new to R and using it to analyze education data <sup id="fnref:eeptools"><a class="footnote-ref" href="#fn:eeptools" rel="footnote">2</a></sup>. This seemed like an appropriate addition to that package, so I wanted to write it to that standard. In fact, it was my first (and to date, only) submitted and accepted pull request on Github. Third, it is a tiny, simple function so it was easy to wrap my head around and write it well. I will let you be the judge of my success or failure <sup id="fnref:inspiration"><a class="footnote-ref" href="#fn:inspiration" rel="footnote">3</a></sup>.</p>
+<p>This is probably the first custom function in almost 3 years using R that I wrote to be truly generalizable. I was inspired by three factors. First, this is a truly frequent task that I will have to apply to many data sets in the future that I don&#8217;t want to have to revisit. Second, a professional acquaintance, <a href="http://jaredknowles.com/">Jared Knowles</a>, is putting together a <span class="caps">CRAN</span> package with various convenience functions for folks who are new to R and using it to analyze education data <sup id="fnref:eeptools"><a class="footnote-ref" href="#fn:eeptools" rel="footnote">2</a></sup>. This seemed like an appropriate addition to that package, so I wanted to write it to that standard. In fact, it was my first (and to date, only) submitted and accepted pull request on Github. Third, it is a tiny, simple function so it was easy to wrap my head around and write it well. I will let you be the judge of my success or failure <sup id="fnref:inspiration"><a class="footnote-ref" href="#fn:inspiration" rel="footnote">3</a></sup>.</p>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:wrote">
-<p>I originally used <code>Sys.time()</code> not realizing there was a <code>Sys.Date()</code> function. Thanks to Jared Knowles for that edit in preparation for a CRAN check.&#160;<a class="footnote-backref" href="#fnref:wrote" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>I originally used <code>Sys.time()</code> not realizing there was a <code>Sys.Date()</code> function. Thanks to Jared Knowles for that edit in preparation for a <span class="caps">CRAN</span> check.&#160;<a class="footnote-backref" href="#fnref:wrote" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:eeptools">
 <p>Check out <a href="https://github.com/jknowles/eeptools">eeptools</a> on Github.&#160;<a class="footnote-backref" href="#fnref:eeptools" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:inspiration">
-<p>Thanks to <a href="http://mcfromnz.wordpress.com/2013/06/12/updated-age-calculation-function/">Matt's Stats n Stuff</a> for getting me to write this post. When I saw another age calculation function pop up on the r-bloggers feed I immediately thought of this function. Matt pointed out that it was quite hard to Google for age calculations in R, lamenting that Google doesn't meaningfully crawl Github where I linked to find my code. So this post is mostly about providing some help to less experience R folks who are frantically Googling as both Matt and I did when faced with this need.&#160;<a class="footnote-backref" href="#fnref:inspiration" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>Thanks to <a href="http://mcfromnz.wordpress.com/2013/06/12/updated-age-calculation-function/">Matt&#8217;s Stats n Stuff</a> for getting me to write this post. When I saw another age calculation function pop up on the r-bloggers feed I immediately thought of this function. Matt pointed out that it was quite hard to Google for age calculations in R, lamenting that Google doesn&#8217;t meaningfully crawl Github where I linked to find my code. So this post is mostly about providing some help to less experience R folks who are frantically Googling as both Matt and I did when faced with this need.&#160;<a class="footnote-backref" href="#fnref:inspiration" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
@@ -91,43 +91,43 @@
                       <div class=entry-overview>
         <div class=date>May 30, 2013</div>
         <div class=detail>
-          <h1><a href="../2013/05/cleaning-urls-with-textexpander.html">Cleaning URLs with TextExpander</a></h1>
-            <div class=summary><p><p>One thing I really dislike about Google Reader is it replaces the links to posts in my RSS feed. My <a href="http://pinboard.in/u:jasonpbecker">Pinboard account</a> is littered with links that start with <code>http://feedproxy.google.com</code>. I am quite concerned that with the demise of <a href="http://googlereader.blogspot.com/2013/03/powering-down-google-reader.html">Google Reader</a> on July 1, 2013, these redirects ...</p></p></div>
+          <h1><a href="../2013/05/cleaning-urls-with-textexpander.html">Cleaning URLs with&nbsp;TextExpander</a></h1>
+            <div class=summary><p><p>One thing I really dislike about Google Reader is it replaces the links to posts in my <span class="caps">RSS</span> feed. My <a href="http://pinboard.in/u:jasonpbecker">Pinboard account</a> is littered with links that start with <code>http://feedproxy.google.com</code>. I am quite concerned that with the demise of <a href="http://googlereader.blogspot.com/2013/03/powering-down-google-reader.html">Google Reader</a> on July 1, 2013, these redirects ...</p></p></div>
         </div>
       </div>
                 <div class=entry-overview>
         <div class=date>Jun 20, 2013</div>
         <div class=detail>
-          <h1><a href="../2013/06/economic-policy-institute-is-wrong.html">Economic Policy Institute is Wrong</a></h1>
-            <div class=summary><p><p>The <a href="http://www.epi.org/">Economic Policy Institute</a> has release a <a href="http://www.epi.org/files/2013/ib366-rhode-islands-hybrid-pension-plan.pdf">short issue brief</a> on the Rhode Island Retirement Security Act (RIRSA) by <a href="https://twitter.com/rhiltnsmth">Robert Hiltonsmith</a> that manages to get all of the details right but the big picture entirely wrong.</p>
-<p>The EPI Issue Brief details the differences between the retirement system for state workers ...</p></p></div>
+          <h1><a href="../2013/06/economic-policy-institute-is-wrong.html">Economic Policy Institute is&nbsp;Wrong</a></h1>
+            <div class=summary><p><p>The <a href="http://www.epi.org/">Economic Policy Institute</a> has release a <a href="http://www.epi.org/files/2013/ib366-rhode-islands-hybrid-pension-plan.pdf">short issue brief</a> on the Rhode Island Retirement Security Act (<span class="caps">RIRSA</span>) by <a href="https://twitter.com/rhiltnsmth">Robert Hiltonsmith</a> that manages to get all of the details right but the big picture entirely&nbsp;wrong.</p>
+<p>The <span class="caps">EPI</span> Issue Brief details the differences between the retirement system for state workers ...</p></p></div>
         </div>
       </div>
                 <div class=entry-overview>
         <div class=date>Jun 02, 2013</div>
         <div class=detail>
-          <h1><a href="../2013/06/linear-thinking.html">Linear Thinking</a></h1>
-            <div class=summary><p><p>Apple will be revealing new details for both of its major operating systems at WWDC on June 10, 2013. The focus of much speculation has been how Apple will improve multi-tasking and inter-app communication in iOS7. As batteries have grown, CPUs have become increasingly powerful, and the application <a href="../2012/11/frictionless.html">ecosystem</a> has ...</p></p></div>
+          <h1><a href="../2013/06/linear-thinking.html">Linear&nbsp;Thinking</a></h1>
+            <div class=summary><p><p>Apple will be revealing new details for both of its major operating systems at <span class="caps">WWDC</span> on June 10, 2013. The focus of much speculation has been how Apple will improve multi-tasking and inter-app communication in iOS7. As batteries have grown, CPUs have become increasingly powerful, and the application <a href="../2012/11/frictionless.html">ecosystem</a> has ...</p></p></div>
         </div>
       </div>
                 <div class=entry-overview>
         <div class=date>Jul 23, 2013</div>
         <div class=detail>
-          <h1><a href="../2013/07/smarter-balance-released-items-scare-me.html">Smarter Balance Released Items Scare Me</a></h1>
-            <div class=summary><p><p><a href="http://ccssimath.blogspot.com/2013/06/our-sbac-practice-tests-run-through.html">CCSSI Mathematics</a> posted a scathing look at the items released by the <a href="http://www.smarterbalanced.org/">Smarter Balanced Assessment Consortium</a> (SBAC). While the rest of the internet seems to be obsessed over <a href="http://blogs.edweek.org/edweek/curriculum/2013/07/georgia_drops_out_of_parcc_tes.html">Georgia leaving the Partnership for Assessment of College and Careers</a><sup id="fnref:absurdity"><a class="footnote-ref" href="#fn:absurdity" rel="footnote">1</a></sup>, the real concern should be over the quality of these test ...</p></p></div>
+          <h1><a href="../2013/07/smarter-balance-released-items-scare-me.html">Smarter Balance Released Items Scare&nbsp;Me</a></h1>
+            <div class=summary><p><p><a href="http://ccssimath.blogspot.com/2013/06/our-sbac-practice-tests-run-through.html"><span class="caps">CCSSI</span> Mathematics</a> posted a scathing look at the items released by the <a href="http://www.smarterbalanced.org/">Smarter Balanced Assessment Consortium</a> (<span class="caps">SBAC</span>). While the rest of the internet seems to be obsessed over <a href="http://blogs.edweek.org/edweek/curriculum/2013/07/georgia_drops_out_of_parcc_tes.html">Georgia leaving the Partnership for Assessment of College and Careers</a><sup id="fnref:absurdity"><a class="footnote-ref" href="#fn:absurdity" rel="footnote">1</a></sup>, the real concern should be over the quality of these test ...</p></p></div>
         </div>
       </div>
                 <div class=entry-overview>
         <div class=date>Aug 22, 2013</div>
         <div class=detail>
-          <h1><a href="../2013/08/some-changes-for-rhode-island-state-aid-to-education.html">Some Changes for Rhode Island State Aid to Education</a></h1>
-            <div class=summary><p><p>In December 2009, the education department head, Professor Kenneth K. Wong, another graduate student and myself were part of a three-person team consulting the Rhode Island Department of Education (RIDE) on how to establish a new state funding formula. We worked with finance and legal staff at the department to ...</p></p></div>
+          <h1><a href="../2013/08/some-changes-for-rhode-island-state-aid-to-education.html">Some Changes for Rhode Island State Aid to&nbsp;Education</a></h1>
+            <div class=summary><p><p>In December 2009, the education department head, Professor Kenneth K. Wong, another graduate student and myself were part of a three-person team consulting the Rhode Island Department of Education (<span class="caps">RIDE</span>) on how to establish a new state funding formula. We worked with finance and legal staff at the department to ...</p></p></div>
         </div>
       </div>
                 <div class=entry-overview>
         <div class=date>Aug 15, 2013</div>
         <div class=detail>
-          <h1><a href="../2013/08/what-can-be-done-for-rhode-island-pensioners.html">What can be done for Rhode Island Pensioners?</a></h1>
+          <h1><a href="../2013/08/what-can-be-done-for-rhode-island-pensioners.html">What can be done for Rhode Island&nbsp;Pensioners?</a></h1>
             <div class=summary><p><p>Proposing a small improvement to Rhode Island's pension reform.</p>
 <div class="footnote">
 <hr />

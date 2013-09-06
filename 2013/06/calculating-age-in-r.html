@@ -14,7 +14,7 @@
                 <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title> Calculating Age in R | jasonpbecker </title>
+    <title> Calculating Age in&nbsp;R | jasonpbecker </title>
 
     <link rel="stylesheet" href="../../theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../../theme/css/pygments.css" type="text/css" />
@@ -52,9 +52,9 @@
       </div>
       <div class=separator></div>                
         <div class=body>
-            <h1 class="title"> Calculating Age in R</h1>
+            <h1 class="title"> Calculating Age in&nbsp;R</h1>
     <p class=date> 2013-06-12 </p>
-    <p>A few months back I wrote some code to calculate age from a date of birth and arbitrary end date. It is not a real tricky task, but it is certainly one that comes up often when doing research on individual-level data.</p>
+    <p>A few months back I wrote some code to calculate age from a date of birth and arbitrary end date. It is not a real tricky task, but it is certainly one that comes up often when doing research on individual-level&nbsp;data.</p>
 <p>I was a bit surprised to only find bits and pieces of code and advice on how to best go about this task. After reading through some old R-help and Stack Overflow responses on various ways to do date math in R, this is the function I wrote <sup id="fnref:wrote"><a class="footnote-ref" href="#fn:wrote" rel="footnote">1</a></sup>:</p>
 <div class="highlight"><pre>age_calc <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dob<span class="p">,</span> enddate<span class="o">=</span>Sys.Date<span class="p">(),</span> units<span class="o">=</span><span class="s">&#39;months&#39;</span><span class="p">){</span>
   <span class="kr">if</span> <span class="p">(</span><span class="o">!</span>inherits<span class="p">(</span>dob<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="o">!</span>inherits<span class="p">(</span>enddate<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">))</span>
@@ -80,24 +80,24 @@
 </pre></div>
 
 
-<p>A few notes on proper usage and the choices I made in writing this function: </p>
+<p>A few notes on proper usage and the choices I made in writing this&nbsp;function: </p>
 <ul>
 <li>The parameters <code>dob</code> and <code>enddate</code> expect data that is already in one of the various classes that minimally inherits the base class <code>Date</code>. </li>
-<li>This function takes advantage of the way that R treats vectors, so both <code>dob</code> and <code>enddate</code> can be a single or multi-element vector. For example <code>enddate</code> is a single date, as is the default, then the function will return a vector that calculates the difference between <code>dob</code> and that single date for each element in <code>dob</code>. If <code>dob</code> and <code>enddate</code> are both vectors with n&gt;1, then the returned vector will contain the <a href="http://heather.cs.ucdavis.edu/~matloff/r.old.html#elementwise">element-wise</a> difference between <code>dob</code> and <code>enddate</code>. When the vectors are of different sizes, the shorter vector will be repeated over until it reaches the same length as the longer vector. This is known as <a href="http://cran.r-project.org/doc/manuals/R-intro.html#The-recycling-rule">recycling</a>, and it is the default behavior in R.</li>
-<li>This function always returns an integer. Calculating age in years will never return, say, 26.2. Instead, it assumes that the correct behavior for age calculations is something like a <code>floor</code> function. For examle, the function will only return 27 if <code>enddate</code> is minimally your 27th birthday. Up until that day you are considered 26. The same is true for age in months.</li>
+<li>This function takes advantage of the way that R treats vectors, so both <code>dob</code> and <code>enddate</code> can be a single or multi-element vector. For example <code>enddate</code> is a single date, as is the default, then the function will return a vector that calculates the difference between <code>dob</code> and that single date for each element in <code>dob</code>. If <code>dob</code> and <code>enddate</code> are both vectors with n&gt;1, then the returned vector will contain the <a href="http://heather.cs.ucdavis.edu/~matloff/r.old.html#elementwise">element-wise</a> difference between <code>dob</code> and <code>enddate</code>. When the vectors are of different sizes, the shorter vector will be repeated over until it reaches the same length as the longer vector. This is known as <a href="http://cran.r-project.org/doc/manuals/R-intro.html#The-recycling-rule">recycling</a>, and it is the default behavior in&nbsp;R.</li>
+<li>This function always returns an integer. Calculating age in years will never return, say, 26.2. Instead, it assumes that the correct behavior for age calculations is something like a <code>floor</code> function. For examle, the function will only return 27 if <code>enddate</code> is minimally your 27th birthday. Up until that day you are considered 26. The same is true for age in&nbsp;months.</li>
 </ul>
-<p>This is probably the first custom function in almost 3 years using R that I wrote to be truly generalizable. I was inspired by three factors. First, this is a truly frequent task that I will have to apply to many data sets in the future that I don't want to have to revisit. Second, a professional acquaintance, <a href="http://jaredknowles.com/">Jared Knowles</a>, is putting together a CRAN package with various convenience functions for folks who are new to R and using it to analyze education data <sup id="fnref:eeptools"><a class="footnote-ref" href="#fn:eeptools" rel="footnote">2</a></sup>. This seemed like an appropriate addition to that package, so I wanted to write it to that standard. In fact, it was my first (and to date, only) submitted and accepted pull request on Github. Third, it is a tiny, simple function so it was easy to wrap my head around and write it well. I will let you be the judge of my success or failure <sup id="fnref:inspiration"><a class="footnote-ref" href="#fn:inspiration" rel="footnote">3</a></sup>.</p>
+<p>This is probably the first custom function in almost 3 years using R that I wrote to be truly generalizable. I was inspired by three factors. First, this is a truly frequent task that I will have to apply to many data sets in the future that I don&#8217;t want to have to revisit. Second, a professional acquaintance, <a href="http://jaredknowles.com/">Jared Knowles</a>, is putting together a <span class="caps">CRAN</span> package with various convenience functions for folks who are new to R and using it to analyze education data <sup id="fnref:eeptools"><a class="footnote-ref" href="#fn:eeptools" rel="footnote">2</a></sup>. This seemed like an appropriate addition to that package, so I wanted to write it to that standard. In fact, it was my first (and to date, only) submitted and accepted pull request on Github. Third, it is a tiny, simple function so it was easy to wrap my head around and write it well. I will let you be the judge of my success or failure <sup id="fnref:inspiration"><a class="footnote-ref" href="#fn:inspiration" rel="footnote">3</a></sup>.</p>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:wrote">
-<p>I originally used <code>Sys.time()</code> not realizing there was a <code>Sys.Date()</code> function. Thanks to Jared Knowles for that edit in preparation for a CRAN check.&#160;<a class="footnote-backref" href="#fnref:wrote" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>I originally used <code>Sys.time()</code> not realizing there was a <code>Sys.Date()</code> function. Thanks to Jared Knowles for that edit in preparation for a <span class="caps">CRAN</span> check.&#160;<a class="footnote-backref" href="#fnref:wrote" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:eeptools">
 <p>Check out <a href="https://github.com/jknowles/eeptools">eeptools</a> on Github.&#160;<a class="footnote-backref" href="#fnref:eeptools" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:inspiration">
-<p>Thanks to <a href="http://mcfromnz.wordpress.com/2013/06/12/updated-age-calculation-function/">Matt's Stats n Stuff</a> for getting me to write this post. When I saw another age calculation function pop up on the r-bloggers feed I immediately thought of this function. Matt pointed out that it was quite hard to Google for age calculations in R, lamenting that Google doesn't meaningfully crawl Github where I linked to find my code. So this post is mostly about providing some help to less experience R folks who are frantically Googling as both Matt and I did when faced with this need.&#160;<a class="footnote-backref" href="#fnref:inspiration" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>Thanks to <a href="http://mcfromnz.wordpress.com/2013/06/12/updated-age-calculation-function/">Matt&#8217;s Stats n Stuff</a> for getting me to write this post. When I saw another age calculation function pop up on the r-bloggers feed I immediately thought of this function. Matt pointed out that it was quite hard to Google for age calculations in R, lamenting that Google doesn&#8217;t meaningfully crawl Github where I linked to find my code. So this post is mostly about providing some help to less experience R folks who are frantically Googling as both Matt and I did when faced with this need.&#160;<a class="footnote-backref" href="#fnref:inspiration" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

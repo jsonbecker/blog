@@ -14,7 +14,7 @@
                 <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title> Cleaning URLs with TextExpander | jasonpbecker </title>
+    <title> Cleaning URLs with&nbsp;TextExpander | jasonpbecker </title>
 
     <link rel="stylesheet" href="../../theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../../theme/css/pygments.css" type="text/css" />
@@ -52,15 +52,15 @@
       </div>
       <div class=separator></div>                
         <div class=body>
-            <h1 class="title"> Cleaning URLs with TextExpander</h1>
+            <h1 class="title"> Cleaning URLs with&nbsp;TextExpander</h1>
     <p class=date> 2013-05-30 </p>
-    <p>One thing I really dislike about Google Reader is it replaces the links to posts in my RSS feed. My <a href="http://pinboard.in/u:jasonpbecker">Pinboard account</a> is littered with links that start with <code>http://feedproxy.google.com</code>. I am quite concerned that with the demise of <a href="http://googlereader.blogspot.com/2013/03/powering-down-google-reader.html">Google Reader</a> on July 1, 2013, these redirects will no longer work.</p>
-<p>It's not just Google that obscures the actually address of links on the internet. The popularity of using link shortening services, both to save characters on Twitter and to collect analytics, has proliferated the <em>Internet of Redirects</em>.</p>
-<p>Worse still, after I am done cutting through redirects, I often find that the ultimate link include all kinds of extraneous attributes, most especially a barrage of <code>utm_*</code> campaign tracking.</p>
-<p>Now, I understand why all of this is happening and the importance of the services and analytics this link cruft provides. I am quite happy to click on shortened links, move through all the redirects, and let sites know just how I found them. But quite often, like when using a bookmarking service or writing a blog post, I just want the simple, plain text URL that gets me directly to the permanent home of the content.</p>
-<p>One part of my workflow to deal with link cruft is a TextExpander snippet I call <code>cleanURL</code>. It triggers a simple Python script that grabs the URL in my clipboard, traces through the redirects to the final destination, then strips links of campaign tracking attributes, and ultimately pastes a new URL that is much "cleaner".</p>
-<p>Below I have provided the script. I hope it is useful to some other folks, and I would love some recommendations for additional "cleaning" that could be performed.</p>
-<p>My next task is expanding this script to work with <a href="http://pinboard.in">Pinboard</a> so that I can clean up all my links before the end of the month when Google Reader goes belly up.</p>
+    <p>One thing I really dislike about Google Reader is it replaces the links to posts in my <span class="caps">RSS</span> feed. My <a href="http://pinboard.in/u:jasonpbecker">Pinboard account</a> is littered with links that start with <code>http://feedproxy.google.com</code>. I am quite concerned that with the demise of <a href="http://googlereader.blogspot.com/2013/03/powering-down-google-reader.html">Google Reader</a> on July 1, 2013, these redirects will no longer&nbsp;work.</p>
+<p>It&#8217;s not just Google that obscures the actually address of links on the internet. The popularity of using link shortening services, both to save characters on Twitter and to collect analytics, has proliferated the <em>Internet of Redirects</em>.</p>
+<p>Worse still, after I am done cutting through redirects, I often find that the ultimate link include all kinds of extraneous attributes, most especially a barrage of <code>utm_*</code> campaign&nbsp;tracking.</p>
+<p>Now, I understand why all of this is happening and the importance of the services and analytics this link cruft provides. I am quite happy to click on shortened links, move through all the redirects, and let sites know just how I found them. But quite often, like when using a bookmarking service or writing a blog post, I just want the simple, plain text <span class="caps">URL</span> that gets me directly to the permanent home of the&nbsp;content.</p>
+<p>One part of my workflow to deal with link cruft is a TextExpander snippet I call <code>cleanURL</code>. It triggers a simple Python script that grabs the <span class="caps">URL</span> in my clipboard, traces through the redirects to the final destination, then strips links of campaign tracking attributes, and ultimately pastes a new <span class="caps">URL</span> that is much&nbsp;&#8220;cleaner&#8221;.</p>
+<p>Below I have provided the script. I hope it is useful to some other folks, and I would love some recommendations for additional &#8220;cleaning&#8221; that could be&nbsp;performed.</p>
+<p>My next task is expanding this script to work with <a href="http://pinboard.in">Pinboard</a> so that I can clean up all my links before the end of the month when Google Reader goes belly&nbsp;up.</p>
 <div class="highlight"><pre><span class="c">#!/usr/bin/python</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -69,7 +69,7 @@
 
 <span class="n">url</span> <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&#39;pbpaste&#39;</span><span class="p">)</span>
 
-<span class="c"># Go through the redirects to get the destination URL</span>
+<span class="c"># Go through the redirects to get the destination <span class="caps">URL</span></span>
 <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
 <span class="c"># Look for utm attributes</span>

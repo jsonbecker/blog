@@ -14,7 +14,7 @@
                 <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title> Ranked Likert-Scale Visualization | jasonpbecker </title>
+    <title> Ranked Likert-Scale&nbsp;Visualization | jasonpbecker </title>
 
     <link rel="stylesheet" href="../../theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../../theme/css/pygments.css" type="text/css" />
@@ -52,15 +52,15 @@
       </div>
       <div class=separator></div>                
         <div class=body>
-            <h1 class="title"> Ranked Likert-Scale Visualization</h1>
+            <h1 class="title"> Ranked Likert-Scale&nbsp;Visualization</h1>
     <p class=date> 2012-07-10 </p>
     <h2>Update</h2>
 <p>See below for more information now that Ethan Brown has <a href="http://statisfactions.com/2012/improved-net-stacked-distribution-graphs-via-ggplot2-trickery/">weighed in with some great code</a>.</p>
 <p>A <a href="http://blog.ouseful.info/2012/07/09/fumblings-with-ranked-likert-scale-data-in-r/">recent post</a> I came across on <a href="http://www.r-bloggers.com/">r-bloggers</a> asked for input on visualizing ranked <a href="http://en.wikipedia.org/wiki/Likert_scale">Likert-scale data</a>.</p>
 <p>I happen to be working on a substantial project using very similarly structured data so I thought I would share some code. In my efforts to be generic as possible, I decided to generate some fake data from scratch. As I peeled away the layers of context-specific aspects of my nearing-production level code, I ran into all kinds of trouble. So I apologize for the somewhat sloppy and unfinished code<sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">2</a></sup>.</p>
 <p><img alt="Greaterthan" src="../../static/images/rankedlikert.png" title="Example of a Net Stacked Likert" /> <sup id="fnref:netstacked"><a class="footnote-ref" href="#fn:netstacked" rel="footnote">1</a></sup></p>
-<p>My preferred method for visualizing Likert-scale data from surveys is using <a href="http://www.organizationview.com/net-stacked-distribution-a-better-way-to-visualize-likert-data">net stacked distribution graphs</a>. There are two major benefits of these kinds of graphs. First, they immediately draw attention to <em>how strongly</em> respondents feel about a question, particularly when multiple questions are visualized at once. The total width of any bar is equal to the total number of responded who had a non-neutral answer. Second, these graphs make it very easy to distinguish between positive and negative responses. In some cases, it is critical to view the distribution of data to visualize the differences in responses to one question or another. However, most of the time it is informative enough to simply know how positive or negative responses are. I find this is particularly true with 3, 4, and 5-point Likert scales, the most common I come across in education research.</p>
-<p>Anyway, without further ado, some starter code for producing net stacked distribution graphs.</p>
+<p>My preferred method for visualizing Likert-scale data from surveys is using <a href="http://www.organizationview.com/net-stacked-distribution-a-better-way-to-visualize-likert-data">net stacked distribution graphs</a>. There are two major benefits of these kinds of graphs. First, they immediately draw attention to <em>how strongly</em> respondents feel about a question, particularly when multiple questions are visualized at once. The total width of any bar is equal to the total number of responded who had a non-neutral answer. Second, these graphs make it very easy to distinguish between positive and negative responses. In some cases, it is critical to view the distribution of data to visualize the differences in responses to one question or another. However, most of the time it is informative enough to simply know how positive or negative responses are. I find this is particularly true with 3, 4, and 5-point Likert scales, the most common I come across in education&nbsp;research.</p>
+<p>Anyway, without further ado, some starter code for producing net stacked distribution&nbsp;graphs.</p>
 <div class="highlight"><pre>require<span class="p">(</span>ggplot2<span class="p">)</span>
 require<span class="p">(</span>scales<span class="p">)</span>
 require<span class="p">(</span>plyr<span class="p">)</span>
@@ -100,7 +100,7 @@ visualize <span class="o">&lt;-</span> <span class="kr">function</span><span cla
                                   <span class="s">&#39;Agree&#39;</span><span class="p">,</span>
                                   <span class="s">&#39;Strongly Agree&#39;</span><span class="p">),</span>
                       desc<span class="o">=</span><span class="s">&#39;Title&#39;</span><span class="p">,</span>
-                      rm.neutral<span class="o">=</span><span class="kc">TRUE</span><span class="p">){</span>
+                      rm.neutral<span class="o">=</span><span class="kc"><span class="caps">TRUE</span></span><span class="p">){</span>
   <span class="c1"># This function will create net stacked distribution graphs. These are</span>
   <span class="c1"># a particularly useful visualization of Likert data when there is a neutral</span>
   <span class="c1"># option available and/or when emphasizing the difference between positive and</span>
@@ -112,7 +112,7 @@ visualize <span class="o">&lt;-</span> <span class="kr">function</span><span cla
   <span class="c1">#         question text.</span>
   <span class="c1">#   rm.neutral: This is a single element logical vector that determines if the</span>
   <span class="c1">#               neutral response should be removed from the data. The default</span>
-  <span class="c1">#               value is TRUE.</span>
+  <span class="c1">#               value is <span class="caps">TRUE</span>.</span>
   <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>ceiling<span class="p">(</span>length<span class="p">(</span>responses<span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">)</span><span class="m">-1</span><span class="p">){</span>
       <span class="c1"># This loop negates all the negative, non-neutral responses regardless of</span>
       <span class="c1"># the number of possible responses. This will center the non-neutral</span>
@@ -149,23 +149,23 @@ visualize <span class="o">&lt;-</span> <span class="kr">function</span><span cla
                                      limits<span class="o">=</span>c<span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">1</span><span class="p">),</span>
                                      breaks<span class="o">=</span>seq<span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">.2</span><span class="p">))</span> <span class="o">+</span>
                   scale_fill_manual<span class="p">(</span>limits<span class="o">=</span>responses<span class="p">,</span>
-                                    values<span class="o">=</span>c<span class="p">(</span><span class="s">&#39;#AA1111&#39;</span><span class="p">,</span>
-                                             <span class="s">&#39;#BB6666&#39;</span><span class="p">,</span>
-                                             <span class="s">&#39;#66BB66&#39;</span><span class="p">,</span>
-                                             <span class="s">&#39;#11AA11&#39;</span><span class="p">))</span> <span class="o">+</span>
+                                    values<span class="o">=</span>c<span class="p">(</span><span class="s">&#39;#<span class="caps">AA1111</span>&#39;</span><span class="p">,</span>
+                                             <span class="s">&#39;#<span class="caps">BB6666</span>&#39;</span><span class="p">,</span>
+                                             <span class="s">&#39;#<span class="caps">66BB66</span>&#39;</span><span class="p">,</span>
+                                             <span class="s">&#39;#<span class="caps">11AA11</span>&#39;</span><span class="p">))</span> <span class="o">+</span>
                   coord_flip<span class="p">()</span>
   stackedchart
 <span class="p">}</span>
 </pre></div>
 
 
-<p>And the results of all that?</p>
+<p>And the results of all&nbsp;that?</p>
 <p><img alt="I wish it were prettier, but this is where I got." src="../../static/images/fakeexample.png" /></p>
-<h2>UPDATE:</h2>
-<p>So now that Ethan has weighed in with his code I thought I would add some things to make this post better reflect my production code. Below, I have included my comment on his blog as well as an actual copy of my current production code (which definitely is not sufficiently refactored for easy use across multiple projects). Again, excuse what I consider to be incomplete work on my part. I do intend on refactoring this code and eventually including it in my broader set of custom functions available across all of my projects. I suspect along that path that I will be "stealing" some of Ethan's ideas.</p>
+<h2><span class="caps">UPDATE</span>:</h2>
+<p>So now that Ethan has weighed in with his code I thought I would add some things to make this post better reflect my production code. Below, I have included my comment on his blog as well as an actual copy of my current production code (which definitely is not sufficiently refactored for easy use across multiple projects). Again, excuse what I consider to be incomplete work on my part. I do intend on refactoring this code and eventually including it in my broader set of custom functions available across all of my projects. I suspect along that path that I will be &#8220;stealing&#8221; some of Ethan&#8217;s&nbsp;ideas.</p>
 <h3>Comment</h3>
-<p>Hi Ethan! Super excited to see this post. This is exactly why I put up my code-- so others could run with it. There are a few things that you do here that I actually already had implemented into my code and removed in an attempt to be more neutral to scale that I really like.</p>
-<p>For starters, in my actual production code I also separate out the positive and negative responses. In my code, I have a parameter called <code>scaleName</code> that allows me to switch between all of the scales that are available in my survey data. This includes Strongly Disagree to Strongly Agree (<code>scaleName=='sdsa'</code>), Never -> Always (<code>scaleName=='sdsa'</code>) and even simple yes/no (<code>scaleName=='ny'</code>). This is not ideal because it does require 1) knowing all possible scales and including some work in the function to treat them differently 2) including an additional parameter. However, because I use this work to analyze just a few surveys, the upfront work of including this as a parameter has made this very flexible in dealing with multiple scales. As a result, I do not need to require that the columns are ordered in any particular way, just that the titles match existing scales. So I have a long set of if elseif statements that look something like this:</p>
+<p>Hi Ethan! Super excited to see this post. This is exactly why I put up my code&#8212; so others could run with it. There are a few things that you do here that I actually already had implemented into my code and removed in an attempt to be more neutral to scale that I really&nbsp;like.</p>
+<p>For starters, in my actual production code I also separate out the positive and negative responses. In my code, I have a parameter called <code>scaleName</code> that allows me to switch between all of the scales that are available in my survey data. This includes Strongly Disagree to Strongly Agree (<code>scaleName=='sdsa'</code>), Never -> Always (<code>scaleName=='sdsa'</code>) and even simple yes/no (<code>scaleName=='ny'</code>). This is not ideal because it does require 1) knowing all possible scales and including some work in the function to treat them differently 2) including an additional parameter. However, because I use this work to analyze just a few surveys, the upfront work of including this as a parameter has made this very flexible in dealing with multiple scales. As a result, I do not need to require that the columns are ordered in any particular way, just that the titles match existing scales. So I have a long set of if elseif statements that look something like&nbsp;this:</p>
 <div class="highlight"><pre><span class="kr">if</span><span class="p">(</span>scaleName<span class="o">==</span><span class="s">&#39;sdsa&#39;</span><span class="p">){</span>
 scale <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
 pos <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
@@ -174,14 +174,14 @@ neg <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;S
 </pre></div>
 
 
-<p>This is actually really helpful for producing negative values and including some scales in my function which do not have values that are negative (so that it can be used for general stacked charts instead of just net-stacked):</p>
+<p>This is actually really helpful for producing negative values and including some scales in my function which do not have values that are negative (so that it can be used for general stacked charts instead of just&nbsp;net-stacked):</p>
 <div class="highlight"><pre><span class="kr">if</span><span class="p">(</span>length<span class="p">(</span>neg<span class="p">)</span><span class="o">&gt;</span><span class="m">0</span><span class="p">){</span>
 quest<span class="p">[,</span>names<span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> c<span class="p">(</span>neg<span class="p">)]</span> <span class="o">&lt;-</span> <span class="o">-</span><span class="p">(</span>quest<span class="p">[,</span>names<span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> c<span class="p">(</span>neg<span class="p">)])</span>
 </pre></div>
 
 
-<p>(Recall that quest is what I call the dataframe and is equivalent to x in your code)</p>
-<p>Another neat trick that I have instituted is having dynamic x-axis limits rather than always going from -100 to 100. I generally like to keep my scales representing the full logical range of data (0 - 100 for percentages, etc) so I might consider this a manipulation. However, after getting many charts with stubby centers, I found I was not really seeing sufficient variation by sticking to my -100 to 100 setup. So I added this:</p>
+<p>(Recall that quest is what I call the dataframe and is equivalent to x in your&nbsp;code)</p>
+<p>Another neat trick that I have instituted is having dynamic x-axis limits rather than always going from -100 to 100. I generally like to keep my scales representing the full logical range of data (0 - 100 for percentages, etc) so I might consider this a manipulation. However, after getting many charts with stubby centers, I found I was not really seeing sufficient variation by sticking to my -100 to 100 setup. So I added&nbsp;this:</p>
 <div class="highlight"><pre>pos_lims <span class="o">=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">1</span><span class="p">,]),</span>
 sum<span class="p">(</span>subset<span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span>c<span class="p">(</span>which<span class="p">(</span>quest<span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&gt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">2</span><span class="p">,])))</span>
 neg_lims <span class="o">&lt;-</span> max<span class="p">(</span>abs<span class="p">(</span>c<span class="p">(</span>sum<span class="p">(</span>subset<span class="p">(</span>quest<span class="p">,</span> 
@@ -191,7 +191,7 @@ x_axis_lims <span class="o">&lt;-</span> max<span class="p">(</span>pos_lims<spa
 </pre></div>
 
 
-<p>Which helps to determine the value furthest from 0 in either direction across the data frame (I have to admit, this code looks a bit like magic reading it back. My comments actually are quite helpful:</p>
+<p>Which helps to determine the value furthest from 0 in either direction across the data frame (I have to admit, this code looks a bit like magic reading it back. My comments actually are quite&nbsp;helpful:</p>
 <div class="highlight"><pre><span class="c1"># pos_lims and neg_lims subset each row of the data based on sign, then</span>
 <span class="c1"># sums the values that remain (gettting the total positive or negative</span>
 <span class="c1"># percentage for each row). Then, the max of the rows is saved as a candidate</span>
@@ -199,7 +199,7 @@ x_axis_lims <span class="o">&lt;-</span> max<span class="p">(</span>pos_lims<spa
 </pre></div>
 
 
-<p>To make this more generalizable (my production code always compares two bars at once) , it would be fairly trivial to loop over all the rows (or use the apply functions which I'm still trying to get a hang of).</p>
+<p>To make this more generalizable (my production code always compares two bars at once) , it would be fairly trivial to loop over all the rows (or use the apply functions which I&#8217;m still trying to get a hang&nbsp;of).</p>
 <p>I then pad the <code>x_limits</code> value by some percent inside the <code>limits</code> attribute.</p>
 <p>In my production code I also have the <code>scale_fill_manual</code> attribute
 added separately to the ggplot object. However, rather than add this
@@ -208,7 +208,7 @@ function again set by <code>scaleName</code>. However, I think the best organiza
 is probably to have a separate function that makes it easy to select the
 color scheme you want and apply it so that your final call could be
 something like <code>colorNetStacked(net_stacked(x), 'blues')</code>.</p>
-<p>My actual final return looks like this:</p>
+<p>My actual final return looks like&nbsp;this:</p>
 <div class="highlight"><pre><span class="kr">return</span><span class="p">(</span>stackedchart <span class="o">+</span> scale_fill_manual<span class="p">(</span>limits<span class="o">=</span>scale<span class="p">,</span>
 values<span class="o">=</span>colors<span class="p">)</span> <span class="o">+</span>
 coord_flip<span class="p">())</span>
@@ -216,8 +216,8 @@ coord_flip<span class="p">())</span>
 
 
 <p>Where colors is set by a line like: <code>colors &lt;- brewer.pal(name='Blues',n=7)[3:7]</code></p>
-<p>Seriously though, I am super excited you found my post and thought it was useful and improved what I presented!</p>
-<h3>Current production code:</h3>
+<p>Seriously though, I am super excited you found my post and thought it was useful and improved what I&nbsp;presented!</p>
+<h3>Current production&nbsp;code:</h3>
 <div class="highlight"><pre>visualize <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>quest<span class="p">,</span>scaleName<span class="o">=</span><span class="s">&#39;sdsa&#39;</span><span class="p">,</span>desc<span class="p">){</span>
   <span class="c1"># Produces the main net-stacked Likert graphic used for survey data in the</span>
   <span class="c1"># diagnostic tool</span>
@@ -295,7 +295,7 @@ coord_flip<span class="p">())</span>
   <span class="c1"># is furthest left and strongly agree is furthest right.</span>
   quest<span class="p">[[</span><span class="s">&#39;variable&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> factor<span class="p">(</span>quest<span class="p">[[</span><span class="s">&#39;variable&#39;</span><span class="p">]],</span>
                                 levels<span class="o">=</span>scale<span class="p">,</span>
-                                ordered<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+                                ordered<span class="o">=</span><span class="kc"><span class="caps">TRUE</span></span><span class="p">)</span>
 
   <span class="c1"># Build the plot using ggplot(). Layers are used so that positive and negative</span>
   <span class="c1"># can be drawn separately. This is important because the order of the negative</span>
@@ -333,7 +333,7 @@ coord_flip<span class="p">())</span>
 
   <span class="p">}</span>
   <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> c<span class="p">(</span><span class="s">&#39;sdsa&#39;</span><span class="p">,</span><span class="s">&#39;neal&#39;</span><span class="p">)){</span>
-    colors <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;#AA1111&#39;</span><span class="p">,</span><span class="s">&#39;#BB6666&#39;</span><span class="p">,</span><span class="s">&#39;#66BB66&#39;</span><span class="p">,</span><span class="s">&#39;#11AA11&#39;</span><span class="p">)</span>
+    colors <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;#<span class="caps">AA1111</span>&#39;</span><span class="p">,</span><span class="s">&#39;#<span class="caps">BB6666</span>&#39;</span><span class="p">,</span><span class="s">&#39;#<span class="caps">66BB66</span>&#39;</span><span class="p">,</span><span class="s">&#39;#<span class="caps">11AA11</span>&#39;</span><span class="p">)</span>
     stackedchart <span class="o">&lt;-</span>  stackedchart <span class="o">+</span>
       scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>percent<span class="p">,</span>
                          limits<span class="o">=</span>c<span class="p">(</span><span class="o">-</span>x_axis_lims<span class="m">-.1</span><span class="p">,</span> x_axis_lims<span class="m">+.1</span><span class="p">),</span>
@@ -341,7 +341,7 @@ coord_flip<span class="p">())</span>
                                     round<span class="p">(</span>x_axis_lims<span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="m">+.1</span><span class="p">,</span>
                                     <span class="m">.2</span><span class="p">))</span>
   <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> c<span class="p">(</span><span class="s">&#39;ny&#39;</span><span class="p">,</span><span class="s">&#39;da&#39;</span><span class="p">)){</span>
-    colors <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;#BB6666&#39;</span><span class="p">,</span><span class="s">&#39;#66BB66&#39;</span><span class="p">)</span>
+    colors <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;#<span class="caps">BB6666</span>&#39;</span><span class="p">,</span><span class="s">&#39;#<span class="caps">66BB66</span>&#39;</span><span class="p">)</span>
     stackedchart <span class="o">&lt;-</span>  stackedchart <span class="o">+</span>
       scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>percent<span class="p">,</span>
                          limits<span class="o">=</span>c<span class="p">(</span><span class="o">-</span>x_axis_lims<span class="m">-.1</span><span class="p">,</span> x_axis_lims<span class="m">+.1</span><span class="p">),</span>
