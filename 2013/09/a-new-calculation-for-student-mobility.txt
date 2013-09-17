@@ -1,7 +1,7 @@
 title: A New Calculation for Student Mobility
 author: Jason P. Becker
 email: jason.paul.becker@gmail.com
-date: 2013-09-12
+date: 2013-09-17
 keywords: education, data, rstats
 summary: A brief discussion on the complexity of determining the number of schools a student has attended within a single school year using a minimal set of information.
 

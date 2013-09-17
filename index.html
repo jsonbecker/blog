@@ -38,53 +38,94 @@
       <div class=separator></div>                
         <div class=body>
         
-            <h1 class="title">Documentation of Business Rules and&nbsp;Analysis<a href="./2013/09/documentation-of-business-rules-and-analysis.html" class=perma>&#8734;</a></h1>
-      <p class=date> 2013-09-13 </p>
-      <p>One of the most challenging aspects of being a data analyst is translating programmatic terms like &#8220;student mobility&#8221; into precise business rules. Almost any simple statistic involves a series of decisions that are often opaque to the ultimate users of that&nbsp;statistic.</p>
-<p>Documentation of business rules is a critical aspect of a data analysts job that, in my experience, is often regrettably overlooked. If you have ever tried to reproduce someone else&#8217;s analysis, asked different people for the same statistic, or tried to compare data from multiple years, you have probably encountered difficulties getting a consistent answer on standard statistics, e.g. how many students were proficient in math, how many students graduated in four years, what proportion of students were chronically absent? All too often documentation of business rules is poor or non-existent. The result is that two analysts with the same data will produce inconsistent statistics. This is not because of something inherent in the quality of the data or an indictment of the analyst’s skills. In most cases, the undocumented business rules are essentially trivial, in that the results of any decision has a small impact on the final result and any of the decisions made by the analysts are equally&nbsp;defensible.</p>
-<p>This major problem of lax or non-existent documentation is one of the main reasons I feel that analysts, and in particular analysts working in the public sector, should extensively use tools for code sharing and version control like <a href="http://www.github.com/">Github</a>, use free tools whenever possible, and generally adhere to best practices in reproducible&nbsp;research.</p>
-<p>I am trying to put as much of my code on Github as I can these days. Much of what I write is still very disorganized and, frankly, embarrassing. A lot of what is in my Github repositories is old, abandoned code written as I was learning my craft. A lot of it is written to work with very specific, private data. Most of it is poorly documented because I am the only one who has ever had to use it, I don&#8217;t interact with anyone through practices like code reviews, and frankly I am lazy when pressed with a deadline. But that&#8217;s not really the point, is it? The worst documented code is code that is hidden away on a personal hard drive, written for an expensive proprietary environment most people and organizations cannot use, or worse, is not code at all but rather a series of destructive data edits and manipulations. <sup id="fnref:fuckexcel"><a class="footnote-ref" href="#fn:fuckexcel" rel="footnote">1</a></sup></p>
-<p>One way that I have been trying to improve the quality and utility of the code I write is by contributing to an open source R package, <code>eeptools</code>. This is a package written and maintained by Jared Knowles, an employee of the Wisconsin Department of Public Instruction, whom I met at a <a href="http://www.gse.harvard.edu/sdp/">Strategic Data Project</a> convening. <code>eeptools</code> is consolidating several functions in R for common tasks education data analysts are faced with. Because this package is available on <a href="http://cran.us.r-project.org/"><span class="caps">CRAN</span></a>, the primary repository for R packages, any education analyst can have access to its functions in one&nbsp;line: </p>
-<div class="highlight"><pre>install.packages<span class="p">(</span><span class="s">&#39;eeptools&#39;</span><span class="p">);</span> require<span class="p">(</span>eeptools<span class="p">)</span>
-</pre></div>
-
-
-<p>Submitting code to a <span class="caps">CRAN</span> package reinforces several habits. First, I get to practice writing R documentation,  explaining how to use a function, and therefore, articulating the assumptions and business rules I am applying. Second, I have to write my code with a wider tolerance for input data. One of the easy pitfalls of a beginning analyst is writing code that is too specific to the dataset in front of you. Most of the errors I have found in analyses during quality control stem from assumptions embedded in code that were perfectly reasonable with a single data set that lead to serious errors when using different data. One way to avoid this issue is through <a href="http://en.wikipedia.org/wiki/Test-driven_development">test-driven development</a>, writing a good testing suite that tests a wide range of unexpected inputs. I am not quite there yet, personally, but thinking about how my code would have to work with arbitrary inputs and ensuring it fails gracefully <sup id="fnref:fallingwithstyle"><a class="footnote-ref" href="#fn:fallingwithstyle" rel="footnote">2</a></sup> is an excellent side benefit of preparing a pull request <sup id="fnref:gitterms"><a class="footnote-ref" href="#fn:gitterms" rel="footnote">3</a></sup> . Third, it is an opportunity to write code for someone other than myself. Because I am often the sole analyst with my skillset working on a project, it is easy to not consider things like style, optimizations, clarity, etc. This can lead to large build-ups of <a href="http://en.wikipedia.org/wiki/Technical_debt">technical debt</a>, complacency toward learning new techniques, and general sloppiness. Submitting a pull request feels like publishing. The world has to read this, so it better be something I am proud of that can stand up to the scrutiny of third-party&nbsp;users.</p>
-<p>My first pull request, which was accepted into the package, calculates age in years, months, or days at an arbitrary date based on date of birth. While even a beginning R programmer can develop a similar function, it is the perfect example of an easily compartmentalized component, with a broad set of applications, that can be accessed frequently&nbsp;.</p>
-<p>Today I submitted by second pull request that I hope will be accepted. This time I covered a much more complex task&#8212; calculating student mobility. To be honest, I am completely unaware of existing business rules and algorithms used to produce the mobility numbers that are federally reported. I wrote this function from scratch thinking through how I would calculate the number of schools attended by a student in a given year. I am really proud of both the business rules I have developed and the code I wrote to apply those rules. My custom function can accept fairly arbitrary inputs, fails gracefully when it finds data it does not expect, and is pretty fast. The original version of my code took close to 10 minutes to run on ~30,000 rows of data. I have reduced that with a complete rewrite prior to submission to 16&nbsp;seconds.</p>
-<p>While I am not sure if this request will be accepted, I will be thrilled if it is. Mobility is a tremendously important statistic in education research and a standard, reproducible way to calculate it would be a great help to researchers. How great would it be if <code>eeptools</code> becomes one of the first packages education data analysts load and my mobility calculations are used broadly by researchers and analysts? But even if it’s not accepted because it falls out of scope, the process of developing the business rules, writing an initial implementation of those rules, and then refining that code to be far simpler, faster, and less error prone was incredibly&nbsp;rewarding.</p>
-<p>My next post will probably be a review of that process and some parts of my <code>moves_calc</code> function that I&#8217;m particularly proud&nbsp;of.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:fuckexcel">
-<p>Using a spreadsheet program, such as Excel, encourages directly manipulating and editing the source data. Each change permanently changes the data. Even if you keep an original version of the data, there is no recording of exactly what was done to change the data to produce your results. Reproducibility is all but impossible of any significant analysis done using spreadsheet software.&#160;<a class="footnote-backref" href="#fnref:fuckexcel" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:fallingwithstyle">
-<p>Instead of halting the function with hard to understand error when things go wrong, I do my best to &#8220;correct&#8221; easily anticipated errors or report back to users in a plain way what needs to be fixed. See also <a href="http://en.wikipedia.org/wiki/Fault-tolerant_system">fault-tolerant system</a>.&#160;<a class="footnote-backref" href="#fnref:fallingwithstyle" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-<li id="fn:gitterms">
-<p>A <a href="https://help.github.com/articles/using-pull-requests">pull request</a> is when you submit your additions, deletions, or any other modifications to be incorporated in someone else&#8217;s repository.&#160;<a class="footnote-backref" href="#fnref:gitterms" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div>
-      
-                      <div class=entry-overview>
-        <div class=date>Sep 12, 2013</div>
-        <div class=detail>
-          <h1><a href="./2013/09/a-new-calculation-for-student-mobility.html">A New Calculation for Student&nbsp;Mobility</a></h1>
-            <div class=summary><p><p>A brief discussion on the complexity of determining the number of schools a student has attended within a single school year using a minimal set of information.</p>
+            <h1 class="title">A New Calculation for Student&nbsp;Mobility<a href="./2013/09/a-new-calculation-for-student-mobility.html" class=perma>&#8734;</a></h1>
+      <p class=date> 2013-09-17 </p>
+      <p>How do we calculate student mobility? I am currently soliciting responses from other data professionals across the country. But when I needed to produce mobility numbers for some of my work a couple of months ago, I decided to develop a set of business rules without any exposure to how the federal government, states, or other existing systems define mobility. <sup id="fnref:ignorance"><a class="footnote-ref" href="#fn:ignorance" rel="footnote">1</a></sup></p>
+<p>I am fairly proud of my work on mobility. This post will review how I defined student mobility. I am hopeful that it matches or bests current techniques for calculating the number of schools a student has attended. In my next post, I will share the first two major versions of my implementation of these mobility business rules in <code>R</code>. <sup id="fnref:learningexperience"><a class="footnote-ref" href="#fn:learningexperience" rel="footnote">2</a></sup> Together, these posts will represent the work I referred to in my previous post on the <a href="./2013/09/documentation-of-business-rules-and-analysis.html">importance of documenting business rules and sharing code</a>.</p>
+<h2>The&nbsp;Rules</h2>
+<p>Working with district data presents a woefully incomplete picture of the education mobile students receive. Particularly in a state like Rhode Island, where our districts are only a few miles wide, there is substantial interdistrict mobility. When a student moves across district lines, their enrollment is not recorded in local district data. However, even with state level data, highly mobile students cross state lines and present incomplete data. A key consideration for calculating how many schools a student has attended in a particular year is capturing &#8220;missing&#8221; data&nbsp;sensibly.</p>
+<p>The typical structure of enrollment records looks something like&nbsp;this:</p>
+<table>
+<thead>
+<tr>
+<th>Unique Student <span class="caps">ID</span></th>
+<th>School Code</th>
+<th>Enrollment Date</th>
+<th>Exit Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1000000</td>
+<td>10101</td>
+<td>2012-09-01</td>
+<td>2012-11-15</td>
+</tr>
+<tr>
+<td>1000000</td>
+<td>10103</td>
+<td>2012-11-16</td>
+<td>2013-06-15</td>
+</tr>
+</tbody>
+</table>
+<p>A compound key for this data consists of the Unique Student <span class="caps">ID</span>, School Code, and Enrollment Date, meaning that each row must be a unique combination of these three factors. The data above shows a simple case of a student enrolling at the start of the school year, switching schools once with no gap in enrollment, and continuing at the new school until the end of the school year. For the purposes of mobility, I would define the above as having moved one&nbsp;time.</p>
+<p>But it is easy to see how some very complex scenarios could quickly arise. What if student <code>1000000</code>&#8216;s record looked like&nbsp;this?</p>
+<table>
+<thead>
+<tr>
+<th>Unique Student <span class="caps">ID</span></th>
+<th>School Code</th>
+<th>Enrollment Date</th>
+<th>Exit Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1000000</td>
+<td>10101</td>
+<td>2012-10-15</td>
+<td>2012-11-15</td>
+</tr>
+<tr>
+<td>1000000</td>
+<td>10103</td>
+<td>2013-01-03</td>
+<td>2013-03-13</td>
+</tr>
+<tr>
+<td>1000000</td>
+<td>10103</td>
+<td>2013-03-20</td>
+<td>2013-05-13</td>
+</tr>
+</tbody>
+</table>
+<p>There are several features that make it challenging to assign a number of &#8220;moves&#8221; to this student. First, the student does not enroll in school until October 15, 2012. This is nearly six weeks into the typical school year in the Northeastern United States. Should we assume that this student has enrolled in no school at all prior to October 15th or should we assume that the student was enrolled in a school that was outside of this district and therefore missing in the data? Next, we notice the enrollment gap between November 15, 2012 and January 3, 2013. Is it right to assume that the student has moved only once in this period of time with a gap of enrollment of over a month and a half? Then we notice that the student exited school <code>10103</code> on March 13, 2013 but was re-enrolled in the same school a week later on March 20, 2013. Has the student truly &#8220;moved&#8221; in this period? Lastly, the student exits the district on May 13, 2013 for the final time. This is nearly a month before the end of school. Has this student moved to a different&nbsp;school?</p>
+<p>There is an element missing that most enrollment data has which can enrich our understanding of this student&#8217;s record. All district collect an exit type, which explains if a student is leaving to enroll in another school within the district, another school in a different district in the same state, another school in a different state, a private school, etc. It also defines whether a student is dropping out, graduating, or has entered the juvenile justice system, for example. However, it has been my experience that this data is reported inconsistently and unreliably. Frequently a student will be reported as changing schools within the district without a subsequent enrollment record, or reported as leaving the district but enroll within the same district a few days later. Therefore, I think that we should try and infer the number of schools that a student has attended using soley the enrollment date, exit date, and school code for each student record. This data is far more reliable for a host of reasons, and, ultimately, provides us with all the information we need to make intelligent&nbsp;decisions.</p>
+<p>My proposed set of business rules examines <code>school code</code>, <code>enrollment date</code>, and <code>exit date</code> against three parameters: <code>enrollment by</code>, <code>exit by</code>, and <code>gap</code>. 
+Each students minimum enrollment date is compared to <code>enrollment by</code>. If that student entered the data set for the first time before the <code>enrollment by</code>, the assumption is that this record represents the first time the student enrolls in any school for that year, and therefore the student has 0 <code>moves</code>. If the student enrolls for the first time after <code>enrollment by</code>, then the record is considered the second school a student has attended and their <code>moves</code> attribute is incremented by <code>1</code>. Similarly, if a student&#8217;s maximium <code>exit date</code> is after <code>exit by</code>, then this considered to be the student&#8217;s last school enrolled in for the year and they are credited with <code>0</code> <code>moves</code>, but if <code>exit date</code> is prior to <code>exit by</code>, then that student&#8217;s <code>moves</code> is incremented by <code>1</code>.</p>
+<p>That takes care of the &#8220;ends&#8221;, but what happens as students switch schools in the &#8220;middle&#8221;? I proposed that each <code>exit date</code> is compared to the subsequent <code>enrollment date</code>. If <code>enrollment date</code> occurs within <code>gap</code> days of the previous <code>exit date</code>, and the <code>school code</code> of enrollment is not the same as the <code>school code</code> of exit, then a student&#8217;s <code>moves</code> are incremented by <code>1</code>. If the <code>school codes</code> are identical and the difference between dates is less than <code>gap</code>, then the student is said to have not moved at all. If the difference between the <code>enrollment date</code> and the previous <code>exit date</code> is greater than <code>gap</code>, then the student&#8217;s <code>moves</code> is incremented by <code>2</code>, the assumption being that the student likely attended a different school between the two observations in the&nbsp;data.</p>
+<p>Whereas calculating student mobility may have seemed a simple matter of counting the number of records in the enrollment file, clearly there is a level of complexity this would fail to&nbsp;capture.</p>
+<p>Check back in a few days to see my next post where I will share my initial implementation of these business rules and how I achieved an 10x speed up with a massive code&nbsp;refactor.</p>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:ignorance">
-<p>My ignorance was intentional. It is good to stretch those brain muscles that think through sticky problems like developing business rules for a key statistic. I can't be sure that I have developed the most considered and complete set of rules for mobility, which is why I'm now soliciting other's views, but I am hopeful my solution is at least as good.&#160;<a class="footnote-backref" href="#fnref:ignorance" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>My ignorance was intentional. It is good to stretch those brain muscles that think through sticky problems like developing business rules for a key statistic. I can&#8217;t be sure that I have developed the most considered and complete set of rules for mobility, which is why I&#8217;m now soliciting other&#8217;s views, but I am hopeful my solution is at least as good.&#160;<a class="footnote-backref" href="#fnref:ignorance" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:learningexperience">
 <p>I think showing my first two implementation of these business rules is an excellent opportunity to review several key design considerations when programming in <code>R</code>. From version 1 to version 2 I achieved a 10x speedup due to a complete refactor that avoided <code>for</code> loops, used <code>data.table</code>, and included some clever use of recursion.&#160;<a class="footnote-backref" href="#fnref:learningexperience" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
-</div></p></div>
+</div>
+      
+                      <div class=entry-overview>
+        <div class=date>Sep 13, 2013</div>
+        <div class=detail>
+          <h1><a href="./2013/09/documentation-of-business-rules-and-analysis.html">Documentation of Business Rules and&nbsp;Analysis</a></h1>
+            <div class=summary><p><p>One of the most challenging aspects of being a data analyst is translating programmatic terms like &#8220;student mobility&#8221; into precise business rules. Almost any simple statistic involves a series of decisions that are often opaque to the ultimate users of that&nbsp;statistic.</p>
+<p>Documentation of business rules is a critical aspect ...</p></p></div>
         </div>
       </div>
                 <div class=entry-overview>
