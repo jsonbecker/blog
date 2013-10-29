@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-                    <script type="text/javascript">
+        <script type="text/javascript">
         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
         </script>
@@ -13,7 +13,7 @@
           pageTracker._trackPageview();
         } catch(err) {}
         </script>
-                <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>jasonpbecker <small>google maps</small></title>
@@ -21,10 +21,10 @@
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/font-awesome.css" type="text/css"/>
-      </head>
+  </head>
   <body>
     <div class=container>
-                    
+
       <div class=navigation>
         <ul>
           <a href="../index.html"> 
@@ -35,14 +35,14 @@
             <li> <i class="icon-archive icon-large"></i> </li> </a>
         </ul>
       </div>
-      <div class=separator></div>                
+      <div class=separator></div>        
         <div class=body>
-        
-            <h1 class="title">Providence Real Estate Sales in&nbsp;R<a href="../2012/01/providence-real-estate-sales-in-r.html" class=perma>&#8734;</a></h1>
+
+      <h1 class="title">Providence Real Estate Sales in&nbsp;R<a href="../2012/01/providence-real-estate-sales-in-r.html" class=perma>&#8734;</a></h1>
       <p class=date> 2012-01-23 </p>
       <p>The past few months I&#8217;ve been learning how to use R. This morning, I decided to try out two first&#8212; importing a table of data that is being read of the web and overlaying location data onto a&nbsp;map.</p>
 <p>With a little bit of Google skills and just enough R know-how I was able to produce this&nbsp;image:</p>
-<p><img alt="Providence Home Sales 9-12-11 to 12-27-11" src="../static/images/homesales.png" title="Providence Home Sales 9-12-11 to 12-27-11" /></p>
+<p><img alt="Providence Home Sales 9-12-11 to 12-27-11" src="../images/homesales.png" title="Providence Home Sales 9-12-11 to 12-27-11" /></p>
 <p>There were a few things that were kind of tricky for me. First, for sometime I couldn&#8217;t get latitude and longitude components for the addresses. I figured there was something wrong with the way I was using the *apply class of functions in R. apply() (and the related class of functions lapply, sapply, etc.) are really handy if a bit tricky for beginning R users. This function permits quickly &#8220;applying&#8221; a function across multiple elements. Traditionally this is done with a loop, but the apply() functions &#8220;vectorize&#8221; this process (R folks always talk about making your code more vectorized which has something to do with the structure of objects in R but is beyond my computer science skills&#8212; essentially, vectorized code runs much faster and more efficiency than loops because of some underlying feature of the language). After playing around with apply, lapply, and sapply, I decided to move back into my &#8220;old&#8221; way of thinking and just write a&nbsp;loop:</p>
 <div class="highlight"><pre>latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">){</span>
   lat <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
@@ -150,18 +150,18 @@ map <span class="o">&lt;-</span> GetMap.bbox<span class="p">(</span>bb<span clas
 PlotOnStaticMap<span class="p">(</span>map<span class="p">,</span>lon<span class="o">=</span>providence<span class="o">$</span>lng<span class="p">,</span>lat<span class="o">=</span>providence<span class="o">$</span>lat<span class="p">)</span>
 </pre></div>
       
-            <p class=tags style="margin-bottom: 15em;">This entry was tagged as
-                <a href="../tag/google-maps.html">google maps</a>
-                <a href="../tag/providence.html">providence</a>
-                <a href="../tag/real-estate.html">real estate</a>
-                <a href="../tag/rhode-island.html">rhode island</a>
-                <a href="../tag/rstats.html">rstats</a>
-              </p>
-            
+      <p class=tags style="margin-bottom: 15em;">This entry was tagged as
+        <a href="../tag/google-maps.html">google maps</a>
+        <a href="../tag/providence.html">providence</a>
+        <a href="../tag/real-estate.html">real estate</a>
+        <a href="../tag/rhode-island.html">rhode island</a>
+        <a href="../tag/rstats.html">rstats</a>
+      </p>
+
 
         </div>
         
-                    <div class=footer>
+<div class=footer>
   <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
   <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
     Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
@@ -182,6 +182,6 @@ PlotOnStaticMap<span class="p">(</span>map<span class="p">,</span>lon<span class
       </ul>
     </div>
   </p>
-</div>            </div>
-          </body>
+</div>    </div>
+  </body>
 </html>

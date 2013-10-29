@@ -4,20 +4,20 @@
 &lt;p&gt;Although I was writing as a private citizen without the support of the Rhode Island Department of Education, I did use my access to &lt;span class="caps"&gt;RIDE&lt;/span&gt; data to ensure that differences in the federal reports were not significant enough to call into question my analysis. I found that both the direction and magnitude of all the trends that I describe in the Nesi&amp;#8217;s Notes post held up with the state data. While all of that information is publicly available, it is less easily accessible than &lt;span class="caps"&gt;NCES&lt;/span&gt; data and doesn&amp;#8217;t provide the same opportunity for analysis outside of financial data. For these reasons, I decided to stick with&amp;nbsp;&lt;span class="caps"&gt;NCES&lt;/span&gt;.&lt;/p&gt;
 &lt;p&gt;So how do you reproduce the data I&amp;nbsp;used?&lt;/p&gt;
 &lt;p&gt;First, go to  the &lt;a href="http://nces.ed.gov/ccd/bat"&gt;&lt;span class="caps"&gt;NCES&lt;/span&gt; Common Core Data Build a Table&lt;/a&gt; site. On the drop down, select &amp;#8220;District&amp;#8221; as the row variable and select the last fifteen years excluding 2009-10 (since there is no current financial data available for that&amp;nbsp;year).&lt;/p&gt;
-&lt;p&gt;&lt;img alt="1" src="http://blog.jsonbecker.com/static/images/nces1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="1" src="http://blog.jsonbecker.com/images/nces1.png" /&gt;&lt;/p&gt;
 &lt;p&gt;After clicking next, hit &amp;#8220;I Agree&amp;#8221; on the&amp;nbsp;pop-up.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="2" src="http://blog.jsonbecker.com/static/images/nces2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="2" src="http://blog.jsonbecker.com/images/nces2.png" /&gt;&lt;/p&gt;
 &lt;p&gt;Now select &amp;#8220;Finance Per Pupil Ratios&amp;#8221; for the first&amp;nbsp;column.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="3" src="http://blog.jsonbecker.com/static/images/nces3.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="3" src="http://blog.jsonbecker.com/images/nces3.png" /&gt;&lt;/p&gt;
 &lt;p&gt;Click the green arrow that selects all years for local sources per
 student and state sources per&amp;nbsp;student.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="4" src="http://blog.jsonbecker.com/static/images/nces4.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="4" src="http://blog.jsonbecker.com/images/nces4.png" /&gt;&lt;/p&gt;
 &lt;p&gt;Click &amp;#8220;Next&gt;&gt;&amp;#8221; on the top right. Now select only &lt;span class="caps"&gt;RI&lt;/span&gt;-Rhode Island for
 your row&amp;nbsp;variable.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="5" src="http://blog.jsonbecker.com/static/images/nces5.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="5" src="http://blog.jsonbecker.com/images/nces5.png" /&gt;&lt;/p&gt;
 &lt;p&gt;Finally, click view table to see the results. I recommend downloading
 the Test (.csv) file to work&amp;nbsp;with.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="6" src="http://blog.jsonbecker.com/static/images/nces6.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="6" src="http://blog.jsonbecker.com/images/nces6.png" /&gt;&lt;/p&gt;
 &lt;p&gt;And finally, here&amp;#8217;s the R code to reshape/rejigger the data I used and
 produce the graphics from the Nesi&amp;#8217;s Notes&amp;nbsp;post.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;## Using &lt;span class="caps"&gt;NCES&lt;/span&gt; data to analyze education finances to Woonsocket over 15 years.&lt;/span&gt;

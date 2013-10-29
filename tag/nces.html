@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-                    <script type="text/javascript">
+        <script type="text/javascript">
         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
         </script>
@@ -13,7 +13,7 @@
           pageTracker._trackPageview();
         } catch(err) {}
         </script>
-                <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>jasonpbecker <small>nces</small></title>
@@ -21,10 +21,10 @@
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/font-awesome.css" type="text/css"/>
-      </head>
+  </head>
   <body>
     <div class=container>
-                    
+
       <div class=navigation>
         <ul>
           <a href="../index.html"> 
@@ -35,30 +35,30 @@
             <li> <i class="icon-archive icon-large"></i> </li> </a>
         </ul>
       </div>
-      <div class=separator></div>                
+      <div class=separator></div>        
         <div class=body>
-        
-            <h1 class="title">Using the Common Core Data on&nbsp;<span class="caps">NCES</span><a href="../2012/07/using-the-common-core-data-on-nces.html" class=perma>&#8734;</a></h1>
+
+      <h1 class="title">Using the Common Core Data on&nbsp;<span class="caps">NCES</span><a href="../2012/07/using-the-common-core-data-on-nces.html" class=perma>&#8734;</a></h1>
       <p class=date> 2012-07-12 </p>
       <p>My analysis on <a href="http://blogs.wpri.com/?p=62059">Nesi&#8217;s Notes</a> depended entirely on the <a href="http://nces.ed.gov/ccd/bat">National Center for Education Statistics&#8217; Common Core Data</a>. The per pupil amounts reported to <span class="caps">NCES</span> may look a bit different from state sources of this information. There are several explanations of this. First, the enrollment counts used to generate per pupil amounts are based on an October 1st headcount. In Rhode Island, we use something called &#8220;average daily membership&#8221; (<span class="caps">ADM</span>) as the denominator and not a headcount. The <span class="caps">ADM</span> of a district is calculated by taking all the students who attended the district at any point in the year and adding up the number of school days they were enrolled for. The total membership (i.e. all the student*days, for those who like to think about this in units) is divided by the number of school days per year, almost always 180 (so student*days / days/year = students/year). Additionally, <span class="caps">NCES</span> does not record the final three digits on most financial data. These rounding issues will also make the per pupil data seem different from state&nbsp;reports.</p>
 <p>I wanted to use the <span class="caps">NCES</span> to make sure that the data in my post was easily reproducible by any member of the public. I also thought using <span class="caps">NCES</span> would serve as a great learning opportunity for the wonks and nerds out there who never even realized how much rich data about schools and school finance are available through the federal government. That being said, I do believe that the state reported numbers are far more accurate than those available from the federal government. That is not to say that the federal data is bad. On the contrary, that data is substantially vetted and validated and is very useful for research. My concern was only that some of the tiny differences in the <span class="caps">NCES</span> data that deviated from what I would consider to be ideal data might reach the level where they affected the validity of the conclusions I wanted to&nbsp;draw.</p>
 <p>Although I was writing as a private citizen without the support of the Rhode Island Department of Education, I did use my access to <span class="caps">RIDE</span> data to ensure that differences in the federal reports were not significant enough to call into question my analysis. I found that both the direction and magnitude of all the trends that I describe in the Nesi&#8217;s Notes post held up with the state data. While all of that information is publicly available, it is less easily accessible than <span class="caps">NCES</span> data and doesn&#8217;t provide the same opportunity for analysis outside of financial data. For these reasons, I decided to stick with&nbsp;<span class="caps">NCES</span>.</p>
 <p>So how do you reproduce the data I&nbsp;used?</p>
 <p>First, go to  the <a href="http://nces.ed.gov/ccd/bat"><span class="caps">NCES</span> Common Core Data Build a Table</a> site. On the drop down, select &#8220;District&#8221; as the row variable and select the last fifteen years excluding 2009-10 (since there is no current financial data available for that&nbsp;year).</p>
-<p><img alt="1" src="../static/images/nces1.png" /></p>
+<p><img alt="1" src="../images/nces1.png" /></p>
 <p>After clicking next, hit &#8220;I Agree&#8221; on the&nbsp;pop-up.</p>
-<p><img alt="2" src="../static/images/nces2.png" /></p>
+<p><img alt="2" src="../images/nces2.png" /></p>
 <p>Now select &#8220;Finance Per Pupil Ratios&#8221; for the first&nbsp;column.</p>
-<p><img alt="3" src="../static/images/nces3.png" /></p>
+<p><img alt="3" src="../images/nces3.png" /></p>
 <p>Click the green arrow that selects all years for local sources per
 student and state sources per&nbsp;student.</p>
-<p><img alt="4" src="../static/images/nces4.png" /></p>
+<p><img alt="4" src="../images/nces4.png" /></p>
 <p>Click &#8220;Next>>&#8221; on the top right. Now select only <span class="caps">RI</span>-Rhode Island for
 your row&nbsp;variable.</p>
-<p><img alt="5" src="../static/images/nces5.png" /></p>
+<p><img alt="5" src="../images/nces5.png" /></p>
 <p>Finally, click view table to see the results. I recommend downloading
 the Test (.csv) file to work&nbsp;with.</p>
-<p><img alt="6" src="../static/images/nces6.png" /></p>
+<p><img alt="6" src="../images/nces6.png" /></p>
 <p>And finally, here&#8217;s the R code to reshape/rejigger the data I used and
 produce the graphics from the Nesi&#8217;s Notes&nbsp;post.</p>
 <div class="highlight"><pre><span class="c1">## Using <span class="caps">NCES</span> data to analyze education finances to Woonsocket over 15 years.</span>
@@ -296,25 +296,25 @@ ggsave<span class="p">(</span><span class="s">&#39;localpropplot.png&#39;</span>
 
 <p><em>This post is the third of a three-part follow up on my <a href="http://blogs.wpri.com/category/nesis-notes/">guest post</a> for Nesi&#8217;s Notes. Parts I and <span class="caps">II</span> can be found <a href="../2012/07/follow-up-to-nesis-notes-guest-post-woonsocket-school-funding.html">here</a>.</em></p>
       
-            <p class=tags style="margin-bottom: 15em;">This entry was tagged as
-                <a href="../tag/ccd.html">ccd</a>
-                <a href="../tag/data.html">data</a>
-                <a href="../tag/education.html">education</a>
-                <a href="../tag/education-policy.html">education policy</a>
-                <a href="../tag/ggplot2.html">ggplot2</a>
-                <a href="../tag/nces.html">nces</a>
-                <a href="../tag/nesis-notes.html">nesi's notes</a>
-                <a href="../tag/politics.html">politics</a>
-                <a href="../tag/rhode-island.html">rhode island</a>
-                <a href="../tag/ri.html">ri</a>
-                <a href="../tag/rstats.html">rstats</a>
-                <a href="../tag/woonsocket.html">woonsocket</a>
-              </p>
-            
+      <p class=tags style="margin-bottom: 15em;">This entry was tagged as
+        <a href="../tag/ccd.html">ccd</a>
+        <a href="../tag/data.html">data</a>
+        <a href="../tag/education.html">education</a>
+        <a href="../tag/education-policy.html">education policy</a>
+        <a href="../tag/ggplot2.html">ggplot2</a>
+        <a href="../tag/nces.html">nces</a>
+        <a href="../tag/nesis-notes.html">nesi's notes</a>
+        <a href="../tag/politics.html">politics</a>
+        <a href="../tag/rhode-island.html">rhode island</a>
+        <a href="../tag/ri.html">ri</a>
+        <a href="../tag/rstats.html">rstats</a>
+        <a href="../tag/woonsocket.html">woonsocket</a>
+      </p>
+
 
         </div>
         
-                    <div class=footer>
+<div class=footer>
   <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
   <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
     Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
@@ -335,6 +335,6 @@ ggsave<span class="p">(</span><span class="s">&#39;localpropplot.png&#39;</span>
       </ul>
     </div>
   </p>
-</div>            </div>
-          </body>
+</div>    </div>
+  </body>
 </html>

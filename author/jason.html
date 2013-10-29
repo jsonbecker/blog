@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-                    <script type="text/javascript">
+        <script type="text/javascript">
         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
         </script>
@@ -13,7 +13,7 @@
           pageTracker._trackPageview();
         } catch(err) {}
         </script>
-                <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>jasonpbecker - Articles by Jason</title>
@@ -21,10 +21,10 @@
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/font-awesome.css" type="text/css"/>
-      </head>
+  </head>
   <body>
     <div class=container>
-                    
+
       <div class=navigation>
         <ul>
           <a href="../index.html"> 
@@ -35,166 +35,244 @@
             <li> <i class="icon-archive icon-large"></i> </li> </a>
         </ul>
       </div>
-      <div class=separator></div>                
+      <div class=separator></div>        
         <div class=body>
-        
-            <h1 class="title">A little knowledge is a wonderful (dangerous)&nbsp;thing<a href="../2012/11/a-little-knowledge-is-a-wonderful-dangerous-thing.html" class=perma>&#8734;</a></h1>
-      <p class=date> 2012-11-20 </p>
-      <p>It is so tempting to try to apply cognitive science results in education. It seems like an obvious step on the long road of moving education from a field of theory and philosophies to one more grounded in empirical research. Yet, learning myths are persistent. Even scarier, &#8220;<a href="http://cedarsdigest.wordpress.com/2012/11/18/myths-come-from-values-not-from-ignorance/">those who know the most about neuroscience also believe the most myths.</a>&#8221;</p>
-<p>Educators may have the best intentions when trying to infuse their practice with evidence, but they all too often are not equipped as critical consumers of research. Worse, the education profession has historically been wrapped in &#8220;thoughtworld&#8221; <sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">1</a></sup>, where schools of education have taught same ideas about effective teaching and learning for decades without a basis in empirical research. These same ideas are taught to principals, district administrators, and teachers, so nary a critical voice can stop the myths from being repeated and mutually reinforcing each&nbsp;other.</p>
-<p>Effectively conducting empirical research, translating research for policymakers, and implementing research-based program design is my job. I came to education purely from a research and policy perspective, and I am equipped to understand some of the empirical research done on effective schooling <sup id="fnref:2"><a class="footnote-ref" href="#fn:2" rel="footnote">2</a></sup>.</p>
-<p>I have to confront an awful history of &#8220;outsiders&#8221; like myself who have brought round after round of poorly supported, poorly evaluated reforms. I have to confront the history of districts and schools discarding some very effective programs because of leadership changes, lack of resources, and most of all a lack good, systematic evaluation of programs. And I have to be damn good at what I do, because even a small misstep could paint me just like every other &#8220;expert&#8221; that has rolled through with the newest great&nbsp;idea.</p>
-<p>I think this is why I tend to favor interventions that are very small. Simple, small, hard to &#8220;mess up&#8221; interventions,  based in research, implemented just a few at a time have tremendous potential. I love the oft-cited work on <a href="http://www.nber.org/papers/w15361">filling out the <span class="caps">FAFSA</span> along with tax filing at H&amp;R Block</a>. It is simple. There is no fear of &#8220;dosage&#8221; or implementation fidelity. There are both sound theoretical reasons and empirical results from other domains that suggest a high likelihood of success. It has the potential to make a huge impact on students without adding any load to teachers who are, say, implementing a brand new and complicated curriculum this year. This is how you earn trust through building&nbsp;success.</p>
-<p>I am also a fan of some really big, dramatic changes, but how I get there will have to be the subject of a future&nbsp;post.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:1">
-<p><span class="caps">E.D.</span> Hirsch&#8217;s term&#160;<a class="footnote-backref" href="#fnref:1" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p>In the area of neuroscience and cognitive science, I am probably only marginally better off than most teachers. My Sc.B. is in chemistry. So a background in empirical physical sciences and my knowledge of social science may help me to access some of the research on how people learn, but I would probably be just as susceptible to overconfidence in my ability to process this research and repeat untruths as many very intelligent educators.&#160;<a class="footnote-backref" href="#fnref:2" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div>
+
+      <h1 class="title">The Slow Trek to&nbsp;Pelican<a href="../2012/12/the-slow-trek-to-pelican.html" class=perma>&#8734;</a></h1>
+      <p class=date> 2012-12-20 </p>
+      <p><em>Update: Please see below for two&nbsp;solutions.</em></p>
+<p>I have grown increasingly unhappy with Wordpress lately. My blog is simple. My design tastes are simple. My needs are simple. I like control. I am a geek. And I really need an excuse to learn Python, which seems to be rapidly growing into one of the most important programming languages for a data&nbsp;analyst.</p>
+<p>I have decided to migrate this blog over to <a href="http://docs.getpelican.com/en/3.1.1/">Pelican</a>, a static site generator written in Python. Static sites are the &#8220;classic&#8221; way to do a webpage&#8212; just upload a bunch of <span class="caps">HTML</span> and <span class="caps">CSS</span> files, maybe some Javascript. But no databases and no constructing the page a user sees in the browser as they request it. This puts substantially less strain on a web server and makes it far easier to export and move a webpage since all you need to do is duplicate files. What makes static sites a real pain is that there is a lot of repetition. Folks adopted dynamic sites that use content management system so that they can write a page called &#8220;post.php&#8221; one time, and for each unique post just query a database for the unique content. The frame around the post, layout, components, etc are all just written once. Static site generators allow you to build a webpage using a similar, but far more stripped down, layout system. However, rather than generate each page on the web server, you generate each page by running a script locally that transforms plain text documents into well-formed <span class="caps">HTML</span>/<span class="caps">CSS</span>. Then you can just upload a directory and the whole site is ready to&nbsp;go.</p>
+<p>Pelican comes with a pretty good script that will take Wordpress <span class="caps">XML</span> that&#8217;s available via the built-in export tools and transform each post into a <a href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> files, a format similar to <a href="http://daringfireball.net/projects/markdown/">Markdown</a>. I prefer Markdown so I used <a href="http://johnmacfarlane.net/pandoc/">pandoc</a> to convert all my *.rst posts into *.md&nbsp;files.</p>
+<p>So far, so&nbsp;good.</p>
+<p>But one of the really big problems I had with Wordpress was a growing dependency on plugins that added non-standard, text-based markup in my posts that would be rendered a particular way. For example, text surrounded by two parenthesis, &#8216;[^0]&#8217;, became a footnote. For code syntax highlighting, I use a &#8220;short code&#8221;, which puts &#8220;sourcecode language=&#8217;r&#8217;&#8221;, for example, between brackets []. All of these plugins have been great, but now when you try to export a post you get the non-standard markup in-line as part of your posts. It makes it very difficult to recreate a post the way it looks&nbsp;today.</p>
+<p>This presents a great opportunity to learn a little Python. So I have begun to scrounge together some basic Python knowledge to write some scripts to clean up my Markdown files and convert the syntax of the short codes that I have used to properly formatted Markdown so that when I run the pelican script it will accurately reproduce each&nbsp;post.</p>
+<p>Unfortunately, I&#8217;ve hit a snag with my very first attempt. Footnotes are a big deal to me and have standard Markdown interpretation. In Markdown, footnotes are inserted in the text where &#8220;[\^#]&#8221; appears in the text, where # = the footnote identifier/key. Then, at the end of the document, surrounded by new lines, the footnote text is found with &#8220;[\^#]: footnote text&#8221; where # is the same identifier. So I needed to write a script that found each instance of text surrounded by two parentheses, insert the [\^#] part in place of the footnote, and then add the footnote at the bottom of the post in the right&nbsp;format.</p>
+<p>I created a test text&nbsp;file:</p>
+<div class="highlight"><pre><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">test</span> <span class="p">((</span><span class="n">test</span> <span class="n">footnote</span><span class="p">)).</span>
+<span class="n">And</span> <span class="n">here</span> <span class="n">is</span> <span class="n">another</span> <span class="n">test</span> <span class="p">((</span><span class="n">footnote2</span><span class="p">)).</span> <span class="n">Why</span> <span class="n">not</span> <span class="n">add</span> <span class="n">a</span> <span class="n">third</span><span class="o">?</span> <span class="p">((</span><span class="n">Three</span>
+<span class="n">Three</span><span class="p">)).</span>
+</pre></div>
+
+
+<p>The goal was to end up with a file like&nbsp;this:</p>
+<div class="highlight"><pre><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">test</span> <span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">].</span> <span class="n">And</span> <span class="n">here</span> <span class="n">is</span> <span class="n">another</span>
+<span class="n">test</span> <span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">].</span> <span class="n">Why</span> <span class="n">not</span> <span class="n">add</span> <span class="n">a</span> <span class="n">third</span><span class="o">?</span> <span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">].</span>
+
+<span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="n">test</span> <span class="n">footnote</span>
+
+<span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">footnote2</span>
+
+<span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="n">Three</span> <span class="n">Three</span>
+</pre></div>
+
+
+<p>Unfortunately, the output isn&#8217;t quite right. My best attempt resulted in
+a file like&nbsp;this:</p>
+<div class="highlight"><pre><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">test</span> <span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">]</span> <span class="n">And</span> <span class="n">here</span> <span class="n">is</span> <span class="n">another</span> <span class="n">te</span><span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">])).</span> <span class="n">Why</span> <span class="n">not</span> <span class="n">add</span> <span class="n">a</span>
+<span class="n">t</span><span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">]</span><span class="n">ree</span><span class="p">)).</span>
+
+<span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="p">((</span><span class="n">test</span> <span class="n">footnote</span><span class="p">))</span>
+
+<span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="p">((</span><span class="n">footnote2</span><span class="p">))</span>
+
+<span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="p">((</span><span class="n">Three</span> <span class="n">Three</span><span class="p">))</span>
+</pre></div>
+
+
+<p>Ugh.</p>
+<p>So I am turning to the tiny slice of my readership that might actually know Python or just code in general to help me out. Where did I screw up? The source to my Python script is below so feel free to comment here or on this <a href="https://gist.github.com/4342554#file-wpfootnotestomarkdown-py">Gist</a>. I am particularly frustrate that the regex appears to be capturing the parenthesis, because that&#8217;s not how the same code behaves on <a href="http://www.pythonregex.com">PythonRegex.com</a>.</p>
+<p>If anyone can help me with the next step, which will be creating arguments that will understand an input like <em>.rst and set the output to creating a file that&#8217;s </em>.md, that would be appreciated as&nbsp;well. </p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&quot;\(\(([^\(\(\)\)]+)\)\)&quot;</span><span class="p">)</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">raw_input</span><span class="p">(</span><span class="s">&#39;File Name &gt;&#39;</span><span class="p">))</span>
+<span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">footnoteMatches</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">coordinates</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">footnotes</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c"># Print span of matches</span>
+<span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">footnoteMatches</span><span class="p">:</span>
+    <span class="n">coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">())</span>
+    <span class="n">footnotes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">())</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="s">&#39;[^&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span> <span class="s">&#39;]&#39;</span> <span class="o">+</span>
+            <span class="n">text</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="n">shift</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">):</span>
+        <span class="n">coordinates</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">coordinates</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">shift</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">shift</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="n">referenceLinkList</span> <span class="o">=</span> <span class="p">[</span><span class="n">text</span> <span class="mi">1</span><span class="o">=</span><span class="s">&quot;&#39;</span>
+<span class="s">&#39;&quot; language=&quot;,&quot;][/text]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">footnotes</span><span class="p">)):</span>
+    <span class="n">insertList</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;[^&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="s">&#39;]: &#39;</span><span class="p">,</span> <span class="n">footnotes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">])</span>
+    <span class="n">referenceLinkList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">insertList</span><span class="p">)</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">referenceLinkList</span><span class="p">)</span>
+
+<span class="n">newFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+<span class="n">newFile</span><span class="o">.</span><span class="n">truncate</span><span class="p">()</span>
+<span class="n">newFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="n">newFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<h2>Update with&nbsp;solutions:</h2>
+<p>I am happy to report I now have two working solutions. The first one comes courtesy of <a href="https://github.com/ilikepi">James Blanding</a> who was kind enough to <a href="https://gist.github.com/4355865">fork</a> the gist I put up. While I was hoping to take a look tonight at his fork tonight, <a href="http://news.ycombinator.com/item?id=4957935">Github was experiencing some downtime</a>.  So I ended up fixing the script myself a slightly different way (seen below). I think James&#8217;s approach is superior for a few reasons, not the least of which was avoiding the ugly if/elif/else found in my code by using a global counter. He also used .format() a lot better than I did, which I didn&#8217;t know existed until I found it&nbsp;tonight.</p>
+<p>I made two other changes before coming to my solution. First, I realized my regex was completely wrong. I didn&#8217;t want to capture anything within the two parenthesis when no parenthesis were contained, as the original regex did. Instead, I wanted to make sure to preserve any parenthetical comments contained within my footnotes. So the resulting regex looks a bit different. I also switched from using user input to taking in the filepath as an&nbsp;argument.</p>
+<p>My next step will be to learn a bit more about the os module which seems to contain what I need so that this Python script can behave like a good Unix script and know what to do with one file or a list of files as a parameter (and of course, most importantly, a list generated from a wild card like *.rst). I will also be incorporating the bits of James&#8217;s code that I feel confident I understand and that I like&nbsp;better.</p>
+<p>Without further ado, my solution (I updated the gist as&nbsp;well):</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">argv</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">name</span><span class="p">,</span> <span class="n">file_path</span> <span class="o">=</span> <span class="n">argv</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;[\s]\(\((.*?[)]{0,1})\)\)[\s]{0,1}&quot;</span><span class="p">)</span>
+<span class="c"># The tricky part here is to match all text between &quot;((&quot;&quot;))&quot;, including as </span>
+<span class="c"># many as one set of (), which may even terminate ))). The {0,1} captures as</span>
+<span class="c"># many as one ). The trailing space is there because I often surrounded the </span>
+<span class="c"># &quot;((&quot;&quot;))&quot; with a space to make it clear in the WordPress editor.</span>
+
+<span class="c"># file_path = str(raw_input(&#39;File Name &gt;&#39;))</span>
+<span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">footnoteMatches</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">coordinates</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">footnotes</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c"># Print span of matches</span>
+<span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">footnoteMatches</span><span class="p">:</span>
+    <span class="n">coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">())</span>
+<span class="c"># Capture only group(1) so you get the content of the footnote, not the </span>
+<span class="c"># whole pattern which includes the parenthesis delimiter.</span>
+    <span class="n">footnotes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="n">newText</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">newText</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">[:</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span>
+                               <span class="s">&#39; [^{}]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span>
+        <span class="n">newText</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span>
+                          <span class="s">&#39; [^{}]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">newText</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span>
+                          <span class="s">&#39; [^{}]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c"># Accounts for text after the last footnote which only runs once.</span>
+        <span class="n">newText</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]:]</span><span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+
+<span class="n">endNotes</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">footnotes</span><span class="p">)):</span>
+    <span class="n">insertList</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;[^{}]: &#39;</span><span class="p">,</span> <span class="n">footnotes</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">endNotes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">insertList</span><span class="p">)</span>
+
+<span class="n">newText</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">newText</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">endNotes</span><span class="p">)</span>
+
+<span class="n">newFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+<span class="n">newFile</span><span class="o">.</span><span class="n">truncate</span><span class="p">()</span>
+<span class="n">newFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">newText</span><span class="p">)</span>
+<span class="n">newFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
       
-            <p class=tags style="margin-bottom: 15em;">This entry was tagged as
-                <a href="../tag/edpolicy.html">edpolicy</a>
-                <a href="../tag/education.html">education</a>
-                <a href="../tag/education-policy.html">education policy</a>
-                <a href="../tag/research.html">research</a>
-              </p>
-                      <div class=entry-overview>
-        <div class=date>Jun 13, 2012</div>
+      <p class=tags style="margin-bottom: 15em;">This entry was tagged as
+        <a href="../tag/code.html">code</a>
+        <a href="../tag/pelican.html">pelican</a>
+        <a href="../tag/python.html">python</a>
+        <a href="../tag/regex.html">regex</a>
+        <a href="../tag/wordpress.html">wordpress</a>
+      </p>
+      <div class=entry-overview>
+        <div class=date>Nov 20, 2012</div>
         <div class=detail>
-          <h1><a href="../2012/06/algorithms-design-and-analysis-part-i.html">Algorithms: Design and Analysis Part&nbsp;I</a></h1>
-            <div class=summary><p><p>Day one of a MOOC I thought I would take. I enjoyed it, but never continued because of the time committment.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:constituent">
-<p>The algorithm called to split an $n$ digit number $x$ into two, $n/2$ digit numbers. What was unstated, but of course true, is that this transformation must result in an expression that was equal to $x$. Of course, $x=10^n * a+10^\frac{n}{2} * b$ , because the leading digit of $a$ must be in the $n^{th}$ place and the leading digit of $b$ must be in the $\frac{n}{2}^{th}$ place. Nothing about this is complex to me, but it was not obvious at the speed of conversation. I think working out an actual example of a 4-digit number multiplication, as Professor Roughgarden had with the "primitive" multiplication algorithm, would have made this far clearer.&#160;<a class="footnote-backref" href="#fnref:constituent" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div></p></div>
+          <h1><a href="../2012/11/a-little-knowledge-is-a-wonderful-dangerous-thing.html">A little knowledge is a wonderful (dangerous)&nbsp;thing</a></h1>
+            <div class=summary><p><p>Applying the lessons of cognitive science to education is not a straight forward task. Even with the best intentions, we may do more harm than good.</p></p></div>
         </div>
       </div>
-                <div class=entry-overview>
-        <div class=date>Sep 14, 2011</div>
+      <div class=entry-overview>
+        <div class=date>Nov 04, 2012</div>
         <div class=detail>
-          <h1><a href="../2011/09/apple-migration-assistant.html">Apple Migration&nbsp;Assistant</a></h1>
-            <div class=summary><p><p>Apple makes setting up a new Mac a breeze.</p></p></div>
+          <h1><a href="../2012/11/frictionless.html">Frictionless</a></h1>
+            <div class=summary><p><p>The key benefit that Apple has is <em>ecosystem</em>. Catching up with high quality hardware is just not enough.</p></p></div>
         </div>
       </div>
-                <div class=entry-overview>
-        <div class=date>Jan 07, 2012</div>
+      <div class=entry-overview>
+        <div class=date>Nov 02, 2012</div>
         <div class=detail>
-          <h1><a href="../2012/01/associated-press-israeli-schools-not-looking-so-good-against-oecd-peers.html">Associated Press: Israeli schools not looking so good against <span class="caps">OECD</span>&nbsp;peers.</a></h1>
-            <div class=summary><p><p>I read an interesting <a href="http://goo.gl/SSY83">article</a> this morning on Israeli
-schools. Facing extreme poverty among Arab-Israeli&#8217;s and the
-ultra-orthodox, Israel struggles to maintain three separate school
-systems and succeed. It reminded me of some interesting centralized
-policy reforms in Israel that have led to great natural experiments. For
-example, so-called ...</p></p></div>
+          <h1><a href="../2012/11/paul-cuffee-middle-school-addressing-emotional-needs.html">Paul Cuffee Middle School, Addressing Emotional&nbsp;Needs</a></h1>
+            <div class=summary><p><p>I like this piece in Slate on <a href="http://www.paulcuffee.org">Paul Cuffee Middle School</a>, a charter school right here in Providence. Most of what I know about child development seems to suggest that middle schools are sort of ridiculous. At the moment children are looking for role models and close relationships with adults ...</p></p></div>
         </div>
       </div>
-                <div class=entry-overview>
-        <div class=date>Jan 31, 2012</div>
+      <div class=entry-overview>
+        <div class=date>Oct 09, 2012</div>
         <div class=detail>
-          <h1><a href="../2012/01/bank-of-america-will-leave-111-westminster.html">Bank of America will leave 111&nbsp;Westminster</a></h1>
-            <div class=summary><p><p>I was pretty disappointed, but not surprised, that Bank of America has chosen to leave 111 Westminster Street. The building is an iconic anchor to downtown Providence. Unfortunately, this space has not been properly refurbished to more modern standards or for multi-tenancy. I share some ideas for a use befitting the space.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:downcity">
-<p>I am desperately trying to drop "Downcity" in favor of "Downtown" after training myself to say Downcity.&#160;<a class="footnote-backref" href="#fnref:downcity" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:arcade">
-<p>I know I've been cranky about the Arcade plans, but I think that's more about my general mood than the merits of the redevelopment. It could work, and if it does, it will be very exciting for Downtown.&#160;<a class="footnote-backref" href="#fnref:arcade" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-<li id="fn:dorrance">
-<p>I'd love to see traffic closed along both Weybosset and Westminster from Memorial Boulevard down to Dorrance.&#160;<a class="footnote-backref" href="#fnref:dorrance" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
-</li>
-<li id="fn:110west">
-<p>And 110 Westminster, while we're at it, the massive condo tower-turned parking lot&#160;<a class="footnote-backref" href="#fnref:110west" rev="footnote" title="Jump back to footnote 4 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div></p></div>
+          <h1><a href="../2012/10/where-i-share.html">Where I&nbsp;Share</a></h1>
+            <div class=summary><p><p>I have been meaning to write this post for the past couple of weeks. Like most other people, I am constantly experimenting with different ways to publish and share my thoughts and engage with social networking. Lately, I have settled into what feels like an &#8220;end state&#8221; workflow<sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">1</a></sup>. I ...</p></p></div>
         </div>
       </div>
-                <div class=entry-overview>
-        <div class=date>Sep 08, 2011</div>
+      <div class=entry-overview>
+        <div class=date>Oct 01, 2012</div>
         <div class=detail>
-          <h1><a href="../2011/09/community-voice-at-the-knowledge-district-development-framework-meeting.html">Community Voice at the Knowledge District Development Framework&nbsp;Meeting</a></h1>
-            <div class=summary><p><p>Some thoughts after my first experience at a public planning meeting.</p></p></div>
+          <h1><a href="../2012/10/what-can-management-do-ios6-maps-monday-morning-quarterbacking.html">What Can Management Do? iOS6 Maps Monday-Morning&nbsp;Quarterbacking</a></h1>
+            <div class=summary><p><p><a href="https://twitter.com/philiped">Philip Elmer-DeWitt</a> has <a href="http://tech.fortune.cnn.com/2012/09/29/does-apple-have-a-scott-forstall-problem/">suggested</a> the <a href="http://theamazingios6maps.tumblr.com/">iOS6 Maps debacle</a> falls on the shoulders of <a href="http://en.wikipedia.org/wiki/Scott_Forstall">Scott Forstall</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">1</a></sup>. When I first read the piece, I felt like it was unfair to blame management for this kind of failure. In my experience, the Maps application is wonderful software. The turn-by-turn directions are elegant ...</p></p></div>
         </div>
       </div>
-                <div class=entry-overview>
-        <div class=date>Nov 29, 2011</div>
+      <div class=entry-overview>
+        <div class=date>Oct 01, 2012</div>
         <div class=detail>
-          <h1><a href="../2011/11/contracting-technology-in-education.html">Contracting Technology in&nbsp;Education</a></h1>
-            <div class=summary><p><p>The Special Education Information System in NYC is getting a lot of slack for failing to live up to the promise and cost. This stirs up some thoughts on government contracting and large IT projects from my experiences at the Rhode Island Department of Education.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:coverage">
-<p>For pretty good coverage check out all of Gotham School's posts <a href="http://gothamschools.org/tag/sesis/">http://gothamschools.org/tag/sesis/</a>&#160;<a class="footnote-backref" href="#fnref:coverage" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div></p></div>
+          <h1><a href="../2012/10/thoughts-on-grit.html">Thoughts on&nbsp;Grit</a></h1>
+            <div class=summary><p><p>I have not had the opportunity to read <a href="http://www.paultough.com/the-books/how-children-succeed/">Paul Tough&#8217;s newest book</a> on &#8220;grit&#8221;<sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">2</a></sup>. I have, however, read Paul Tough&#8217;s <a href="http://www.nytimes.com/2011/09/18/magazine/what-if-the-secret-to-success-is-failure.html">New York Times Magazine article on grit</a> and recently listened to an <a href="http://www.econtalk.org/archives/2012/09/paul_tough_on_h.html">EconTalk podcast</a> where he discussed <span style="text-decoration: underline;">How Children Succeed</span>.</p>
+<p>The thrust of Tough&#8217;s argument, if ...</p></p></div>
         </div>
       </div>
-                <div class=entry-overview>
-        <div class=date>Dec 12, 2011</div>
+      <div class=entry-overview>
+        <div class=date>Sep 19, 2012</div>
         <div class=detail>
-          <h1><a href="../2011/12/diane-ravitch-rebuttals.html">Diane Ravitch,&nbsp;rebuttals.</a></h1>
-            <div class=summary><p><p>A bit of a <em>mea culpa</em>, where I share smarter, more nuanced, and more informed takes than what I offered on this blog on a recent TNR article about Diane Ravitch.</p></p></div>
+          <h1><a href="../2012/09/thoughts-on-grading.html">Thoughts on&nbsp;Grading</a></h1>
+            <div class=summary><p><p><a href="http://www.twitter.com/MrPABruno">Bruno</a> is a skeptic on <a href="http://scholasticadministrator.typepad.com/thisweekineducation/2012/09/bruno-is-standards-based-grading-a-good-idea.html">standards-based grading</a>. He seems to think
+that &#8220;mastery of content&#8221; is too abstract for students to work toward
+and rightly cites evidence that motivation and changed behavior are
+tightly linked to a sense of efficacy, which in turn is tightly linked
+to feeling as though ...</p></p></div>
         </div>
       </div>
-                <div class=entry-overview>
-        <div class=date>Sep 26, 2011</div>
+      <div class=entry-overview>
+        <div class=date>Aug 22, 2012</div>
         <div class=detail>
-          <h1><a href="../2011/09/downcity-residents-should-support-the-core-connector-and-the-tax-makes-sense.html">Downcity Residents Should Support the Core Connector and the Tax Makes&nbsp;Sense</a></h1>
-            <div class=summary><p><p>I examine the direct costs associated with building a street car in Providence if they pursue the proposed special tax assessment zone. It turns out, taxing nearby residents for operations expenses is a pretty good deal for everyone.</p></p></div>
+          <h1><a href="../2012/08/there-must-be-an-easier-way-survey-questions-in-r.html">There must be an easier way&#8230; survey questions in&nbsp;R</a></h1>
+            <div class=summary><p><p>So I have this great little custom function I&#8217;ve used when looking at survey data in R. I call this function <code>pull()</code>. The goal of <code>pull()</code> is to quickly produce frequency tables with n sizes from individual-level survey&nbsp;data.</p>
+<p>Before using <code>pull()</code>, I create a big table that includes ...</p></p></div>
         </div>
       </div>
-                <div class=entry-overview>
-        <div class=date>Apr 25, 2012</div>
+      <div class=entry-overview>
+        <div class=date>Aug 06, 2012</div>
         <div class=detail>
-          <h1><a href="../2012/04/downtown-improvement-district.html">Downtown Improvement&nbsp;District</a></h1>
-            <div class=summary><p><p>My favorite tax bill.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:1">
-<p><a href="http://t.co/zmwvItBf">let's change that</a>&#160;<a class="footnote-backref" href="#fnref:1" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:underfunded">
-<p>See Pawtucket and Woonsocket on <a href="http://www.ride.ri.gov/Finance/funding/Uniform%20Chart%20of%20Accounts/2010/STATE/FY10%20Equalized%20Expenditures%20Report%20-%20Sorted.pdf">this chart</a>&#160;<a class="footnote-backref" href="#fnref:underfunded" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-<li id="fn:census">
-<p>US Census Bureau. Check out this <a href="http://gis.providenceplanning.org/PVD_2010CensusViewer/">great resource</a> that the <a href="http://www.providenceri.com/planning/">Providence Planning Department</a> put up&#160;<a class="footnote-backref" href="#fnref:census" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div></p></div>
+          <h1><a href="../2012/08/pay-for-quality-join-appnet.html">Pay For Quality: Join&nbsp;App.net</a></h1>
+            <div class=summary><p><p>I like paying for good software. There are applications I use every day, some for hours a day, that make my experience on the web and on my computers better. I have paid for <a href="http://reederapp.com/">Reeder</a> on three platforms, <a href="http://tapbots.com/software/tweetbot/">Tweetbot</a> on two<sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">1</a></sup>, <a href="http://pinboard.in">Pinboard</a>, and many others. I like to pay ...</p></p></div>
         </div>
       </div>
-      
+
 <div class="pagination">
 <ul>
-      <span class="prev disabled"><a href="#">&larr; Previous</a>
-        <span class="active"><a href="../author/jason.html">1</a>
-      <span class=""><a href="../author/jason2.html">2</a>
-      <span class=""><a href="../author/jason3.html">3</a>
-      <span class=""><a href="../author/jason4.html">4</a>
-      <span class=""><a href="../author/jason5.html">5</a>
-        <span class="next"><a href="../author/jason2.html">Next &rarr;</a>
-  </ul>
+    <span class="prev disabled"><a href="#">&larr; Previous</a>
+    <span class="active"><a href="../author/jason.html">1</a>
+    <span class=""><a href="../author/jason2.html">2</a>
+    <span class=""><a href="../author/jason3.html">3</a>
+    <span class=""><a href="../author/jason4.html">4</a>
+    <span class=""><a href="../author/jason5.html">5</a>
+    <span class="next"><a href="../author/jason2.html">Next &rarr;</a>
+</ul>
 </div>
 
         </div>
         
-                    <div class=footer>
+<div class=footer>
   <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
   <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
     Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
@@ -215,6 +293,6 @@ example, so-called ...</p></p></div>
       </ul>
     </div>
   </p>
-</div>            </div>
-          </body>
+</div>    </div>
+  </body>
 </html>
