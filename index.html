@@ -38,88 +38,22 @@
       <div class=separator></div>        
         <div class=body>
 
-      <h1 class="title">A New Calculation for Student&nbsp;Mobility<a href="./2013/09/a-new-calculation-for-student-mobility.html" class=perma>&#8734;</a></h1>
-      <p class=date> 2013-09-17 </p>
-      <p>How do we calculate student mobility? I am currently soliciting responses from other data professionals across the country. But when I needed to produce mobility numbers for some of my work a couple of months ago, I decided to develop a set of business rules without any exposure to how the federal government, states, or other existing systems define mobility. <sup id="fnref:ignorance"><a class="footnote-ref" href="#fn:ignorance" rel="footnote">1</a></sup></p>
-<p>I am fairly proud of my work on mobility. This post will review how I defined student mobility. I am hopeful that it matches or bests current techniques for calculating the number of schools a student has attended. In my next post, I will share the first two major versions of my implementation of these mobility business rules in <code>R</code>. <sup id="fnref:learningexperience"><a class="footnote-ref" href="#fn:learningexperience" rel="footnote">2</a></sup> Together, these posts will represent the work I referred to in my previous post on the <a href="./2013/09/documentation-of-business-rules-and-analysis.html">importance of documenting business rules and sharing code</a>.</p>
-<h2>The&nbsp;Rules</h2>
-<p>Working with district data presents a woefully incomplete picture of the education mobile students receive. Particularly in a state like Rhode Island, where our districts are only a few miles wide, there is substantial interdistrict mobility. When a student moves across district lines, their enrollment is not recorded in local district data. However, even with state level data, highly mobile students cross state lines and present incomplete data. A key consideration for calculating how many schools a student has attended in a particular year is capturing &#8220;missing&#8221; data&nbsp;sensibly.</p>
-<p>The typical structure of enrollment records looks something like&nbsp;this:</p>
-<table>
-<thead>
-<tr>
-<th>Unique Student <span class="caps">ID</span></th>
-<th>School Code</th>
-<th>Enrollment Date</th>
-<th>Exit Date</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1000000</td>
-<td>10101</td>
-<td>2012-09-01</td>
-<td>2012-11-15</td>
-</tr>
-<tr>
-<td>1000000</td>
-<td>10103</td>
-<td>2012-11-16</td>
-<td>2013-06-15</td>
-</tr>
-</tbody>
-</table>
-<p>A compound key for this data consists of the Unique Student <span class="caps">ID</span>, School Code, and Enrollment Date, meaning that each row must be a unique combination of these three factors. The data above shows a simple case of a student enrolling at the start of the school year, switching schools once with no gap in enrollment, and continuing at the new school until the end of the school year. For the purposes of mobility, I would define the above as having moved one&nbsp;time.</p>
-<p>But it is easy to see how some very complex scenarios could quickly arise. What if student <code>1000000</code>&#8216;s record looked like&nbsp;this?</p>
-<table>
-<thead>
-<tr>
-<th>Unique Student <span class="caps">ID</span></th>
-<th>School Code</th>
-<th>Enrollment Date</th>
-<th>Exit Date</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1000000</td>
-<td>10101</td>
-<td>2012-10-15</td>
-<td>2012-11-15</td>
-</tr>
-<tr>
-<td>1000000</td>
-<td>10103</td>
-<td>2013-01-03</td>
-<td>2013-03-13</td>
-</tr>
-<tr>
-<td>1000000</td>
-<td>10103</td>
-<td>2013-03-20</td>
-<td>2013-05-13</td>
-</tr>
-</tbody>
-</table>
-<p>There are several features that make it challenging to assign a number of &#8220;moves&#8221; to this student. First, the student does not enroll in school until October 15, 2012. This is nearly six weeks into the typical school year in the Northeastern United States. Should we assume that this student has enrolled in no school at all prior to October 15th or should we assume that the student was enrolled in a school that was outside of this district and therefore missing in the data? Next, we notice the enrollment gap between November 15, 2012 and January 3, 2013. Is it right to assume that the student has moved only once in this period of time with a gap of enrollment of over a month and a half? Then we notice that the student exited school <code>10103</code> on March 13, 2013 but was re-enrolled in the same school a week later on March 20, 2013. Has the student truly &#8220;moved&#8221; in this period? Lastly, the student exits the district on May 13, 2013 for the final time. This is nearly a month before the end of school. Has this student moved to a different&nbsp;school?</p>
-<p>There is an element missing that most enrollment data has which can enrich our understanding of this student&#8217;s record. All district collect an exit type, which explains if a student is leaving to enroll in another school within the district, another school in a different district in the same state, another school in a different state, a private school, etc. It also defines whether a student is dropping out, graduating, or has entered the juvenile justice system, for example. However, it has been my experience that this data is reported inconsistently and unreliably. Frequently a student will be reported as changing schools within the district without a subsequent enrollment record, or reported as leaving the district but enroll within the same district a few days later. Therefore, I think that we should try and infer the number of schools that a student has attended using soley the enrollment date, exit date, and school code for each student record. This data is far more reliable for a host of reasons, and, ultimately, provides us with all the information we need to make intelligent&nbsp;decisions.</p>
-<p>My proposed set of business rules examines <code>school code</code>, <code>enrollment date</code>, and <code>exit date</code> against three parameters: <code>enrollment by</code>, <code>exit by</code>, and <code>gap</code>. 
-Each students minimum enrollment date is compared to <code>enrollment by</code>. If that student entered the data set for the first time before the <code>enrollment by</code>, the assumption is that this record represents the first time the student enrolls in any school for that year, and therefore the student has 0 <code>moves</code>. If the student enrolls for the first time after <code>enrollment by</code>, then the record is considered the second school a student has attended and their <code>moves</code> attribute is incremented by <code>1</code>. Similarly, if a student&#8217;s maximium <code>exit date</code> is after <code>exit by</code>, then this considered to be the student&#8217;s last school enrolled in for the year and they are credited with <code>0</code> <code>moves</code>, but if <code>exit date</code> is prior to <code>exit by</code>, then that student&#8217;s <code>moves</code> is incremented by <code>1</code>.</p>
-<p>That takes care of the &#8220;ends&#8221;, but what happens as students switch schools in the &#8220;middle&#8221;? I proposed that each <code>exit date</code> is compared to the subsequent <code>enrollment date</code>. If <code>enrollment date</code> occurs within <code>gap</code> days of the previous <code>exit date</code>, and the <code>school code</code> of enrollment is not the same as the <code>school code</code> of exit, then a student&#8217;s <code>moves</code> are incremented by <code>1</code>. If the <code>school codes</code> are identical and the difference between dates is less than <code>gap</code>, then the student is said to have not moved at all. If the difference between the <code>enrollment date</code> and the previous <code>exit date</code> is greater than <code>gap</code>, then the student&#8217;s <code>moves</code> is incremented by <code>2</code>, the assumption being that the student likely attended a different school between the two observations in the&nbsp;data.</p>
-<p>Whereas calculating student mobility may have seemed a simple matter of counting the number of records in the enrollment file, clearly there is a level of complexity this would fail to&nbsp;capture.</p>
-<p>Check back in a few days to see my next post where I will share my initial implementation of these business rules and how I achieved an 10x speed up with a massive code&nbsp;refactor.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:ignorance">
-<p>My ignorance was intentional. It is good to stretch those brain muscles that think through sticky problems like developing business rules for a key statistic. I can&#8217;t be sure that I have developed the most considered and complete set of rules for mobility, which is why I&#8217;m now soliciting other&#8217;s views, but I am hopeful my solution is at least as good.&#160;<a class="footnote-backref" href="#fnref:ignorance" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:learningexperience">
-<p>I think showing my first two implementation of these business rules is an excellent opportunity to review several key design considerations when programming in <code>R</code>. From version 1 to version 2 I achieved a 10x speedup due to a complete refactor that avoided <code>for</code> loops, used <code>data.table</code>, and included some clever use of recursion.&#160;<a class="footnote-backref" href="#fnref:learningexperience" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div>
+    
+        <h1 class="title"><a href='http://www.ssireview.org/articles/entry/poverty_and_achievement_revisited' title="Link">It&#8217;s Poverty Stupid&#8230; or is&nbsp;it? &#8640;</a><a href="./2013/11/its-poverty-stupid-or-is-it.html" class=perma title ="Permalink for It&#8217;s Poverty Stupid&#8230; or is&nbsp;it?">&#8734;</a></h1>
+        <p class=date> 2013-11-18 </p>
+
+      <p>If I had to point to the key fissure in the education policy and research community it would be around poverty. Some seem to view it as an inexorable obstacle, deeply believing that the key improvement strategy is to decrease inequity of inputs. Some seem to view it as an obstacle that can be overcome by systems functioning at peak efficacy, deeply believing the great challenge is achieving that efficacy sustainably at scale. Both positions seem to grossly simplify causes and suggest policy structures and outcomes that are&nbsp;unachievable.</p>
+<p>Paraphrasing <a href="http://www.kungfugrippe.com">Merlin Mann</a>, <em>always be skeptical of &#8220;turns out&#8221; research</em>. In this case, are the results really that surprising? If they are, I might suggest that you have been focusing too much on the partial equilibrium impact of poverty and ignoring the bigger&nbsp;picture.</p>
+<p>Not that I think integration is likely, easy, quick, or magically fixes&nbsp;things.</p>
       
+    <div class=separator></div>
+      <div class=entry-overview>
+        <div class=date>Sep 17, 2013</div>
+        <div class=detail>
+          <h1><a href="./2013/09/a-new-calculation-for-student-mobility.html">A New Calculation for Student&nbsp;Mobility</a></h1>
+            <div class=summary><p><p>A brief discussion on the complexity of determining the number of schools a student has attended within a single school year using a minimal set of information.</p></p></div>
+        </div>
+      </div>
       <div class=entry-overview>
         <div class=date>Sep 13, 2013</div>
         <div class=detail>
@@ -142,51 +76,6 @@ Each students minimum enrollment date is compared to <code>enrollment by</code>.
             <div class=summary><p><p>Proposing a small improvement to Rhode Island's pension reform.</p></p></div>
         </div>
       </div>
-      <div class=entry-overview>
-        <div class=date>Jul 23, 2013</div>
-        <div class=detail>
-          <h1><a href="./2013/07/smarter-balance-released-items-scare-me.html">Smarter Balance Released Items Scare&nbsp;Me</a></h1>
-            <div class=summary><p><p><a href="http://ccssimath.blogspot.com/2013/06/our-sbac-practice-tests-run-through.html"><span class="caps">CCSSI</span> Mathematics</a> posted a scathing look at the items released by the <a href="http://www.smarterbalanced.org/">Smarter Balanced Assessment Consortium</a> (<span class="caps">SBAC</span>). While the rest of the internet seems to be obsessed over <a href="http://blogs.edweek.org/edweek/curriculum/2013/07/georgia_drops_out_of_parcc_tes.html">Georgia leaving the Partnership for Assessment of College and Careers</a><sup id="fnref:absurdity"><a class="footnote-ref" href="#fn:absurdity" rel="footnote">1</a></sup>, the real concern should be over the quality of these test ...</p></p></div>
-        </div>
-      </div>
-      <div class=entry-overview>
-        <div class=date>Jun 20, 2013</div>
-        <div class=detail>
-          <h1><a href="./2013/06/economic-policy-institute-is-wrong.html">Economic Policy Institute is&nbsp;Wrong</a></h1>
-            <div class=summary><p><p>The <a href="http://www.epi.org/">Economic Policy Institute</a> has release a <a href="http://www.epi.org/files/2013/ib366-rhode-islands-hybrid-pension-plan.pdf">short issue brief</a> on the Rhode Island Retirement Security Act (<span class="caps">RIRSA</span>) by <a href="https://twitter.com/rhiltnsmth">Robert Hiltonsmith</a> that manages to get all of the details right but the big picture entirely&nbsp;wrong.</p>
-<p>The <span class="caps">EPI</span> Issue Brief details the differences between the retirement system for state workers ...</p></p></div>
-        </div>
-      </div>
-      <div class=entry-overview>
-        <div class=date>Jun 12, 2013</div>
-        <div class=detail>
-          <h1><a href="./2013/06/calculating-age-in-r.html">Calculating Age in&nbsp;R</a></h1>
-            <div class=summary><p><p>A few months back I wrote some code to calculate age from a date of birth and arbitrary end date. It is not a real tricky task, but it is certainly one that comes up often when doing research on individual-level&nbsp;data.</p>
-<p>I was a bit surprised to only find ...</p></p></div>
-        </div>
-      </div>
-      <div class=entry-overview>
-        <div class=date>Jun 02, 2013</div>
-        <div class=detail>
-          <h1><a href="./2013/06/linear-thinking.html">Linear&nbsp;Thinking</a></h1>
-            <div class=summary><p><p>Apple will be revealing new details for both of its major operating systems at <span class="caps">WWDC</span> on June 10, 2013. The focus of much speculation has been how Apple will improve multi-tasking and inter-app communication in iOS7. As batteries have grown, CPUs have become increasingly powerful, and the application <a href="./2012/11/frictionless.html">ecosystem</a> has ...</p></p></div>
-        </div>
-      </div>
-      <div class=entry-overview>
-        <div class=date>May 30, 2013</div>
-        <div class=detail>
-          <h1><a href="./2013/05/cleaning-urls-with-textexpander.html">Cleaning URLs with&nbsp;TextExpander</a></h1>
-            <div class=summary><p><p>One thing I really dislike about Google Reader is it replaces the links to posts in my <span class="caps">RSS</span> feed. My <a href="http://pinboard.in/u:jasonpbecker">Pinboard account</a> is littered with links that start with <code>http://feedproxy.google.com</code>. I am quite concerned that with the demise of <a href="http://googlereader.blogspot.com/2013/03/powering-down-google-reader.html">Google Reader</a> on July 1, 2013, these redirects ...</p></p></div>
-        </div>
-      </div>
-      <div class=entry-overview>
-        <div class=date>Dec 20, 2012</div>
-        <div class=detail>
-          <h1><a href="./2012/12/the-slow-trek-to-pelican.html">The Slow Trek to&nbsp;Pelican</a></h1>
-            <div class=summary><p><p><em>Update: Please see below for two&nbsp;solutions.</em></p>
-<p>I have grown increasingly unhappy with Wordpress lately. My blog is simple. My design tastes are simple. My needs are simple. I like control. I am a geek. And I really need an excuse to learn Python, which seems to be rapidly growing ...</p></p></div>
-        </div>
-      </div>
 
 <div class="pagination">
 <ul>
@@ -197,6 +86,11 @@ Each students minimum enrollment date is compared to <code>enrollment by</code>.
     <span class=""><a href="./index4.html">4</a>
     <span class=""><a href="./index5.html">5</a>
     <span class=""><a href="./index6.html">6</a>
+    <span class=""><a href="./index7.html">7</a>
+    <span class=""><a href="./index8.html">8</a>
+    <span class=""><a href="./index9.html">9</a>
+    <span class=""><a href="./index10.html">10</a>
+    <span class=""><a href="./index11.html">11</a>
     <span class="next"><a href="./index2.html">Next &rarr;</a>
 </ul>
 </div>
