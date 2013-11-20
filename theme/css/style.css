@@ -64,7 +64,10 @@ ul ol, ol ul, ul ul, ol ol      { margin: 10px 0; padding: 0 0 0 40px; }
 li                              { padding: 0; }
 h1 + p.date                     { margin-top: -20px; }
 
-blockquote                      { border-left: 2px solid #00997C; }
+blockquote                      { 
+                                  border-left: 2px solid #00997C; 
+                                  padding-left: 25px;
+                                }
 
 /* code formatting.  no monospace because of webkit (bug?) */
 pre, code, tt   { font-family: 'Consolas', 'Deja Vu Sans Mono',
