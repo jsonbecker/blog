@@ -38,31 +38,96 @@
       <div class=separator></div>        
         <div class=body>
 
-    
-        <h1 class="title">
-        <a href='http://www.compareyourcountry.org/chart?project=pisa' title="Link">
-          A Different Angle on PISA 
-          <i class="icon-external-link" style="font-size:0.5em;vertical-align:super;"></i>
-        </a>
-        <a href="../2013/12/a-different-angle-on-pisa.html" class=perma title ="Permalink for A Different Angle on PISA">&#8734;</a></h1>
+      
+        <h1 class="title">Calculating Age with Precision in R<a href="../2013/12/calculating-age-with-precision-in-r.html" class=perma>&#8734;</a></h1>
         <p class=date> 2013-12-03 </p>
 
-      <p><img alt="PISA Results" src="../images/pisaengagement.png" title="PISA Student Engagement US" /></p>
-<p>I wanted to call attention to these interesting <span class="caps">PISA</span> results. <a href="../images/turnsout.mp3">Turns out</a> that student anxiety in the United States is lower than the <span class="caps">OECD</span> average and belief in ability is higher <sup id="fnref:definitions"><a class="footnote-ref" href="#fn:definitions" rel="footnote">1</a></sup>. I thought that all of the moves in education since the start of standard&#8217;s based reform were supposed to be generating tremendous anxiety and failing to produce students who had high sense of&nbsp;self-efficacy?</p>
-<p>It is also worth noting that students in the United States were more likely to skip out on school dand this had a higher than typical impact on student performance. One interpretation of this could be that students are less engaged, but also that schooling activities do have a large impact on students rather than schools being of lesser importance than student&nbsp;inputs.</p>
-<p>I have always had a hard time reconciling the calls for higher teacher pay and better work conditions and evidence that missing even just 10% of schooling has a huge impact on student outcomes with the belief that addressing other social inequities is the key way to achieve better outcomes for&nbsp;kids.</p>
-<p>This is all an exercise in nonsense. It is incredibly difficult to transfer findings from surveys across dramatical cultural differences. It is also hard to imagine what can be learned about the delivery of education in the dramatically different contexts that exists. The whole international comparison game seems like one big Rorschach test where the price of admission is leaving any understanding of culture, context, and external validity at the&nbsp;door.</p>
-<p>P.S.: The use of color in this visualization is awful. There is a sense that they are trying to be &#8220;value neutral&#8221; with data that is ordinal in nature (above, same, or below), and in doing so chose two colors that are very difficult to distinguish between.&nbsp;Yuck.</p>
+      <p>I recently updated the function I <a href="../2013/06/calculating-age-in-r.html">posted</a> about back in June that calculates the difference between two dates in days, months, or years in R. It is still surprising to me that <code>difftime</code> can only return units from seconds up until weeks. I suspect this has to do with the challenge of properly defining a &#8220;month&#8221; or &#8220;year&#8221; as a unit of time, since these are&nbsp;variable.</p>
+<p>While there was nothing wrong with the original function, it did irk me that it always returned an integer. In other words, function returned only complete months or years. If the start date was on <code>2012-12-13</code> and the end date was on <code>2013-12-03</code>, the function would return <code>0</code> years. Most of the time, this is the behavior I expect when calcuating age. But it is completely reasonable to want to include partial years or months, e.g. in the aforementioned example returning <code>0.9724605</code>.</p>
+<p>So after several failed attempts because of silly errors in my algorithm, here is the final code. It will be released as part of <a href="https://github.com/jknowles/eeptools/">eeptools 0.3</a> which should be avialable on <span class="caps">CRAN</span> soon <sup id="fnref:moves"><a class="footnote-ref" href="#fn:moves" rel="footnote">1</a></sup>.</p>
+<div class="highlight"><pre>age_calc <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dob<span class="p">,</span> enddate<span class="o">=</span>Sys.Date<span class="p">(),</span> units<span class="o">=</span><span class="s">&#39;months&#39;</span><span class="p">,</span> precise<span class="o">=</span><span class="kc"><span class="caps">TRUE</span></span><span class="p">){</span>
+  <span class="kr">if</span> <span class="p">(</span><span class="o">!</span>inherits<span class="p">(</span>dob<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="o">!</span>inherits<span class="p">(</span>enddate<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">)){</span>
+    stop<span class="p">(</span><span class="s">&quot;Both dob and enddate must be Date class objects&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+  start <span class="o">&lt;-</span> as.POSIXlt<span class="p">(</span>dob<span class="p">)</span>
+  end <span class="o">&lt;-</span> as.POSIXlt<span class="p">(</span>enddate<span class="p">)</span>
+  <span class="kr">if</span><span class="p">(</span>precise<span class="p">){</span>
+    start_is_leap <span class="o">&lt;-</span> ifelse<span class="p">(</span>start<span class="o">$</span>year <span class="o">%%</span> <span class="m">400</span> <span class="o">==</span> <span class="m">0</span><span class="p">,</span> <span class="kc"><span class="caps">TRUE</span></span><span class="p">,</span> 
+                        ifelse<span class="p">(</span>start<span class="o">$</span>year <span class="o">%%</span> <span class="m">100</span> <span class="o">==</span> <span class="m">0</span><span class="p">,</span> <span class="kc"><span class="caps">FALSE</span></span><span class="p">,</span>
+                               ifelse<span class="p">(</span>start<span class="o">$</span>year <span class="o">%%</span> <span class="m">4</span> <span class="o">==</span> <span class="m">0</span><span class="p">,</span> <span class="kc"><span class="caps">TRUE</span></span><span class="p">,</span> <span class="kc"><span class="caps">FALSE</span></span><span class="p">)))</span>
+    end_is_leap <span class="o">&lt;-</span> ifelse<span class="p">(</span>end<span class="o">$</span>year <span class="o">%%</span> <span class="m">400</span> <span class="o">==</span> <span class="m">0</span><span class="p">,</span> <span class="kc"><span class="caps">TRUE</span></span><span class="p">,</span> 
+                        ifelse<span class="p">(</span>end<span class="o">$</span>year <span class="o">%%</span> <span class="m">100</span> <span class="o">==</span> <span class="m">0</span><span class="p">,</span> <span class="kc"><span class="caps">FALSE</span></span><span class="p">,</span>
+                               ifelse<span class="p">(</span>end<span class="o">$</span>year <span class="o">%%</span> <span class="m">4</span> <span class="o">==</span> <span class="m">0</span><span class="p">,</span> <span class="kc"><span class="caps">TRUE</span></span><span class="p">,</span> <span class="kc"><span class="caps">FALSE</span></span><span class="p">)))</span>
+  <span class="p">}</span>
+  <span class="kr">if</span><span class="p">(</span>units<span class="o">==</span><span class="s">&#39;days&#39;</span><span class="p">){</span>
+    result <span class="o">&lt;-</span> difftime<span class="p">(</span>end<span class="p">,</span> start<span class="p">,</span> units<span class="o">=</span><span class="s">&#39;days&#39;</span><span class="p">)</span>
+  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>units<span class="o">==</span><span class="s">&#39;months&#39;</span><span class="p">){</span>
+    months <span class="o">&lt;-</span> length<span class="p">(</span>seq<span class="p">(</span>start<span class="p">,</span> end<span class="p">,</span> by<span class="o">=</span><span class="s">&#39;month&#39;</span><span class="p">))</span> <span class="o">-</span> <span class="m">1</span>
+    <span class="kr">if</span><span class="p">(</span>precise<span class="p">){</span>
+      month_length_end <span class="o">&lt;-</span> ifelse<span class="p">(</span>end<span class="o">$</span>mon<span class="o">==</span><span class="m">1</span><span class="p">,</span> <span class="m">28</span><span class="p">,</span>
+                                 ifelse<span class="p">(</span>end<span class="o">$</span>mon<span class="o">==</span><span class="m">1</span> <span class="o">&amp;</span> end_is_leap<span class="p">,</span> <span class="m">19</span><span class="p">,</span>
+                                        ifelse<span class="p">(</span>end<span class="o">$</span>mon <span class="o">%in%</span> c<span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">8</span><span class="p">,</span> <span class="m">10</span><span class="p">),</span> 
+                                               <span class="m">30</span><span class="p">,</span> <span class="m">31</span><span class="p">)))</span>
+      <span class="kr">if</span><span class="p">(</span>end<span class="o">$</span>mday <span class="o">&gt;</span> start<span class="o">$</span>mday<span class="p">){</span>
+        month_frac <span class="o">&lt;-</span> <span class="p">(</span>end<span class="o">$</span>mday<span class="o">-</span>start<span class="o">$</span>mday<span class="p">)</span><span class="o">/</span>month_length_end
+      <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>end<span class="o">$</span>mday <span class="o">&lt;</span> start<span class="o">$</span>mday<span class="p">){</span>
+        month_length_prior <span class="o">&lt;-</span> ifelse<span class="p">((</span>end<span class="o">$</span>mon<span class="m">-1</span><span class="p">)</span><span class="o">==</span><span class="m">1</span><span class="p">,</span> <span class="m">28</span><span class="p">,</span>
+                                     ifelse<span class="p">((</span>end<span class="o">$</span>mon<span class="m">-1</span><span class="p">)</span><span class="o">==</span><span class="m">1</span> <span class="o">&amp;</span> start_is_leap<span class="p">,</span> <span class="m">19</span><span class="p">,</span>
+                                            ifelse<span class="p">((</span>end<span class="o">$</span>mon<span class="m">-1</span><span class="p">)</span> <span class="o">%in%</span> c<span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">8</span><span class="p">,</span> 
+                                                                      <span class="m">10</span><span class="p">),</span> 
+                                                   <span class="m">30</span><span class="p">,</span> <span class="m">31</span><span class="p">)))</span>
+        month_frac <span class="o">&lt;-</span> sum<span class="p">((</span>month_length_start <span class="o">-</span> start<span class="o">$</span>mday<span class="p">)</span><span class="o">/</span><span class="p">(</span>month_length_start<span class="p">),</span>
+                        end<span class="o">$</span>mday<span class="o">/</span>month_length_end<span class="p">)</span>
+      <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+        month_frac <span class="o">&lt;-</span> <span class="m">0.0</span>
+      <span class="p">}</span>
+      result <span class="o">&lt;-</span> months <span class="o">+</span> month_frac
+    <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+      result <span class="o">&lt;-</span> months
+    <span class="p">}</span>
+  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>units<span class="o">==</span><span class="s">&#39;years&#39;</span><span class="p">){</span>
+    years <span class="o">&lt;-</span> length<span class="p">(</span>seq<span class="p">(</span>start<span class="p">,</span> end<span class="p">,</span> by<span class="o">=</span><span class="s">&#39;year&#39;</span><span class="p">))</span> <span class="o">-</span> <span class="m">1</span>
+    <span class="kr">if</span><span class="p">(</span>precise<span class="p">){</span>
+      <span class="kr">if</span><span class="p">(</span>start<span class="o">$</span>yday <span class="o">&lt;</span> end<span class="o">$</span>yday<span class="p">){</span>
+        year_frac <span class="o">&lt;-</span> ifelse<span class="p">(</span>end_is_leap<span class="p">,</span> <span class="p">(</span>end<span class="o">$</span>yday <span class="o">-</span> start<span class="o">$</span>yday<span class="p">)</span> <span class="o">/</span> <span class="m">366</span><span class="p">,</span>
+                            <span class="p">(</span>end<span class="o">$</span>yday<span class="o">-</span>start<span class="o">$</span>yday<span class="p">)</span> <span class="o">/</span> <span class="m">365</span><span class="p">)</span>
+      <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>start<span class="o">$</span>yday <span class="o">&gt;</span> end<span class="o">$</span>yday<span class="p">){</span>
+        year_frac <span class="o">&lt;-</span> sum<span class="p">(</span>ifelse<span class="p">(</span>start_is_leap<span class="p">,</span> <span class="p">(</span><span class="m">366</span><span class="o">-</span>start<span class="o">$</span>yday<span class="p">)</span> <span class="o">/</span> <span class="m">366</span><span class="p">,</span>
+                                <span class="p">(</span><span class="m">365</span> <span class="o">-</span> start<span class="o">$</span>yday<span class="p">)</span> <span class="o">/</span> <span class="m">365</span><span class="p">),</span>
+                         ifelse<span class="p">(</span>end_is_leap<span class="p">,</span> end<span class="o">$</span>yday <span class="o">/</span> <span class="m">366</span><span class="p">,</span>
+                                end<span class="o">$</span>yday <span class="o">/</span> <span class="m">365</span><span class="p">))</span>
+      <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+        year_frac <span class="o">&lt;-</span> <span class="m">0.0</span>
+      <span class="p">}</span>
+      result <span class="o">&lt;-</span> years <span class="o">+</span> year_frac
+    <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+      result <span class="o">&lt;-</span> years
+    <span class="p">}</span>
+  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+    stop<span class="p">(</span><span class="s">&quot;Unrecognized units. Please choose years, months, or days.&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="kr">return</span><span class="p">(</span>result<span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
 <div class="footnote">
 <hr />
 <ol>
-<li id="fn:definitions">
-<p>The site describes prevalence of anxiety as, &#8220;proportion of students who feel helpless when faced with math problems&#8221; and belief in ability as, &#8220;proportion of students who feel confident in their math abilitites&#8221;. Note, based on these defitions, one might also think that either curricula were not so misaligned with international benchmarks or that we are already seeing the fruits of partial transition to Common Core. Not knowing the trend for this data, or some of the specifics about the collection instrument, makes that difficult to assess.&#160;<a class="footnote-backref" href="#fnref:definitions" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<li id="fn:moves">
+<p>I should note that my mobility function will also be included in eeptools 0.3. I know I still owe a post on the actual code, but it is such a complex function I have been having a terrible time trying to write clearly about it.&#160;<a class="footnote-backref" href="#fnref:moves" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
       
     <div class=separator></div>
+      <div class=entry-overview>
+        <div class=date>Dec 03, 2013</div>
+        <div class=detail>
+          <h1><a href="../2013/12/a-different-angle-on-pisa.html">A Different Angle on&nbsp;<span class="caps">PISA</span></a></h1>
+            <div class=summary><p><p>A quick look at the "student engagement" measures in PISA which may have some interesting interpretations.</p></p></div>
+        </div>
+      </div>
       <div class=entry-overview>
         <div class=date>Nov 23, 2013</div>
         <div class=detail>
@@ -85,14 +150,6 @@
           <h1><a href="../2013/11/deblasio-weak-on-implementation.html">DeBlasio: Weak on&nbsp;Implementation</a></h1>
             <div class=summary><p><blockquote>
 <p>De Blasio and his advisers are still figuring out how much rent to charge well-funded charter schools, his transition team told me. “It would depend on the resources of the charter school or charter network,” he told <span class="caps">WNYC</span>, in early October. “Some are clearly very, very well resourced and have ...</p></blockquote></p></div>
-        </div>
-      </div>
-      <div class=entry-overview>
-        <div class=date>Nov 19, 2013</div>
-        <div class=detail>
-          <h1><a href="../2013/11/more-evidence-for-mere-facts.html">More evidence for &#8220;mere&nbsp;facts&#8221;</a></h1>
-            <div class=summary><p><blockquote>
-<p>To recap, the first study discussed above established that children from disadvantaged backgrounds know less about a topic (i.e., birds) than their middle-class peers. Next, in study two, the researchers showed that differences in domain knowledge influenced children’s ability to understand words out of context, and to comprehend ...</p></blockquote></p></div>
         </div>
       </div>
 
