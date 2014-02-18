@@ -49,7 +49,6 @@
 group_by<span class="p">(</span>sid<span class="p">,</span> courseno<span class="p">)</span> <span class="o">%.%</span>
 summarise<span class="p">(</span>gpa <span class="o">=</span> mean<span class="p">(</span>gpa<span class="p">))</span> <span class="o">%.%</span>
 filter<span class="p">(</span>gpa <span class="o">&lt;=</span> <span class="m">1.0</span><span class="p">)</span> <span class="o">%.%</span>
-group_by<span class="p">(</span>sasid<span class="p">)</span> <span class="o">%.%</span>
 summarise<span class="p">(</span>fails <span class="o">=</span> n<span class="p">())</span>
 </pre></div>
 

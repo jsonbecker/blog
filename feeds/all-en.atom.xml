@@ -6,7 +6,6 @@
 group_by&lt;span class="p"&gt;(&lt;/span&gt;sid&lt;span class="p"&gt;,&lt;/span&gt; courseno&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
 summarise&lt;span class="p"&gt;(&lt;/span&gt;gpa &lt;span class="o"&gt;=&lt;/span&gt; mean&lt;span class="p"&gt;(&lt;/span&gt;gpa&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
 filter&lt;span class="p"&gt;(&lt;/span&gt;gpa &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="m"&gt;1.0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
-group_by&lt;span class="p"&gt;(&lt;/span&gt;sasid&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
 summarise&lt;span class="p"&gt;(&lt;/span&gt;fails &lt;span class="o"&gt;=&lt;/span&gt; n&lt;span class="p"&gt;())&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
