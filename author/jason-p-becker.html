@@ -38,32 +38,31 @@
       <div class=separator></div>        
         <div class=body>
 
-      
-        <h1 class="title">Appreciating the Beauty of dplyr<a href="../2014/02/appreciating-the-beauty-of-dplyr.html" class=perma>&#8734;</a></h1>
-        <p class=date> 2014-02-18 </p>
+    
+        <h1 class="title">
+        <a href='http://pbn.com/Report-Unequal-housing-burden-curtails-Latino-spending-saving,95365' title="Link">
+          Latinos in Rhode Island Face Housing Burden 
+          <i class="icon-external-link" style="font-size:0.5em;vertical-align:super;"></i>
+        </a>
+        <a href="../2014/02/latinos-in-rhode-island-face-housing-burden.html" class=perma title ="Permalink for Latinos in Rhode Island Face Housing Burden">&#8734;</a></h1>
+        <p class=date> 2014-02-27 </p>
 
-      <p><a href="http://had.co.nz">Hadley Wickham</a> has <a href="https://github.com/hadley">once again</a><sup id="fnref:seriously"><a class="footnote-ref" href="#fn:seriously" rel="footnote">1</a></sup> made R ridiculously better. Not only is <code>dplyr</code> incredibly fast, but the new syntax allows for some really complex operations to be expressed in a ridiculously beautiful&nbsp;way.</p>
-<p>Consider a data set, <code>course</code>, with a student identifier, <code>sid</code>, a course identifier, <code>courseno</code>, a quarter, <code>quarter</code>, and a grade on a scale of 0 to 4, <code>gpa</code>. What if I wanted to know the number of a courses a student has failed over the entire year, as defined by having an overall grade of less than a&nbsp;1.0?</p>
-<p>In&nbsp;dplyr:</p>
-<div class="highlight"><pre>course <span class="o">%.%</span> 
-group_by<span class="p">(</span>sid<span class="p">,</span> courseno<span class="p">)</span> <span class="o">%.%</span>
-summarise<span class="p">(</span>gpa <span class="o">=</span> mean<span class="p">(</span>gpa<span class="p">))</span> <span class="o">%.%</span>
-filter<span class="p">(</span>gpa <span class="o">&lt;=</span> <span class="m">1.0</span><span class="p">)</span> <span class="o">%.%</span>
-summarise<span class="p">(</span>fails <span class="o">=</span> n<span class="p">())</span>
-</pre></div>
-
-
-<p>I refuse to even sully this post with the way I would have solved this problem in the&nbsp;past.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:seriously">
-<p>Seriously, how many of the packages he has managed/written are indispensable to using R today? It is no exaggeration to say that the world would have many more Stata, <span class="caps">SPSS</span>, and <span class="caps">SAS</span> users if not for Hadleyverse.&#160;<a class="footnote-backref" href="#fnref:seriously" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div>
+      <p>We burden Latinos (and other traditionally underserved communities) with expensive housing because of the widespread practice of using <a href="https://www.providenceri.com/efile/3620">homestead exemptions</a> in Rhode Island. By lowering the real estate tax rate, typically by 50%, for owner occupied housing, we dramatically inflate the tax rate paid by Rhode Islanders who are&nbsp;renting. </p>
+<p>Echoing a newly filed lawsuit in New York City over <a href="http://www.bkreader.com/2014/02/class-action-law-suit-charges-black-and-hispanic-renters-pay-more-in-property-taxes-than-some-owners/">discriminatory real estate tax regimes</a>, this new report emphasizes the racist incentives built into our property&nbsp;tax. </p>
+<p>Homestead exemptions are built on the belief that renters are non-permanent residents of communities, care less for the properties they occupy and neighborhoods they live in, and are worse additions than homeowners. Frankly, it is an anti-White flight measure meant to assure people that only those with the means to purchase and the intent to stay will join their neighborhoods. Wealthy, largely White, property owners see homestead exemptions as fighting an influx of &#8220;slum lords&#8221;, which is basically the perception of anyone who purchases a home or builds apartments and rents them&nbsp;out.</p>
+<p>Rather than encouraging denser communities with higher land utilization and more housing to reduce the cost of living in dignity, we subsidize low value (per acre) construction that maintain inflated housing&nbsp;costs.</p>
+<p>Full disclosure: I own a condo in Providence and receive a 50% discount on my taxes. In fact, living in a condo Downcity, my home value is depressed because of the limited ways that I can use it. I could rent my current condo at market rate and lose money because of the doubling in taxes that I would endure versus turning a small monthly profit at the same rent with higher taxes. The flexibility to use my property as my own residence or as a rental unit more than pays for higher&nbsp;taxes.</p>
+<p>So while I do have personal reasons to support removing the homestead exemption, even if I lived in a single family home on the East Side that was not attractive as a rental property, I would still think this situation is absurd. Homeowners&#8217; taxes should easily be 20% higher to tax renters 30% less. Maybe some of our hulking, vacant infrastructure could be more viably converted into housing stock and lower the cost for all residents. Maybe we could even see denser development because there will actually be a market for renters at the monthly rates that would need to be charged to recuperate expenses. At least the rent wouldn&#8217;t be so damn high for too many people of color and people living in or near&nbsp;poverty.</p>
       
     <div class=separator></div>
+      <div class=entry-overview>
+        <div class=date>Feb 18, 2014</div>
+        <div class=detail>
+          <h1><a href="../2014/02/appreciating-the-beauty-of-dplyr.html">Appreciating the Beauty of&nbsp;dplyr</a></h1>
+            <div class=summary><p><p><a href="http://had.co.nz">Hadley Wickham</a> has <a href="https://github.com/hadley">once again</a><sup id="fnref:seriously"><a class="footnote-ref" href="#fn:seriously" rel="footnote">1</a></sup> made R ridiculously better. Not only is <code>dplyr</code> incredibly fast, but the new syntax allows for some really complex operations to be expressed in a ridiculously beautiful&nbsp;way.</p>
+<p>Consider a data set, <code>course</code>, with a student identifier, <code>sid</code>, a course identifier, <code>courseno</code>, a quarter ...</p></p></div>
+        </div>
+      </div>
       <div class=entry-overview>
         <div class=date>Feb 10, 2014</div>
         <div class=detail>
@@ -88,16 +87,6 @@ summarise<span class="p">(</span>fails <span class="o">=</span> n<span class="p"
         <div class=detail>
           <h1><a href="../2014/01/garrahy-complex-rules-for-public-investment-in-parking.html">Garrahy Complex: Rules for Public Investment in&nbsp;Parking</a></h1>
             <div class=summary><p><p>James over at <a href="http://www.transportprovidence.blogspot.com">TransportPVD</a> has a great <a href="http://www.transportprovidence.blogspot.com/2014/01/how-do-you-prevent-surface-parking-lot.html">post today</a> talking about a Salt Lake City ordinance that makes property owners responsible for providing a bond that funds the landscaping and maintenance of vacant lots left after demolition. I love this as much as he does and would probably add several ...</p></p></div>
-        </div>
-      </div>
-      <div class=entry-overview>
-        <div class=date>Dec 10, 2013</div>
-        <div class=detail>
-          <h1><a href="../2013/12/did-public-schools-build-economies-or-did-economies-build-public-schools.html">Did public schools build economies, or did economies build public&nbsp;schools?</a></h1>
-            <div class=summary><p><blockquote>
-<p>We find that public schools offered practically zero return education on the margin, yet they did enjoy significant political and financial support from local political elites, if they taught in the “right” language of&nbsp;instruction.</p>
-</blockquote>
-<p>One thing that both progressives and libertarians agree upon are that social goals of education ...</p></p></div>
         </div>
       </div>
 
