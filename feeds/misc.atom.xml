@@ -182,6 +182,34 @@ Joining by&lt;span class="o"&gt;:&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span
 &lt;p&gt;That is a remarkable increase in&amp;nbsp;performance!&lt;/p&gt;
 &lt;p&gt;Now, I realize that I may have cheated. My &lt;code&gt;data.table&lt;/code&gt; code isn&amp;#8217;t very good and could probably follow a pattern closer to what I did in &lt;code&gt;dplyr&lt;/code&gt;. The results might be much closer in the hands of a more adept developer. But the take home message for me was that &lt;code&gt;dplyr&lt;/code&gt; enabled me to write the more performant code naturally because of its expressiveness. Not only is my code faster and easier to understand, it is also simpler and took far less time to&amp;nbsp;write.&lt;/p&gt;
 &lt;p&gt;It is not every day that a tool provides powerful &lt;strong&gt;expressiveness&lt;/strong&gt; and yields greater &lt;strong&gt;performance&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3&gt;Update&lt;/h3&gt;
+&lt;p&gt;I have made some improvements to this function to simplify things. I will be maintaining this code in my &lt;a href="https://github.com/jasonpbecker/PPSDCollegeReadiness/blob/master/R/modal_person_attribute.R"&gt;PPSDCollegeReadiness repository&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;modal_person_attribute &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;x&lt;span class="p"&gt;,&lt;/span&gt; sid&lt;span class="p"&gt;,&lt;/span&gt; attribute&lt;span class="p"&gt;,&lt;/span&gt; year&lt;span class="p"&gt;){&lt;/span&gt;
+  &lt;span class="c1"&gt;# Select only the important columns&lt;/span&gt;
+  x &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; x&lt;span class="p"&gt;[,&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;sid&lt;span class="p"&gt;,&lt;/span&gt; attribute&lt;span class="p"&gt;,&lt;/span&gt; year&lt;span class="p"&gt;)]&lt;/span&gt;
+  names&lt;span class="p"&gt;(&lt;/span&gt;x&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;sid&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;attribute&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;year&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="c1"&gt;# Clean up years&lt;/span&gt;
+  &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;&lt;span class="caps"&gt;TRUE&lt;/span&gt;&lt;/span&gt; &lt;span class="o"&gt;%in%&lt;/span&gt; grepl&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;_&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; x&lt;span class="o"&gt;$&lt;/span&gt;year&lt;span class="p"&gt;)){&lt;/span&gt;
+    x&lt;span class="o"&gt;$&lt;/span&gt;year &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; gsub&lt;span class="p"&gt;(&lt;/span&gt;pattern&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;[0-9]{4}_([0-9]{4})&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;\\1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; x&lt;span class="o"&gt;$&lt;/span&gt;year&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;  
+  &lt;span class="c1"&gt;# Calculate the count for each person-attribute combo and select max&lt;/span&gt;
+  max_attributes &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; x &lt;span class="o"&gt;%.%&lt;/span&gt; 
+                    group_by&lt;span class="p"&gt;(&lt;/span&gt;sid&lt;span class="p"&gt;,&lt;/span&gt; attribute&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
+                    summarize&lt;span class="p"&gt;(&lt;/span&gt;count &lt;span class="o"&gt;=&lt;/span&gt; n&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
+                    filter&lt;span class="p"&gt;(&lt;/span&gt;count &lt;span class="o"&gt;==&lt;/span&gt; max&lt;span class="p"&gt;(&lt;/span&gt;count&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
+                    select&lt;span class="p"&gt;(&lt;/span&gt;sid&lt;span class="p"&gt;,&lt;/span&gt; attribute&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="c1"&gt;# Find the max year for each person-attribute combo&lt;/span&gt;
+  results &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; max_attributes &lt;span class="o"&gt;%.%&lt;/span&gt; 
+             left_join&lt;span class="p"&gt;(&lt;/span&gt;x&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
+             group_by&lt;span class="p"&gt;(&lt;/span&gt;sid&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
+             filter&lt;span class="p"&gt;(&lt;/span&gt;year &lt;span class="o"&gt;==&lt;/span&gt; max&lt;span class="p"&gt;(&lt;/span&gt;year&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;%.%&lt;/span&gt;
+             select&lt;span class="p"&gt;(&lt;/span&gt;sid&lt;span class="p"&gt;,&lt;/span&gt; attribute&lt;span class="p"&gt;)&lt;/span&gt;
+  names&lt;span class="p"&gt;(&lt;/span&gt;results&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;sid&lt;span class="p"&gt;,&lt;/span&gt; attribute&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="kr"&gt;return&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;results&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;div class="footnote"&gt;
 &lt;hr /&gt;
 &lt;ol&gt;

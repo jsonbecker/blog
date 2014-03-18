@@ -225,6 +225,34 @@ Joining by<span class="o">:</span> c<span class="p">(</span><span class="s">&quo
 <p>That is a remarkable increase in&nbsp;performance!</p>
 <p>Now, I realize that I may have cheated. My <code>data.table</code> code isn&#8217;t very good and could probably follow a pattern closer to what I did in <code>dplyr</code>. The results might be much closer in the hands of a more adept developer. But the take home message for me was that <code>dplyr</code> enabled me to write the more performant code naturally because of its expressiveness. Not only is my code faster and easier to understand, it is also simpler and took far less time to&nbsp;write.</p>
 <p>It is not every day that a tool provides powerful <strong>expressiveness</strong> and yields greater <strong>performance</strong>.</p>
+<h3>Update</h3>
+<p>I have made some improvements to this function to simplify things. I will be maintaining this code in my <a href="https://github.com/jasonpbecker/PPSDCollegeReadiness/blob/master/R/modal_person_attribute.R">PPSDCollegeReadiness repository</a>.</p>
+<div class="highlight"><pre>modal_person_attribute <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> sid<span class="p">,</span> attribute<span class="p">,</span> year<span class="p">){</span>
+  <span class="c1"># Select only the important columns</span>
+  x <span class="o">&lt;-</span> x<span class="p">[,</span>c<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">,</span> year<span class="p">)]</span>
+  names<span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;sid&#39;</span><span class="p">,</span> <span class="s">&#39;attribute&#39;</span><span class="p">,</span> <span class="s">&#39;year&#39;</span><span class="p">)</span>
+  <span class="c1"># Clean up years</span>
+  <span class="kr">if</span><span class="p">(</span><span class="kc"><span class="caps">TRUE</span></span> <span class="o">%in%</span> grepl<span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">,</span> x<span class="o">$</span>year<span class="p">)){</span>
+    x<span class="o">$</span>year <span class="o">&lt;-</span> gsub<span class="p">(</span>pattern<span class="o">=</span><span class="s">&#39;[0-9]{4}_([0-9]{4})&#39;</span><span class="p">,</span> <span class="s">&#39;\\1&#39;</span><span class="p">,</span> x<span class="o">$</span>year<span class="p">)</span>
+  <span class="p">}</span>  
+  <span class="c1"># Calculate the count for each person-attribute combo and select max</span>
+  max_attributes <span class="o">&lt;-</span> x <span class="o">%.%</span> 
+                    group_by<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)</span> <span class="o">%.%</span>
+                    summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span> <span class="o">%.%</span>
+                    filter<span class="p">(</span>count <span class="o">==</span> max<span class="p">(</span>count<span class="p">))</span> <span class="o">%.%</span>
+                    select<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)</span>
+  <span class="c1"># Find the max year for each person-attribute combo</span>
+  results <span class="o">&lt;-</span> max_attributes <span class="o">%.%</span> 
+             left_join<span class="p">(</span>x<span class="p">)</span> <span class="o">%.%</span>
+             group_by<span class="p">(</span>sid<span class="p">)</span> <span class="o">%.%</span>
+             filter<span class="p">(</span>year <span class="o">==</span> max<span class="p">(</span>year<span class="p">))</span> <span class="o">%.%</span>
+             select<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)</span>
+  names<span class="p">(</span>results<span class="p">)</span> <span class="o">&lt;-</span> c<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)</span>
+  <span class="kr">return</span><span class="p">(</span>results<span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
 <div class="footnote">
 <hr />
 <ol>
