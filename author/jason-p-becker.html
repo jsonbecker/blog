@@ -39,27 +39,90 @@
         <div class=body>
 
       
-        <h1 class="title">Symlinking Your Data<a href="../2014/04/symlinking-your-data.html" class=perma>&#8734;</a></h1>
-        <p class=date> 2014-04-02 </p>
+        <h1 class="title">Pindown: Failed Dreams<a href="../2014/05/pindown-failed-dreams.html" class=perma>&#8734;</a></h1>
+        <p class=date> 2014-05-13 </p>
 
-      <p>I frequently work with private data. Sometimes, it lives on my personal machine rather than on a database server. Sometimes, even if it lives on a remote database server, it is better that I use locally cached data than query the database each time I want to do analysis on the data set. I have always dealt with this by <a href="http://support.apple.com/kb/HT1578?viewlocale=en_US&amp;locale=en_US">creating encrypted disk images</a> with secure passwords (stored in <a href="https://agilebits.com">1Password</a>). This is a nice extra layer of protection for private data served on a laptop, and it adds little complication to my workflow. I just have to remember to mount and unmount the disk&nbsp;images.</p>
-<p>However, it can be inconvenient from a project perspective to refer to data in a distant location like <code>/Volumes/ClientData/Entity/facttable.csv</code>. In most cases, I would prefer the data &#8220;reside&#8221; in <code>data/</code> or <code>cache/</code> &#8220;inside&#8221; of my project&nbsp;directory.</p>
-<p>Luckily, there is a great way that allows me to point to <code>data/facttable.csv</code> in my R code without actually having <code>facttable.csv</code> reside there:&nbsp;symlinking.</p>
-<p>A <a href="http://en.wikipedia.org/wiki/Symbolic_link">symlink</a> is a <strong>symbolic link</strong> file that sits in the preferred location and references the file path to the actual file. This way, when I refer to <code>data/facttable.csv</code> the file system knows to direct all of that activity to the actual file in <code>/Volumes/ClientData/Entity/facttable.csv</code>. </p>
-<p>From the command line, a symlink can be generated with a simple&nbsp;command:</p>
-<div class="highlight"><pre>ln -s target_path link_path
+      <p>I had never thought of a use for <a href="http://www.brettterpstra.com">Brett Terpstra&#8217;s</a> <a href="http://heckyesmarkdown.com">Marky the Markdownifier</a> before listening today&#8217;s <a href="http://5by5.tv/systematic/96">Systematic</a>. Why would I want to turn a webpage into&nbsp;Markdown?</p>
+<p>When I heard that Marky has an <span class="caps">API</span>, I was inspired. <a href="http://pinboard.in">Pinboard</a> has a &#8220;description&#8221; field that allows up to 65,000 characters. I never know what to put in this box. Wouldn&#8217;t it be great to put the full content of the page in Markdown into this&nbsp;field?</p>
+<p>I set out to write a quick Python script&nbsp;to:</p>
+<ol>
+<li>Grab recent Pinboard&nbsp;links.</li>
+<li>Check to see if the URLs still&nbsp;resolve.</li>
+<li>Send the link to Marky and collect a Markdown version of the&nbsp;content.</li>
+<li>Post an updated link to Pinboard with the Markdown in the description&nbsp;field.</li>
+</ol>
+<p>If all went well, I would release this script on Github as <strong>Pindown</strong>, a great way to put Markdown page content into your Pinboard&nbsp;links.</p>
+<p>The script below is far from well-constructed. I would have spent more time cleaning it up with things like better error handling and a more complete <span class="caps">CLI</span> to give more granular control over which links receive Markdown&nbsp;content. </p>
+<p>Unfortunately, I found that Pinboard consistently returns a <a href="http://www.checkupdown.com/status/E414.html">414 error code</a> because the URLs are too long. Why is this a problem? Pinboard, in an attempt to <a href="https://pinboard.in/api/">maintain compatibility</a> with the <a href="http://del.ico.us">del.ico.us</a> <span class="caps">API</span> uses only <span class="caps">GET</span> requests, whereas this kind of request would typically use a <span class="caps">POST</span> end point. As a result, I cannot send along a data&nbsp;payload.</p>
+<p>So I&#8217;m sharing this just for folks who are interested in playing with Python, RESTful APIs, and Pinboard. I&#8217;m also posting for my own posterity since a <a href="https://groups.google.com/d/msg/pinboard-dev/Od6sCzREeBU/L-WKgX6vUDoJ">non-Del.ico.us compatible version 2 of the Pinboard <span class="caps">API</span> is coming</a>.</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+
+<span class="k">def</span> <span class="nf">getDataSet</span><span class="p">(</span><span class="n">call</span><span class="p">):</span>
+  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;https://api.pinboard.in/v1/posts/recent&#39;</span> <span class="o">+</span> <span class="n">call</span><span class="p">)</span>
+  <span class="n">data_set</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">_content</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">data_set</span>
+
+<span class="k">def</span> <span class="nf">checkURL</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+  <span class="n">newurl</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">newurl</span><span class="o">.</span><span class="n">status_code</span><span class="o">==</span><span class="mi">200</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">newurl</span><span class="o">.</span><span class="n">url</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;your message&#39;</span><span class="p">,</span> <span class="n">newurl</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">markyCall</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://heckyesmarkdown.com/go/?u=&#39;</span> <span class="o">+</span> <span class="n">url</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">_content</span>
+
+<span class="k">def</span> <span class="nf">process_site</span><span class="p">(</span><span class="n">call</span><span class="p">):</span>
+  <span class="n">data_set</span> <span class="o">=</span> <span class="n">getDataSet</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
+  <span class="n">processed_site</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">data_set</span><span class="p">[</span><span class="s">&#39;posts&#39;</span><span class="p">]:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">url</span> <span class="o">=</span> <span class="n">checkURL</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s">&#39;href&#39;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+      <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s">&#39;href&#39;</span><span class="p">])</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">markyCall</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">site</span><span class="p">[</span><span class="s">&#39;extended&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+    <span class="n">processed_site</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+  <span class="k">print</span> <span class="n">errors</span>
+  <span class="k">return</span> <span class="n">processed_site</span>
+
+<span class="k">def</span> <span class="nf">write_pinboard</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">auth_token</span><span class="p">):</span>
+  <span class="n">stem</span> <span class="o">=</span> <span class="s">&#39;https://api.pinboard.in/v1/posts/add?format=json&amp;auth_token=&#39;</span>
+  <span class="n">payload</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;href&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;extended&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;extended&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;tags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;tags&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;shared&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;extended&#39;</span><span class="p">,</span> <span class="s">&#39;no&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;toread&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;toread&#39;</span><span class="p">,</span> <span class="s">&#39;no&#39;</span><span class="p">)</span>           
+  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stem</span> <span class="o">+</span> <span class="n">auth_token</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">payload</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s">&#39;href&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\t\t</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+  <span class="n">settings</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="s">&#39;<span class="caps">AUTH</span>.yaml&#39;</span><span class="p">,</span> <span class="s">&#39;rw&#39;</span><span class="p">)</span>
+  <span class="n">identity</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n"><span class="caps">AUTH</span></span><span class="o">.</span><span class="n">yaml</span><span class="p">)</span>
+  <span class="n">auth_token</span> <span class="o">=</span> <span class="n">identity</span><span class="p">[</span><span class="s">&#39;user_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;:&#39;</span> <span class="o">+</span> <span class="n">identity</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span>
+  <span class="n">valid_sites</span> <span class="o">=</span> <span class="n">process_site</span><span class="p">(</span><span class="s">&#39;?format=json&amp;auth_token=&#39;</span> <span class="o">+</span> <span class="n">auth_token</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">valid_sites</span><span class="p">:</span>
+    <span class="n">write_pinboard</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">auth_token</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+  <span class="n">main</span><span class="p">()</span>
 </pre></div>
-
-
-<p>R offers a function that does the same&nbsp;thing:</p>
-<div class="highlight"><pre>file.symlink<span class="p">(</span>target_path<span class="p">,</span> link_path<span class="p">)</span>
-</pre></div>
-
-
-<p>where <code>target_path</code> and <code>link_path</code> are both strings surrounded by quotation&nbsp;marks.</p>
-<p>One of the first things I do when setting up a new analysis is add common data storage file extensions like <code>.csv</code> and <code>.xls</code> to my <code>.gitignore</code> file so that I do not mistakenly put any data in a remote repository. The second thing I do is set up symlinks to the mount location of the encrypted&nbsp;data.</p>
       
     <div class=separator></div>
+      <div class=entry-overview>
+        <div class=date>Apr 02, 2014</div>
+        <div class=detail>
+          <h1><a href="../2014/04/symlinking-your-data.html">Symlinking Your&nbsp;Data</a></h1>
+            <div class=summary><p><p>I frequently work with private data. Sometimes, it lives on my personal machine rather than on a database server. Sometimes, even if it lives on a remote database server, it is better that I use locally cached data than query the database each time I want to do analysis on ...</p></p></div>
+        </div>
+      </div>
       <div class=entry-overview>
         <div class=date>Mar 10, 2014</div>
         <div class=detail>
@@ -82,14 +145,6 @@
 <p>Consider a data set, <code>course</code>, with a student identifier, <code>sid</code>, a course identifier, <code>courseno</code>, a quarter ...</p></p></div>
         </div>
       </div>
-      <div class=entry-overview>
-        <div class=date>Feb 10, 2014</div>
-        <div class=detail>
-          <h1><a href="../2014/02/freedom-should-be-reserved-for-the-wealthy.html">Freedom Should Be Reserved for the&nbsp;Wealthy</a></h1>
-            <div class=summary><p><blockquote>
-<p>These quotes are absolutely striking, in that they give a clear glimpse into the ideological commitments of the Republican Party. From Sen. Blunt and Rep. Cole, we get the revelation that— for conservatives— the only “work” worth acknowledging is wage labor. To myself, and many others, someone who retires early ...</p></blockquote></p></div>
-        </div>
-      </div>
 
 <div class="pagination">
 <ul>
@@ -99,6 +154,7 @@
     <span class=""><a href="../author/jason-p-becker3.html">3</a>
     <span class=""><a href="../author/jason-p-becker4.html">4</a>
     <span class=""><a href="../author/jason-p-becker5.html">5</a>
+    <span class=""><a href="../author/jason-p-becker6.html">6</a>
     <span class="next"><a href="../author/jason-p-becker2.html">Next &rarr;</a>
 </ul>
 </div>
