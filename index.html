@@ -38,84 +38,27 @@
       <div class=separator></div>        
         <div class=body>
 
-      
-        <h1 class="title">Pindown: Failed Dreams<a href="./2014/05/pindown-failed-dreams.html" class=perma>&#8734;</a></h1>
-        <p class=date> 2014-05-13 </p>
+    
+        <h1 class="title">
+        <a href='http://jsomers.net/blog/dictionary' title="Link">
+          They really don’t make them like they used to… 
+          <i class="icon-external-link" style="font-size:0.5em;vertical-align:super;"></i>
+        </a>
+        <a href="./2014/05/they-really-dont-make-them-like-they-used-to.html" class=perma title ="Permalink for They really don’t make them like they used to…">&#8734;</a></h1>
+        <p class=date> 2014-05-20 </p>
 
-      <p>I had never thought of a use for <a href="http://www.brettterpstra.com">Brett Terpstra&#8217;s</a> <a href="http://heckyesmarkdown.com">Marky the Markdownifier</a> before listening today&#8217;s <a href="http://5by5.tv/systematic/96">Systematic</a>. Why would I want to turn a webpage into&nbsp;Markdown?</p>
-<p>When I heard that Marky has an <span class="caps">API</span>, I was inspired. <a href="http://pinboard.in">Pinboard</a> has a &#8220;description&#8221; field that allows up to 65,000 characters. I never know what to put in this box. Wouldn&#8217;t it be great to put the full content of the page in Markdown into this&nbsp;field?</p>
-<p>I set out to write a quick Python script&nbsp;to:</p>
-<ol>
-<li>Grab recent Pinboard&nbsp;links.</li>
-<li>Check to see if the URLs still&nbsp;resolve.</li>
-<li>Send the link to Marky and collect a Markdown version of the&nbsp;content.</li>
-<li>Post an updated link to Pinboard with the Markdown in the description&nbsp;field.</li>
-</ol>
-<p>If all went well, I would release this script on Github as <strong>Pindown</strong>, a great way to put Markdown page content into your Pinboard&nbsp;links.</p>
-<p>The script below is far from well-constructed. I would have spent more time cleaning it up with things like better error handling and a more complete <span class="caps">CLI</span> to give more granular control over which links receive Markdown&nbsp;content. </p>
-<p>Unfortunately, I found that Pinboard consistently returns a <a href="http://www.checkupdown.com/status/E414.html">414 error code</a> because the URLs are too long. Why is this a problem? Pinboard, in an attempt to <a href="https://pinboard.in/api/">maintain compatibility</a> with the <a href="http://del.ico.us">del.ico.us</a> <span class="caps">API</span> uses only <span class="caps">GET</span> requests, whereas this kind of request would typically use a <span class="caps">POST</span> end point. As a result, I cannot send along a data&nbsp;payload.</p>
-<p>So I&#8217;m sharing this just for folks who are interested in playing with Python, RESTful APIs, and Pinboard. I&#8217;m also posting for my own posterity since a <a href="https://groups.google.com/d/msg/pinboard-dev/Od6sCzREeBU/L-WKgX6vUDoJ">non-Del.ico.us compatible version 2 of the Pinboard <span class="caps">API</span> is coming</a>.</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-
-
-<span class="k">def</span> <span class="nf">getDataSet</span><span class="p">(</span><span class="n">call</span><span class="p">):</span>
-  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;https://api.pinboard.in/v1/posts/recent&#39;</span> <span class="o">+</span> <span class="n">call</span><span class="p">)</span>
-  <span class="n">data_set</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">_content</span><span class="p">)</span>
-  <span class="k">return</span> <span class="n">data_set</span>
-
-<span class="k">def</span> <span class="nf">checkURL</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
-  <span class="n">newurl</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-  <span class="k">if</span> <span class="n">newurl</span><span class="o">.</span><span class="n">status_code</span><span class="o">==</span><span class="mi">200</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">newurl</span><span class="o">.</span><span class="n">url</span>
-  <span class="k">else</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;your message&#39;</span><span class="p">,</span> <span class="n">newurl</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">markyCall</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
-  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://heckyesmarkdown.com/go/?u=&#39;</span> <span class="o">+</span> <span class="n">url</span><span class="p">)</span>
-  <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">_content</span>
-
-<span class="k">def</span> <span class="nf">process_site</span><span class="p">(</span><span class="n">call</span><span class="p">):</span>
-  <span class="n">data_set</span> <span class="o">=</span> <span class="n">getDataSet</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
-  <span class="n">processed_site</span> <span class="o">=</span> <span class="p">[]</span>
-  <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
-  <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">data_set</span><span class="p">[</span><span class="s">&#39;posts&#39;</span><span class="p">]:</span>
-    <span class="k">try</span><span class="p">:</span>
-      <span class="n">url</span> <span class="o">=</span> <span class="n">checkURL</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s">&#39;href&#39;</span><span class="p">])</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-      <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s">&#39;href&#39;</span><span class="p">])</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="n">markyCall</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="n">site</span><span class="p">[</span><span class="s">&#39;extended&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
-    <span class="n">processed_site</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
-  <span class="k">print</span> <span class="n">errors</span>
-  <span class="k">return</span> <span class="n">processed_site</span>
-
-<span class="k">def</span> <span class="nf">write_pinboard</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">auth_token</span><span class="p">):</span>
-  <span class="n">stem</span> <span class="o">=</span> <span class="s">&#39;https://api.pinboard.in/v1/posts/add?format=json&amp;auth_token=&#39;</span>
-  <span class="n">payload</span> <span class="o">=</span> <span class="p">{}</span>
-  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;href&#39;</span><span class="p">)</span>
-  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
-  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;extended&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;extended&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
-  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;tags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;tags&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
-  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;shared&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;extended&#39;</span><span class="p">,</span> <span class="s">&#39;no&#39;</span><span class="p">)</span>
-  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;toread&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;toread&#39;</span><span class="p">,</span> <span class="s">&#39;no&#39;</span><span class="p">)</span>           
-  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stem</span> <span class="o">+</span> <span class="n">auth_token</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">payload</span><span class="p">)</span>
-  <span class="k">print</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s">&#39;href&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\t\t</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-  <span class="n">settings</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="s">&#39;<span class="caps">AUTH</span>.yaml&#39;</span><span class="p">,</span> <span class="s">&#39;rw&#39;</span><span class="p">)</span>
-  <span class="n">identity</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n"><span class="caps">AUTH</span></span><span class="o">.</span><span class="n">yaml</span><span class="p">)</span>
-  <span class="n">auth_token</span> <span class="o">=</span> <span class="n">identity</span><span class="p">[</span><span class="s">&#39;user_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;:&#39;</span> <span class="o">+</span> <span class="n">identity</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span>
-  <span class="n">valid_sites</span> <span class="o">=</span> <span class="n">process_site</span><span class="p">(</span><span class="s">&#39;?format=json&amp;auth_token=&#39;</span> <span class="o">+</span> <span class="n">auth_token</span><span class="p">)</span>
-  <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">valid_sites</span><span class="p">:</span>
-    <span class="n">write_pinboard</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">auth_token</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-  <span class="n">main</span><span class="p">()</span>
-</pre></div>
+      <p>I have never found dictionaries or even a thesaurus particularly useful as part of the writing process. I like to blame this on my lack of ~~creative~~ careful&nbsp;writing.</p>
+<p>But just maybe, I have simply been using the wrong dictionaries. It is hard not to be seduced by the seeming superiority of Webster&#8217;s original style. A dictionary that is one-part explanatory and one-part <em>exploratory</em> provides a much richer experience of English as an enabler of ideas that transend meager&nbsp;vocabulary.</p>
       
     <div class=separator></div>
+      <div class=entry-overview>
+        <div class=date>May 13, 2014</div>
+        <div class=detail>
+          <h1><a href="./2014/05/pindown-failed-dreams.html">Pindown: Failed&nbsp;Dreams</a></h1>
+            <div class=summary><p><p>I had never thought of a use for <a href="http://www.brettterpstra.com">Brett Terpstra&#8217;s</a> <a href="http://heckyesmarkdown.com">Marky the Markdownifier</a> before listening today&#8217;s <a href="http://5by5.tv/systematic/96">Systematic</a>. Why would I want to turn a webpage into&nbsp;Markdown?</p>
+<p>When I heard that Marky has an <span class="caps">API</span>, I was inspired. <a href="http://pinboard.in">Pinboard</a> has a &#8220;description&#8221; field that allows up to 65 ...</p></p></div>
+        </div>
+      </div>
       <div class=entry-overview>
         <div class=date>Apr 02, 2014</div>
         <div class=detail>
@@ -135,14 +78,6 @@
         <div class=detail>
           <h1><a href="./2014/02/latinos-in-rhode-island-face-housing-burden.html">Latinos in Rhode Island Face Housing&nbsp;Burden</a></h1>
             <div class=summary><p><p>We burden Latinos (and other traditionally underserved communities) with expensive housing because of the widespread practice of using <a href="https://www.providenceri.com/efile/3620">homestead exemptions</a> in Rhode Island. By lowering the real estate tax rate, typically by 50%, for owner occupied housing, we dramatically inflate the tax rate paid by Rhode Islanders who are&nbsp;renting ...</p></p></div>
-        </div>
-      </div>
-      <div class=entry-overview>
-        <div class=date>Feb 18, 2014</div>
-        <div class=detail>
-          <h1><a href="./2014/02/appreciating-the-beauty-of-dplyr.html">Appreciating the Beauty of&nbsp;dplyr</a></h1>
-            <div class=summary><p><p><a href="http://had.co.nz">Hadley Wickham</a> has <a href="https://github.com/hadley">once again</a><sup id="fnref:seriously"><a class="footnote-ref" href="#fn:seriously" rel="footnote">1</a></sup> made R ridiculously better. Not only is <code>dplyr</code> incredibly fast, but the new syntax allows for some really complex operations to be expressed in a ridiculously beautiful&nbsp;way.</p>
-<p>Consider a data set, <code>course</code>, with a student identifier, <code>sid</code>, a course identifier, <code>courseno</code>, a quarter ...</p></p></div>
         </div>
       </div>
 
