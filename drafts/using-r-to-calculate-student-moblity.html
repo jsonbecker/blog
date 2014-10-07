@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+          <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        try {
+          var pageTracker = _gat._getTracker("UA-40920108-1");
+          pageTracker._trackPageview();
+        } catch(err) {}
+        </script>
+
+
+        <meta name='keywords' contents ="education,data,rstats" />
+
+    <meta name="description" contents="In a couple of previous posts, I outlined the importance of documenting business rules for common education statistics and described my take on how to best calculate student mobility. In this post, I will be sharing two versions of R function I wrote to implement this mobility calculation, reviewing their ..." />
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>  Using R to Calculate Student Moblity | jasonpbecker
+</title>
+
+    <link rel="stylesheet" href="../theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../theme/css/font-awesome.css" type="text/css"/>
+  </head>
+  <body>
+    <div class=container>
+
+      <div class=navigation>
+        <ul>
+          <a href="../index.html"> 
+            <li> <i class="icon-home icon-large"></i> </li> </a>
+          <a href="../about.html"> 
+            <li> <i class="icon-user icon-large"></i> </li> </a>
+          <a href="../archives.html"> 
+            <li> <i class="icon-archive icon-large"></i> </li> </a>
+        </ul>
+      </div>
+      <div class=separator></div>        
+        <div class=body>
+      <h1 class="title"> Using R to Calculate Student Moblity</h1>
+    <p class=date> 2013-09-23 </p>
+    <p>In a couple of previous posts, I outlined the importance of <a href="filename|documentation-of-business-rules-and-analysis.md">documenting business rules for common education statistics</a> and described my take on how to <a href="new-calculation-for-student-mobility.md">best calculate student mobility</a>. In this post, I will be sharing two versions of R function I wrote to implement this mobility calculation, reviewing their different structure and methods to reveal how I achieved an order of magnitude speed up between the two versions. <sup id="fnref:optimization"><a class="footnote-ref" href="#fn:optimization" rel="footnote">1</a></sup> At the end of this post, I will propose several future routes for optimization that I believe should lead to the ability to handle millions of student records in&nbsp;seconds.</p>
+<h2>Version 0: Where Do I&nbsp;Begin?</h2>
+<p>The first thing I tend to do is whiteboard the rules I want to use through careful consideration and constant referal back to real data sets. By staying grounded in the data, I am less likely to encounter unexpected situations during my quality control. It also makes it much easier to develop test data, since I seek out outlier records in actual data during the business rule&nbsp;process.</p>
+<p>Developing test data is a key part of the development process. Without a compact, but sufficiently complex, set of data to try with a newly developed function, there is no way to know whether or not it does what I&nbsp;intend.</p>
+<p>Recall the <a href="filename|new-calculation-for-student-mobility.md">business rules for mobility</a> that I have proposed, all of which came out of this whiteboarding&nbsp;process:</p>
+<ol>
+<li>Entering the data with an enroll date after the start of the year counts as one&nbsp;move.</li>
+<li>Leaving the data with an exit date before the end of the year counts as one&nbsp;move.</li>
+<li>Changing schools sometime during the year without a large gap in enrollment counts as one&nbsp;move.</li>
+<li>Changing schools sometime during the year with a large gap in enrollment counts as two&nbsp;moves.</li>
+<li>Adjacent enrollment records for the same student in the same school without a large gap in enrollment does not count as&nbsp;moving.</li>
+</ol>
+<p>Test data needs to represent each of these situations so that I can confirm the function is properly implementing each&nbsp;rule.</p>
+<p>Below is a copy of my test data. As an exercise, I recommend determining the number of &#8220;moves&#8221; each of these students should be credited with after applying the above stated business&nbsp;rules.</p>
+<table>
+<thead>
+<tr>
+<th>Unique Student <span class="caps">ID</span></th>
+<th>School Code</th>
+<th>Enrollment Date</th>
+<th>Exit Date</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1000000</td>
+<td>10101</td>
+<td>2012-10-15</td>
+<td>2012-11-15</td>
+<td></td>
+</tr>
+<tr>
+<td>1000000</td>
+<td>10103</td>
+<td>2012-01-03</td>
+<td>2013-03-13</td>
+<td></td>
+</tr>
+<tr>
+<td>1000000</td>
+<td>10103</td>
+<td>2012-03-20</td>
+<td>2013-05-13</td>
+<td></td>
+</tr>
+<tr>
+<td>1000001</td>
+<td>10101</td>
+<td>2012-09-01</td>
+<td>2013-06-15</td>
+<td></td>
+</tr>
+<tr>
+<td>1000002</td>
+<td>10102</td>
+<td>2012-09-01</td>
+<td>2013-01-23</td>
+<td></td>
+</tr>
+<tr>
+<td>1000003</td>
+<td>10102</td>
+<td>2012-09-15</td>
+<td>2012-11-15</td>
+<td></td>
+</tr>
+<tr>
+<td>1000003</td>
+<td>10102</td>
+<td>2013-03-15</td>
+<td>2013-06-15</td>
+<td></td>
+</tr>
+<tr>
+<td>1000004</td>
+<td>10103</td>
+<td>2013-03-15</td>
+<td><span class="caps">NA</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>Version 1: A Naïve&nbsp;Implementation</h2>
+<p>Once I have developed business rules and a test data set, I like to quickly confirm that I can produce the desired results. That&#8217;s particularly true when it comes to implementing a new, fairly complex business rules. My initial implementation of a new algorithm does not need to be efficient, easily understood, or maintainable. My goal is simply to follow my initial hunch on how to accomplish a task and get it working. Sometimes this <em>naïve implementation</em> turns out to be pretty close to my final implementation, but sometimes it can be quite far off. The main things I tend to improve with additional work are extensibility, readability, and&nbsp;performance.</p>
+<p>In the case of this mobility calculation, I knew almost immediately that my initial approach was not going to have good performance characteristics. Here is a step by step discussion of Version&nbsp;1.</p>
+<h3>Function Declaration:&nbsp;Parameters</h3>
+<div class="highlight"><pre>moves_calc <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>df<span class="p">,</span> 
+                       enrollby<span class="p">,</span>
+                       exitby<span class="p">,</span>
+                       gap<span class="o">=</span><span class="m">14</span><span class="p">,</span>
+                       sid<span class="o">=</span><span class="s">&#39;sid&#39;</span><span class="p">,</span> 
+                       schid<span class="o">=</span><span class="s">&#39;schid&#39;</span><span class="p">,</span>
+                       enroll_date<span class="o">=</span><span class="s">&#39;enroll_date&#39;</span><span class="p">,</span>
+                       exit_date<span class="o">=</span><span class="s">&#39;exit_date&#39;</span><span class="p">)){</span>
+</pre></div>
+
+
+<p>I named my function <code>moves_calc()</code> to match the style of <code>age_calc()</code> which was submitted and accepted to the eeptools package. This new function has eight&nbsp;parameters.</p>
+<p><code>df</code>: a <code>data.frame</code> containing the required data to do the mobility&nbsp;calculation. </p>
+<p><code>enrollby</code>: an atomic vector of type <code>character</code> or <code>Date</code> in the format <code>YYYY-MM-DD</code>. This parameter signifies the start of the school year. Students whose first enrollment is after this date will have an additional  <code>move</code> under the assumption that they enrolled somewhere prior to the first enrollment record in the data. This does not (and likely should not) match the actual first day of the school&nbsp;year.</p>
+<p><code>exitby</code>: an atomic vector of type <code>character</code> or <code>Date</code> in the format  <code>YYYY-MM-DD</code>. This parameter signifies the end of the school year. Students whose last exit is before this date will have an additional <code>move</code> under the assumption that they enrolled somewhere after this exit record that is excluded in the data. This date does not (and likely should not) match the actual last day of the school&nbsp;year.</p>
+<p><code>gap</code>: an atomic vector of type <code>numeric</code> that signifies how long a gap must exist between student records to record an additional move for that student under the assumption that they enrolled somewhere in between the two records in the data that is not&nbsp;recorded.</p>
+<p><code>sid</code>: an atomic vector of type <code>character</code> that represents the name of the vector in <code>df</code> that contains the unique student identifier. The default value is <code>'sid'</code>.</p>
+<p><code>schid</code>: an atomic vector of type <code>character</code> that represents the name of the vector in <code>df</code> that contains the unique school identifier. The default value is <code>schid</code>.</p>
+<p><code>enroll_date</code>: an atomic vector of type <code>character</code> that represents the name of the vector in <code>df</code> that contains the enrollment date for each record. The default value is <code>enroll_date</code>.</p>
+<p><code>exit_date</code>: an atomic vector of type <code>character</code> that represents the name of the vector in <code>df</code> that contains the exit date for each record. The default value is <code>exit_date</code>.</p>
+<p>Most of these parameters are about providing flexibility around the naming of attributes in the data set. Although I often write functions for my own work which accept <code>data.frames</code>, I can not help but to feel this is a bad practice. Assuming particular data attributes of the right name and type does not make for generalizable code. To make up for my shortcoming in this area, I have done my best to allow other users to enter whatever data column names they want, so long as they contain the right information to run the&nbsp;algorithm.</p>
+<p>The next portion of the function loads some of the required packages and is common to many of my custom&nbsp;functions:</p>
+<div class="highlight"><pre><span class="kr">if</span><span class="p">(</span><span class="s">&quot;data.table&quot;</span> <span class="o">%in%</span> rownames<span class="p">(</span>installed.packages<span class="p">())</span> <span class="o">==</span> <span class="kc">FALSE</span><span class="p">){</span>
+    install.packages<span class="p">(</span><span class="s">&quot;data.table&quot;</span><span class="p">)</span>
+  <span class="p">}</span> 
+require<span class="p">(</span>data.table<span class="p">)</span>
+
+<span class="kr">if</span><span class="p">(</span><span class="s">&quot;plyr&quot;</span> <span class="o">%in%</span> rownames<span class="p">(</span>installed.packages<span class="p">())</span> <span class="o">==</span> <span class="kc">FALSE</span><span class="p">){</span>
+    install.packages<span class="p">(</span><span class="s">&quot;plyr&quot;</span><span class="p">)</span>
+  <span class="p">}</span> 
+require<span class="p">(</span>plyr<span class="p">)</span>
+</pre></div>
+
+
+<h3>Type Checking and Programmatic&nbsp;Defaults</h3>
+<p>Next, I do extensive type-checking to make sure that <code>df</code> is structured the way I expect it to be in order to run the algorithm. I do my best to supply humane <code>warning()</code> and <code>stop()</code> messages when things go wrong, and in some cases, set default values that may help the function run even if function is not called&nbsp;properly.</p>
+<div class="highlight"><pre><span class="kr">if</span> <span class="p">(</span><span class="o">!</span>inherits<span class="p">(</span>df<span class="p">[[</span>enroll_date<span class="p">]],</span> <span class="s">&quot;Date&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="o">!</span>inherits<span class="p">(</span>df<span class="p">[[</span>exit_date<span class="p">]],</span> <span class="s">&quot;Date&quot;</span><span class="p">))</span>
+    stop<span class="p">(</span><span class="s">&quot;Both enroll_date and exit_date must be Date objects&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>The <code>enroll_date</code> and <code>exit_date</code> both have to be <code>Date</code> objects. I could have attempted to coerce those vectors into <code>Date</code> types using <code>as.Date()</code>, but I would rather not assume something like the date format. Since <code>enroll_date</code> and <code>exit_date</code> are the most critical attributes of each student, the function will <code>stop()</code> if they are the incorrect type, informing the analyst to clean up the&nbsp;data.</p>
+<div class="highlight"><pre><span class="kr">if</span><span class="p">(</span>missing<span class="p">(</span>enrollby<span class="p">)){</span>
+   enrollby <span class="o">&lt;-</span> as.Date<span class="p">(</span>paste<span class="p">(</span>year<span class="p">(</span>min<span class="p">(</span>df<span class="o">$</span>enroll_date<span class="p">,</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">)),</span>
+                              <span class="s">&#39;-09-15&#39;</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span> format<span class="o">=</span><span class="s">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+<span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+  <span class="kr">if</span><span class="p">(</span>is.na<span class="p">(</span>as.Date<span class="p">(</span>enrollby<span class="p">,</span> format<span class="o">=</span><span class="s">&quot;%Y-%m-%d&quot;</span><span class="p">))){</span>
+     enrollby <span class="o">&lt;-</span> as.Date<span class="p">(</span>paste<span class="p">(</span>year<span class="p">(</span>min<span class="p">(</span>df<span class="o">$</span>enroll_date<span class="p">,</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">)),</span>
+                               <span class="s">&#39;-09-15&#39;</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span> format<span class="o">=</span><span class="s">&#39;%Y-%m-%d&#39;</span>
+     warning<span class="p">(</span>paste<span class="p">(</span><span class="s">&quot;enrollby must be a string with format %Y-%m-%d,&quot;</span><span class="p">,</span>
+                   <span class="s">&quot;defaulting to&quot;</span><span class="p">,</span> 
+                   enrollby<span class="p">,</span> sep<span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">))</span>
+  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+    enrollby <span class="o">&lt;-</span> as.Date<span class="p">(</span>enrollby<span class="p">,</span> format<span class="o">=</span><span class="s">&quot;%Y-%m-%d&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kr">if</span><span class="p">(</span>missing<span class="p">(</span>exitby<span class="p">)){</span>
+  exitby <span class="o">&lt;-</span> as.Date<span class="p">(</span>paste<span class="p">(</span>year<span class="p">(</span>max<span class="p">(</span>df<span class="o">$</span>exit_date<span class="p">,</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">)),</span>
+                          <span class="s">&#39;-06-01&#39;</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span> format<span class="o">=</span><span class="s">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+<span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+  <span class="kr">if</span><span class="p">(</span>is.na<span class="p">(</span>as.Date<span class="p">(</span>exitby<span class="p">,</span> format<span class="o">=</span><span class="s">&quot;%Y-%m-%d&quot;</span><span class="p">))){</span>
+    exitby <span class="o">&lt;-</span> as.Date<span class="p">(</span>paste<span class="p">(</span>year<span class="p">(</span>max<span class="p">(</span>df<span class="o">$</span>exit_date<span class="p">,</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">)),</span>
+                              <span class="s">&#39;-06-01&#39;</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span> format<span class="o">=</span><span class="s">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+    warning<span class="p">(</span>paste<span class="p">(</span><span class="s">&quot;exitby must be a string with format %Y-%m-%d,&quot;</span><span class="p">,</span>
+                  <span class="s">&quot;defaulting to&quot;</span><span class="p">,</span> 
+                  exitby<span class="p">,</span> sep<span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">))</span>
+  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+    exitby <span class="o">&lt;-</span> as.Date<span class="p">(</span>exitby<span class="p">,</span> format<span class="o">=</span><span class="s">&quot;%Y-%m-%d&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kr">if</span><span class="p">(</span><span class="o">!</span>is.numeric<span class="p">(</span>gap<span class="p">)){</span>
+  gap <span class="o">&lt;-</span> <span class="m">14</span>
+  warning<span class="p">(</span><span class="s">&quot;gap was not a number, defaulting to 14 days&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>For maximum flexibility, I have parameterized the <code>enrollby</code>, <code>exitby</code>, and <code>gap</code> used by the algorithm to determine student moves. An astute observer of the function declaration may have noticed I did not set default values for <code>enrollby</code> or <code>exitby</code>. This is because these dates are naturally going to be different which each year of data. As a result, I want to enforce their explicit&nbsp;declaration. </p>
+<p>However, we all make mistakes. So when I check to see if <code>enrollby</code> or <code>exitby</code> are <code>missing()</code>, I do not stop the function if it returns <code>TRUE</code>. Instead, I set the value <code>enrollby</code> to September 15 in the year that matches the minimum (first) enrollment record and <code>exitby</code> to June 1 in the year that matches the maximum (last) exit record. I then pop off a <code>warning()</code> that informs the user the expected values for each parameter and what values I have defaulted them to. I chose to use <code>warning()</code> because many R users set their environment to halt at <code>warnings()</code>. They are generally not good and should be pursued and fixed. No one should depend upon the defaulting process I use in the function. But the defaults that can be determined programmatically are sensible enough that I did not feel the need to always halt the function in its&nbsp;place.</p>
+<p>I also check to see if <code>gap</code> is, in fact, defined as a number. If not, I also throw a <code>warning()</code> after setting <code>gap</code> equal to default value of <code>14</code>.</p>
+<p>Is this all of the type and error-checking I could have included? Probably not, but I think this represents a very sensible set that make this function much more generalizable outside of my coding environment. This kind of checking may be overkill for a project that is worked on independently and with a single data set, but colleagues, including your future self, will likely be thankful for their inclusion if any of your code is to be&nbsp;reused.</p>
+<h3>Initializing the&nbsp;Results</h3>
+<div class="highlight"><pre>output <span class="o">&lt;-</span> data.frame<span class="p">(</span>id <span class="o">=</span> as.character<span class="p">(</span>unique<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]])),</span>
+                     moves <span class="o">=</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&#39;numeric&#39;</span><span class="p">,</span> 
+                                    length <span class="o">=</span> length<span class="p">(</span>unique<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]]))))</span>
+output <span class="o">&lt;-</span> data.table<span class="p">(</span>output<span class="p">,</span> key<span class="o">=</span><span class="s">&#39;id&#39;</span><span class="p">)</span>
+df <span class="o">&lt;-</span> arrange<span class="p">(</span>df<span class="p">,</span> sid<span class="p">,</span> enroll_date<span class="p">)</span>
+</pre></div>
+
+
+<p>My naïve implementation uses a lot of <code>for</code> loops, a no-no when it comes to R performance. One way to make <code>for</code> loops a lot worse, and this is true in any language, is to reassign a variable within the loop. This means that each iteration has the overhead of creating and assigning that object. Especially when we are building up results for each observation, it is silly to do this. We know exactly how big the data will be and therefore only need to create the object once. We can then assign a much smaller part of that object (in this case, one value in a vector) rather than the whole object (a honking <code>data.table</code>).</p>
+<p>Our <code>output</code> object is what the function returns. It is a simple <code>data.table</code> containing all of the unique student identifiers and the number of <code>moves</code> recorded for each&nbsp;student.</p>
+<p>The last line in this code chunk ensures that the data are arranged by the unique student identifier and enrollment date. This is key since the <code>for</code> loops assume that they are traversing a student&#8217;s record&nbsp;sequentially.</p>
+<h3>Business Rule 1: The&nbsp;Latecomer</h3>
+<div class="highlight"><pre><span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span><span class="p">(</span>length<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]])</span><span class="m">-1</span><span class="p">)){</span>
+  <span class="kr">if</span><span class="p">(</span>i<span class="o">&gt;</span><span class="m">1</span> <span class="o">&amp;&amp;</span> df<span class="p">[</span>sid<span class="p">][</span>i<span class="p">,]</span><span class="o">!=</span>df<span class="p">[</span>sid<span class="p">][(</span>i<span class="m">-1</span><span class="p">),]){</span>
+    <span class="kr">if</span><span class="p">(</span>df<span class="p">[[</span><span class="s">&#39;enroll_date&#39;</span><span class="p">]][</span>i<span class="p">]</span><span class="o">&gt;</span>enrollby<span class="p">){</span>
+      output<span class="p">[</span>as.character<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]][</span>i<span class="p">]),</span> moves<span class="o">:=</span>moves<span class="m">+1L</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>i<span class="o">==</span><span class="m">1</span><span class="p">){</span>
+    <span class="kr">if</span><span class="p">(</span>df<span class="p">[[</span><span class="s">&#39;enroll_date&#39;</span><span class="p">]][</span>i<span class="p">]</span><span class="o">&gt;</span>enrollby<span class="p">){</span>
+    output<span class="p">[</span>as.character<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]][</span>i<span class="p">]),</span> moves<span class="o">:=</span>moves<span class="m">+1L</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+
+
+<p>The first bit of logic checks if <code>sid</code> in row <code>i</code> is not equal to the <code>sid</code> in the <code>i-1</code> row. In other words, is this the first time we are observing this student? If it is, then row <code>i</code> is the first observation for that student and therefore has the minimum enrollment date. The <code>enroll_date</code> is checked against <code>enrollby</code>. When <code>enroll_date</code> is after <code>enrollby</code>, then the <code>moves</code> attribute for that <code>sid</code> is incremented by 1. <sup id="fnref:increments"><a class="footnote-ref" href="#fn:increments" rel="footnote">2</a></sup></p>
+<p>Now, I didn&#8217;t really mention the conditional that <code>i&gt;1</code>. This is needed because there is no <code>i-1</code> observation for the very first row of the <code>data.table</code>. Therefore, <code>i==1</code> is a special case where we once again perform the same check for <code>enroll_date</code> and <code>enrollby</code>. The <code>i&gt;1</code> condition is before the <code>&amp;&amp;</code> operator, which ensures the statement after the <code>&amp;&amp;</code> is not evaluated when the first conditional is <code>FALSE</code>. This avoids an &#8220;out of bounds&#8221;-type error where R tries to check <code>df[0]</code>.</p>
+<h3>Business Rule 5: The&nbsp;Feint</h3>
+<p>Yeah, yeah&#8212; the business rule list above doesn&#8217;t match the order of my function. That&#8217;s ok. Remember, sometimes giving instructions to a computer does not follow the way you would organize instructions for&nbsp;humans.</p>
+<p>Remember, the function is traversing through our <code>data.frame</code> one row at a time. First I checked to see if the function is at the first record for a particular student. Now I check to see if there are any records after the current&nbsp;record.</p>
+<div class="highlight"><pre>  <span class="kr">if</span><span class="p">(</span>df<span class="p">[</span>sid<span class="p">][</span>i<span class="p">,]</span><span class="o">==</span>df<span class="p">[</span>sid<span class="p">][(</span>i<span class="m">+1</span><span class="p">),]){</span>
+    <span class="kr">if</span><span class="p">(</span>as.numeric<span class="p">(</span>difftime<span class="p">(</span>df<span class="p">[[</span><span class="s">&#39;enroll_date&#39;</span><span class="p">]][</span>i<span class="m">+1</span><span class="p">],</span> 
+                           df<span class="p">[[</span><span class="s">&#39;exit_date&#39;</span><span class="p">]][</span>i<span class="p">],</span> units<span class="o">=</span><span class="s">&#39;days&#39;</span><span class="p">))</span> <span class="o">&lt;</span> gap <span class="o">&amp;</span>
+       df<span class="p">[</span>schid<span class="p">][(</span>i<span class="m">+1</span><span class="p">),]</span><span class="o">==</span>df<span class="p">[</span>schid<span class="p">][</span>i<span class="p">,]){</span>
+        <span class="kr">next</span>
+    <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span> <span class="kc">...</span>
+</pre></div>
+
+
+<p>For the case where the <code>i+1</code> record has the same <code>sid</code>, then the <code>enroll_date</code> of <code>i+1</code> is subtracted from the <code>exit_date</code> of <code>i</code> and checked against <code>gap</code>. If it is both less than <code>gap</code> and the <code>schid</code> of <code>i+1</code> is the same as <code>i</code>, then <code>next</code>, which basically breaks out of this conditional and moves on without altering moves. In other words, students who are in the same school with only a few days between the time they exited are not counting has having&nbsp;moved.</p>
+<p>The <code>...</code> above is not the special <code>...</code> in R, rather, I&#8217;m continuing that line&nbsp;below.</p>
+<h3>Business Rule 3: The Smooth&nbsp;Mover</h3>
+<div class="highlight"><pre>  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>as.numeric<span class="p">(</span>difftime<span class="p">(</span>df<span class="p">[[</span><span class="s">&#39;enroll_date&#39;</span><span class="p">]][</span>i<span class="m">+1</span><span class="p">],</span> 
+                               df<span class="p">[[</span><span class="s">&#39;exit_date&#39;</span><span class="p">]][</span>i<span class="p">],</span> 
+                               units<span class="o">=</span><span class="s">&#39;days&#39;</span><span class="p">))</span> <span class="o">&lt;</span> gap<span class="p">){</span>
+    output<span class="p">[</span>as.character<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]][</span>i<span class="p">]),</span> moves<span class="o">:=</span>moves<span class="m">+1L</span><span class="p">]</span> 
+  <span class="p">}</span><span class="kr">else</span><span class="p">{</span> <span class="kc">...</span>
+</pre></div>
+
+
+<p>Here we have the simple case where a student has moved to another school (recall, this is still within the <code>if</code> conditional where the next record is the same student as the current record) with a very short period of time between the <code>exit_date</code> at the current record and the <code>enroll_date</code> of the next record. This is considered a &#8220;seamless&#8221; move from one school to another, and therefore that student&#8217;s moves are incremented by&nbsp;1.</p>
+<h3>Business Rule 4: The Long&nbsp;Hop</h3>
+<p>Our final scenario for a student moving between schools is when the gap between the <code>exit_date</code> at the <code>i</code> school and the <code>enroll_date</code> at the <code>i+1</code> school is large, defined as <code>&gt; gap</code>. In this scenario, the assumption is that the student moved to a jurisdiction outside of the data set, such as out of district for district-level data or out of state for state level data, and enrolled in at least one school not present in their enrollment record. The result is these students receive <code>2 moves</code>&#8212; one out from the <code>i</code> school to a missing school and one in to the <code>i+1</code> school from the missing&nbsp;school.</p>
+<p>The code looks like this (again a repeat from the <code>else{...</code> above which was not using the <code>...</code> character):</p>
+<div class="highlight"><pre>  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+    output<span class="p">[</span>as.character<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]][</span>i<span class="p">]),</span> moves<span class="o">:=</span>moves<span class="m">+2L</span><span class="p">]</span> 
+  <span class="p">}</span>
+<span class="p">}</span>else...
+</pre></div>
+
+
+<p>This ends with a <code>}</code> which closes the <code>if</code> conditional that checked if the <code>i+1</code> student was the same as the <code>i</code> student, leaving only one more business rule to&nbsp;check.</p>
+<h3>Business Rule 2: The Early&nbsp;Summer</h3>
+<div class="highlight"><pre><span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+  <span class="kr">if</span><span class="p">(</span>is.na<span class="p">(</span>df<span class="p">[[</span><span class="s">&#39;exit_date&#39;</span><span class="p">]][</span>i<span class="p">])){</span>
+    <span class="kr">next</span>
+  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>df<span class="p">[[</span><span class="s">&#39;exit_date&#39;</span><span class="p">]][</span>i<span class="p">]</span> <span class="o">&lt;</span> exitby<span class="p">){</span>
+        output<span class="p">[</span>as.character<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]][</span>i<span class="p">]),</span> moves<span class="o">:=</span>moves<span class="m">+1L</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Recall that this <code>else</code> block is only called if <code>sid</code> of the <code>i+1</code> record is not the same as <code>i</code>. This means that this is the final entry for a particular student. First, I check to see if that student has a missing <code>exit_date</code> and if so charges no <code>move</code> to the student implementing the <code>next</code> statement to break out of this iteration of the loop. Students never have missing <code>enroll_date</code> for any of the data I have seen over 8 years. This is because most systems minimally autogenerate the <code>enroll_date</code> for the current date when a student first enters a student information system. However, sometimes districts forget to properly exit a student and are unable to supply an accurate <code>exit_date</code>. In a very small number of cases I have seen these missing dates. So I do not want the function to fail in this scenario. My solution here was simply to break out and move to the next iteration of the&nbsp;loop.</p>
+<p>Finally, I apply the last rule, which compares the final <code>exit_date</code> for a student to <code>exitby</code>, incrementing <code>moves</code> if the student left prior to the end of the year and likely enrolled elsewhere before the&nbsp;summer.</p>
+<p>The last step is to close the <code>for</code> loop and <code>return</code> our&nbsp;result:</p>
+<div class="highlight"><pre>  <span class="p">}</span>
+  <span class="kr">return</span><span class="p">(</span>output<span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2>Version 2: 10x Speed And More&nbsp;Readable</h2>
+<p>The second version of this code is vastly&nbsp;quicker.</p>
+<p>The opening portion of the code, including the error checking is essentially a repeat of before, as is the initialization of the&nbsp;output.</p>
+<div class="highlight"><pre>moves_calc <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>df<span class="p">,</span> 
+                       enrollby<span class="p">,</span>
+                       exitby<span class="p">,</span>
+                       gap<span class="o">=</span><span class="m">14</span><span class="p">,</span>
+                       sid<span class="o">=</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> 
+                       schid<span class="o">=</span><span class="s">&#39;schno&#39;</span><span class="p">,</span>
+                       enroll_date<span class="o">=</span><span class="s">&#39;enroll_date&#39;</span><span class="p">,</span>
+                       exit_date<span class="o">=</span><span class="s">&#39;exit_date&#39;</span><span class="p">){</span>
+  <span class="kr">if</span><span class="p">(</span><span class="s">&quot;data.table&quot;</span> <span class="o">%in%</span> rownames<span class="p">(</span>installed.packages<span class="p">())</span> <span class="o">==</span> <span class="kc">FALSE</span><span class="p">){</span>
+    install.packages<span class="p">(</span><span class="s">&quot;data.table&quot;</span><span class="p">)</span>
+  <span class="p">}</span> 
+  require<span class="p">(</span>data.table<span class="p">)</span>
+  <span class="kr">if</span> <span class="p">(</span><span class="o">!</span>inherits<span class="p">(</span>df<span class="p">[[</span>enroll_date<span class="p">]],</span> <span class="s">&quot;Date&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="o">!</span>inherits<span class="p">(</span>df<span class="p">[[</span>exit_date<span class="p">]],</span> <span class="s">&quot;Date&quot;</span><span class="p">))</span>
+      stop<span class="p">(</span><span class="s">&quot;Both enroll_date and exit_date must be Date objects&quot;</span><span class="p">)</span>
+  <span class="kr">if</span><span class="p">(</span>missing<span class="p">(</span>enrollby<span class="p">)){</span>
+    enrollby <span class="o">&lt;-</span> as.Date<span class="p">(</span>paste<span class="p">(</span>year<span class="p">(</span>min<span class="p">(</span>df<span class="p">[[</span>enroll_date<span class="p">]],</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">)),</span>
+                              <span class="s">&#39;-09-15&#39;</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span> format<span class="o">=</span><span class="s">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+    <span class="kr">if</span><span class="p">(</span>is.na<span class="p">(</span>as.Date<span class="p">(</span>enrollby<span class="p">,</span> format<span class="o">=</span><span class="s">&quot;%Y-%m-%d&quot;</span><span class="p">))){</span>
+      enrollby <span class="o">&lt;-</span> as.Date<span class="p">(</span>paste<span class="p">(</span>year<span class="p">(</span>min<span class="p">(</span>df<span class="p">[[</span>enroll_date<span class="p">]],</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">)),</span>
+                                <span class="s">&#39;-09-15&#39;</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span> format<span class="o">=</span><span class="s">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+      warning<span class="p">(</span>paste<span class="p">(</span><span class="s">&quot;enrollby must be a string with format %Y-%m-%d,&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;defaulting to&quot;</span><span class="p">,</span> 
+                    enrollby<span class="p">,</span> sep<span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">))</span>
+    <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+      enrollby <span class="o">&lt;-</span> as.Date<span class="p">(</span>enrollby<span class="p">,</span> format<span class="o">=</span><span class="s">&quot;%Y-%m-%d&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="kr">if</span><span class="p">(</span>missing<span class="p">(</span>exitby<span class="p">)){</span>
+    exitby <span class="o">&lt;-</span> as.Date<span class="p">(</span>paste<span class="p">(</span>year<span class="p">(</span>max<span class="p">(</span>df<span class="p">[[</span>exit_date<span class="p">]],</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">)),</span>
+                            <span class="s">&#39;-06-01&#39;</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span> format<span class="o">=</span><span class="s">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+    <span class="kr">if</span><span class="p">(</span>is.na<span class="p">(</span>as.Date<span class="p">(</span>exitby<span class="p">,</span> format<span class="o">=</span><span class="s">&quot;%Y-%m-%d&quot;</span><span class="p">))){</span>
+      exitby <span class="o">&lt;-</span> as.Date<span class="p">(</span>paste<span class="p">(</span>year<span class="p">(</span>max<span class="p">(</span>df<span class="p">[[</span>exit_date<span class="p">]],</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">)),</span>
+                                <span class="s">&#39;-06-01&#39;</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">),</span> format<span class="o">=</span><span class="s">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+      warning<span class="p">(</span>paste<span class="p">(</span><span class="s">&quot;exitby must be a string with format %Y-%m-%d,&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;defaulting to&quot;</span><span class="p">,</span> 
+                    exitby<span class="p">,</span> sep<span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">))</span>
+    <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+      exitby <span class="o">&lt;-</span> as.Date<span class="p">(</span>exitby<span class="p">,</span> format<span class="o">=</span><span class="s">&quot;%Y-%m-%d&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="kr">if</span><span class="p">(</span><span class="o">!</span>is.numeric<span class="p">(</span>gap<span class="p">)){</span>
+    gap <span class="o">&lt;-</span> <span class="m">14</span>
+    warning<span class="p">(</span><span class="s">&quot;gap was not a number, defaulting to 14 days&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+  output <span class="o">&lt;-</span> data.frame<span class="p">(</span>id <span class="o">=</span> as.character<span class="p">(</span>unique<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]])),</span>
+                       moves <span class="o">=</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&#39;numeric&#39;</span><span class="p">,</span> 
+                                      length <span class="o">=</span> length<span class="p">(</span>unique<span class="p">(</span>df<span class="p">[[</span>sid<span class="p">]]))))</span>
+</pre></div>
+
+
+<p>Where things start to get interesting is in the calculation of the number of student&nbsp;moves.</p>
+<h3>Handling Missing&nbsp;Data</h3>
+<p>One of the clever bits of code I forgot about when I initially tried to refactor Version 1 appears under &#8220;Business Rule 2: The Early Summer&#8221;. When the <code>exit_date</code> is missing, this code simply breaks out of the&nbsp;loop:</p>
+<div class="highlight"><pre>  <span class="kr">if</span><span class="p">(</span>is.na<span class="p">(</span>df<span class="p">[[</span><span class="s">&#39;exit_date&#39;</span><span class="p">]][</span>i<span class="p">])){</span>
+    <span class="kr">next</span>
+</pre></div>
+
+
+<p>Because the new code will not be utilizing <code>for</code> loops or really any more of the basic control flow, I had to device a different way to treat missing data. The steps to apply the business rules that I present below will fail spectacularly with missing&nbsp;data.</p>
+<p>So the first thing that I do is select the students who have missing data, assign the <code>moves</code> in the <code>output</code> to <code>NA</code>, and then subset the data to exclude these&nbsp;students.</p>
+<div class="highlight"><pre>incomplete <span class="o">&lt;-</span> df<span class="p">[</span><span class="o">!</span>complete.cases<span class="p">(</span>df<span class="p">[,</span> c<span class="p">(</span>enroll_date<span class="p">,</span> exit_date<span class="p">)]),</span> <span class="p">]</span>
+<span class="kr">if</span><span class="p">(</span>dim<span class="p">(</span>incomplete<span class="p">)[</span><span class="m">1</span><span class="p">]</span><span class="o">&gt;</span><span class="m">0</span><span class="p">){</span>
+  output<span class="p">[</span>which<span class="p">(</span>output<span class="p">[[</span><span class="s">&#39;id&#39;</span><span class="p">]]</span> <span class="o">%in%</span> incomplete<span class="p">[[</span>sid<span class="p">]]),][[</span><span class="s">&#39;moves&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> <span class="kc">NA</span>
+<span class="p">}</span>
+output <span class="o">&lt;-</span> data.table<span class="p">(</span>output<span class="p">,</span> key<span class="o">=</span><span class="s">&#39;id&#39;</span><span class="p">)</span>
+df <span class="o">&lt;-</span> df<span class="p">[</span>complete.cases<span class="p">(</span>df<span class="p">[,</span> c<span class="p">(</span>enroll_date<span class="p">,</span> exit_date<span class="p">)]),</span> <span class="p">]</span>
+dt <span class="o">&lt;-</span> data.table<span class="p">(</span>df<span class="p">,</span> key<span class="o">=</span>sid<span class="p">)</span>
+</pre></div>
+
+
+<h3>Woe with <code>data.table</code></h3>
+<p>Now with the data complete and in a <code>data.table</code>, I have to do a little bit of work to assist with my frustrations with <code>data.table</code>. Because <code>data.table</code> does a lot of work with the <code>[</code> operator, I find it very challenging to use a string argument to reference a column in the data. So I just gave up and internally rename these&nbsp;attributes.</p>
+<div class="highlight"><pre>dt<span class="o">$</span>sasid <span class="o">&lt;-</span> as.factor<span class="p">(</span>as.character<span class="p">(</span>dt<span class="o">$</span>sasid<span class="p">))</span>
+setnames<span class="p">(</span>dt<span class="p">,</span> names<span class="p">(</span>dt<span class="p">)[</span>which<span class="p">(</span>names<span class="p">(</span>dt<span class="p">)</span> <span class="o">%in%</span> enroll_date<span class="p">)],</span> <span class="s">&quot;enroll_date&quot;</span><span class="p">)</span>
+setnames<span class="p">(</span>dt<span class="p">,</span> names<span class="p">(</span>dt<span class="p">)[</span>which<span class="p">(</span>names<span class="p">(</span>dt<span class="p">)</span> <span class="o">%in%</span> exit_date<span class="p">)],</span> <span class="s">&quot;exit_date&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>Magic with <code>data.table</code>: Business Rules 1 and 2 in two lines&nbsp;each</h3>
+<p>Despite by challenges with the way that <code>data.table</code> re-imagines <code>[</code>, it does allow for clear, simple syntax for complex processes. Gone are the <code>for</code> loops and conditional blocks. How does <code>data.table</code> allow me to quickly identified whether or not a students first or last enrollment are before or after my&nbsp;cutoffs?</p>
+<div class="highlight"><pre>first <span class="o">&lt;-</span> dt<span class="p">[,</span> list<span class="p">(</span>enroll_date<span class="o">=</span>min<span class="p">(</span>enroll_date<span class="p">)),</span> by<span class="o">=</span>sid<span class="p">]</span>
+output<span class="p">[</span>id <span class="o">%in%</span> first<span class="p">[</span>enroll_date<span class="o">&gt;</span>enrollby<span class="p">][[</span>sid<span class="p">]],</span> moves<span class="o">:=</span>moves<span class="m">+1L</span><span class="p">]</span>
+last <span class="o">&lt;-</span> dt<span class="p">[,</span> list<span class="p">(</span>exit_date<span class="o">=</span>max<span class="p">(</span>exit_date<span class="p">)),</span> by<span class="o">=</span>sid<span class="p">]</span>  
+output<span class="p">[</span>id <span class="o">%in%</span> last<span class="p">[</span>exit_date<span class="o">&lt;</span>exitby<span class="p">][[</span>sid<span class="p">]],</span> moves<span class="o">:=</span>moves<span class="m">+1L</span><span class="p">]</span>
+</pre></div>
+
+
+<p>Line 1 creates a <code>data.table</code> with the student identifier and a new <code>enroll_date</code> column that is equal to the minimum <code>enroll_date</code> for that&nbsp;student.</p>
+<p>The second line is very challenging to parse if you&#8217;ve never used <code>data.table</code>. The first argument for <code>[</code> in <code>data.table</code> is a subset/select function. In this&nbsp;case,</p>
+<div class="highlight"><pre>id <span class="o">%in%</span> first<span class="p">[</span>enroll_date<span class="o">&gt;</span>enrollby<span class="p">][[</span>sid<span class="p">]]</span>
+</pre></div>
+
+
+<p>means,</p>
+<blockquote>
+<p>Select the rows in <code>first</code> where the <code>enroll_date</code> attribute (which was previously assigned as the minimum <code>enroll_date</code>) is less than the global function argument <code>enrollby</code> and check if the <code>id</code> of <code>output</code> is in the <code>sid</code> vector.</p>
+</blockquote>
+<p>So <code>output</code> is being subset to only include those records that meet that condition, in other words, the students who should have a move because they entered the school year&nbsp;late. </p>
+<p>The second argument of <code>[</code> for <code>data.tables</code> is explained in this footnote <sup id="fnref:increments"><a class="footnote-ref" href="#fn:increments" rel="footnote">2</a></sup> if you&#8217;re not familiar with&nbsp;it.</p>
+<h3>Recursion. Which is also known as&nbsp;recursion.</h3>
+<p>The logic for Business Rules 3-5 are substantially more complex. At first it was not plainly obvious how to avoid a slow <code>for</code> loop for this process. Each of the rules on switching schools requires an awareness of context&#8212; how does one record of a student compare to the very next record for that&nbsp;student? </p>
+<p>The breakthrough was thinking back to my single semester of computer science and the concept of recursion. I created a new function inside of this function that can count how many moves are associated with a set of enrollment records, ignoring the considerations in Business Rules 1 and 2. Here&#8217;s my solution. I decided to include inline comments because I think it&#8217;s easier to understand that&nbsp;way.</p>
+<div class="highlight"><pre>school_switch <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dt<span class="p">,</span> x<span class="o">=</span><span class="m">0</span><span class="p">){</span>
+  <span class="c1"># This function accepts a data.table dt and initializes the output to 0.</span>
+    <span class="kr">if</span><span class="p">(</span>dim<span class="p">(</span>dt<span class="p">)[</span><span class="m">1</span><span class="p">]</span><span class="o">&lt;</span><span class="m">2</span><span class="p">){</span>
+    <span class="c1"># When there is only one enrollment record, there are no school changes to</span>
+    <span class="c1"># apply rules 3-5. Therefore, the function returns the value of x. If the</span>
+    <span class="c1"># initial data.table contains a student with just one enrollment record, </span>
+    <span class="c1"># this function will return 0 since we initialize x as 0.</span>
+      <span class="kr">return</span><span class="p">(</span>x<span class="p">)</span>
+    <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+      <span class="c1"># More than one record, find the minimum exit_date which is the &quot;first&quot;</span>
+      <span class="c1"># record</span>
+      exit <span class="o">&lt;-</span> min<span class="p">(</span>dt<span class="p">[,</span> exit_date<span class="p">])</span>
+      <span class="c1"># Find out which school the &quot;first&quot; record was at.</span>
+      exit_school <span class="o">&lt;-</span> dt<span class="p">[</span>exit_date<span class="o">==</span>exit<span class="p">][[</span>schid<span class="p">]]</span>
+      <span class="c1"># Select which rows come after the &quot;first&quot; record and only keep them</span>
+      <span class="c1"># in the data.table</span>
+      rows <span class="o">&lt;-</span> dt<span class="p">[,</span> enroll_date<span class="p">]</span> <span class="o">&gt;</span> exit
+      dt <span class="o">&lt;-</span> dt<span class="p">[</span>rows<span class="p">,]</span>
+      <span class="c1"># Find the minimum enrollment date in the subsetted table. This is the</span>
+      <span class="c1"># enrollment that follows the identified exit record</span>
+      enroll <span class="o">&lt;-</span> min<span class="p">(</span>dt<span class="p">[,</span> enroll_date<span class="p">])</span>
+      <span class="c1"># Find the school associated with that enrollment date</span>
+      enroll_school <span class="o">&lt;-</span> dt<span class="p">[</span>enroll_date<span class="o">==</span>enroll<span class="p">][[</span>schid<span class="p">]]</span>
+      <span class="c1"># When the difference between the enrollment and exit dates are less than</span>
+      <span class="c1"># the gap and the schools are the same, there are no moves. We assign y,</span>
+      <span class="c1"># our count of moves to x, whatever the number of moves were in this call</span>
+      <span class="c1"># of school_switch</span>
+      <span class="kr">if</span><span class="p">(</span>difftime<span class="p">(</span>min<span class="p">(</span>dt<span class="p">[,</span> enroll_date<span class="p">],</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> exit<span class="p">)</span> <span class="o">&lt;</span> gap <span class="o">&amp;</span>
+         exit_school<span class="o">==</span>enroll_school<span class="p">){</span>
+        y <span class="o">=</span> x
+      <span class="c1"># When the difference in days is less than the gap (and the schools are</span>
+      <span class="c1"># different), then our number of moves are incremented by 1.</span>
+      <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>difftime<span class="p">(</span>min<span class="p">(</span>dt<span class="p">[,</span> enroll_date<span class="p">],</span> na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> exit<span class="p">)</span> <span class="o">&lt;</span> gap<span class="p">){</span>
+        y <span class="o">=</span> x <span class="o">+</span> <span class="m">1L</span>
+      <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+      <span class="c1"># Whenever the dates are separated by more than the gap, regardless of which</span>
+      <span class="c1"># school a student is enrolled in at either point, we increment by two.</span>
+        y <span class="o">=</span> x <span class="o">+</span> <span class="m">2L</span>
+      <span class="p">}</span>
+      <span class="c1"># Explained below outside of the code block.</span>
+      school_switch<span class="p">(</span>dt<span class="p">,</span> y<span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+
+
+<p>The recursive aspect of this method is calling <code>school_switch</code> within <code>school_switch</code> once the function reaches its end. Because I subset out the row with the minimum <code>exit_date</code>, the <code>data.table</code> has one row processed with each iteration of <code>school_switch</code>. By passing the number of moves, <code>y</code> back into <code>school_switch</code>, I am &#8220;saving&#8221; my work from each iteration. Only when a single row remains for a particular student does the function <code>return</code> a&nbsp;value.</p>
+<p>This function is called using <code>data.table</code><span class="quo">&#8216;</span>s special <code>.SD</code> object, which accesses the subset of the full <code>data.table</code> when using the <code>by</code> argument.</p>
+<div class="highlight"><pre>dt<span class="p">[,</span> moves<span class="o">:=</span> school_switch<span class="p">(</span>.SD<span class="p">),</span> by<span class="o">=</span>sid<span class="p">]</span>
+</pre></div>
+
+
+<p>This calls <code>school_switch</code> after splitting the <code>data.table</code> by each <code>sid</code> and then stitches the work back together, split-apply-combine style, resulting in a <code>data.table</code> with a set of <code>moves</code> per student identifier. With a little bit of clean up, I can simply add these moves to those recorded earlier in <code>output</code> based on Business Rules 1 and&nbsp;2.</p>
+<div class="highlight"><pre>  dt <span class="o">&lt;-</span> dt<span class="p">[,</span>list<span class="p">(</span>switches<span class="o">=</span>unique<span class="p">(</span>moves<span class="p">)),</span> by<span class="o">=</span>sid<span class="p">]</span>
+  output<span class="p">[</span>dt<span class="p">,</span> moves<span class="o">:=</span>moves<span class="o">+</span>switches<span class="p">]</span>
+  <span class="kr">return</span><span class="p">(</span>output<span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2>Quick and Dirty <code>system.time</code></h2>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:optimization">
+<p>On a mid-2012 Macbook Air, the current mobility calculation is very effective with tens of thousands of student records and practical for use in the low-hundreds of thousands of records range.&#160;<a class="footnote-backref" href="#fnref:optimization" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:increments">
+<p>I thought I was going to use <code>data.table</code> for some of its speedier features as I wrote this initial function. I didn&#8217;t in this go (though I do in Version 2). However, I do find the <code>data.table</code> syntax for assigning values to be really convenient, particularly the <code>:=</code> operator which is common in several other languages. In <code>data.table</code>, the syntax <code>dt[,name:=value]</code> assigns <code>value</code> to an exist (or new) column called <code>name</code>. Because of the need <code>select</code> operator in <code>data.table</code>, I can just use <code>dt[id,moves:=moves+1L]</code> to select only the rows where the table <code>key</code>, in this case <code>sid</code>, matches <code>id</code>, and then increment <code>moves</code>. Nice.&#160;<a class="footnote-backref" href="#fnref:increments" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+    <p class=tags>This entry was tagged as
+      <a href="../tag/education.html">education</a>
+      <a href="../tag/data.html">data</a>
+      <a href="../tag/rstats.html">rstats</a>
+    </p>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jasonpbecker'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        
+<div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'jason+sitemail';
+          s = 'jbecker.co';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/jasonpbecker" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://github.com/jasonpbecker" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="../feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>    </div>
+  </body>
+</html>

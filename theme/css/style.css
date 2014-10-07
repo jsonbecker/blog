@@ -3,7 +3,7 @@ body    { font: 1em 'Open Sans', sans-serif;
           margin: 0; padding: 0;
           /*background-image: url(../images/straws.png); */}
 a       { /*color: #432165;*/ color: #00997C; }
-a:hover { color: #3b185f; background: #f9f8fa; }
+a:hover { color: #3b185f; background: #fdfdfd; }
 a:visited{ color: #3b185f; }
 
 strong, em  {color: #1177bb; }
@@ -11,7 +11,8 @@ strong, em  {color: #1177bb; }
 /* headlines */
 h1, h2, h3, h4, h5, h6      { /*font-family: 'Vollkorn', 'Georgia', serif;*/
                               font-family: 'Merriweather', serif;
-                              font-weight: normal;}
+                              font-weight: normal;
+                              color: #00997C;}
 h1 a, h2 a, h3 a, h4 a,
 h5 a, h6 a                  { text-decoration: none; }
 h1 a:hover, h2 a:hover,
@@ -21,17 +22,36 @@ h1, h2                      { margin: 10px 0 25px 0; }
 h1                          { font-size: 48px; line-height: 52px; }
 h2                          { font-size: 36px; line-height: 40px; }
 
+hr                          {
+                              padding: 0;
+                              border: none;
+                              border-top: medium double #00997C;
+                              color: #00997C;
+                              text-align: center;
+                            }
+hr:after                    {
+                              content: "❖";
+                              color: #00997C;
+                              display: inline-block;
+                              position: relative;
+                              top: -0.7em;
+                              font-size: 1.5em;
+                              padding: 0 0.25em;
+                              background: white;
+                            }
+
 /* layout elements */
 div.container               { max-width: 45em; margin: 48px auto; padding: 0; }
 div.header                  { float: left; }
 div.navigation              { float: left; }
-div.navigation a            { text-decoration: none; 
-                              font-size: 22px; 
+div.navigation a            { text-decoration: none;
+                              font-size: 22px;
                               padding: 10px;
                             }
-
+div.navigation a:visited    { color: #00997C; }
+div.navigation a:hover      { color: #3b185f;}
 div.separator               {
-                              border-bottom: 1px dotted #ddd; 
+                              border-bottom: 1px dotted #ddd;
                               padding-bottom: 42px;
                               margin-bottom: 42px; font-size: 16px; color: #888;
                               text-align: center;
@@ -39,8 +59,8 @@ div.separator               {
 div.header, div.navigation  { height: 25px; margin-bottom: 42px; }
 div.navigation ul           { margin: 0; padding: 0; list-style: none; }
 div.navigation ul li        { display: inline; margin: 0 2px; padding: 0;}
-div.body                    { clear: both; 
-                              padding-left: 2em; 
+div.body                    { clear: both;
+                              padding-left: 2em;
                               padding-right: 2em; }
 div.footer                  { border-top: 1px dotted #ddd; padding-top: 9px;
                               margin-top: 42px; font-size: 16px; color: #888;
@@ -60,7 +80,12 @@ dt                              { margin: 25px 0 16px 0; padding: 0; }
 dd                              { margin: 16px 0 25px 40px; padding: 0; }
 ul ol, ol ul, ul ul, ol ol      { margin: 10px 0; padding: 0 0 0 40px; }
 li                              { padding: 0; }
-h1 + p.date                     { margin-top: -20px; font-style: italic; }
+h1 + p.date                     { margin-top: -20px; }
+
+blockquote                      {
+                                  border-left: 2px solid #00997C;
+                                  padding-left: 25px;
+                                }
 
 /* code formatting.  no monospace because of webkit (bug?) */
 pre, code, tt   { font-family: 'Consolas', 'Deja Vu Sans Mono',
@@ -135,9 +160,9 @@ div.blog-epilogue a         {text-decoration: none;
                              padding-left: 30px; padding-right: 30px;}
 
 /* about img */
-img.align-left { 
-    float: left; 
-    margin: 20px; 
+img.align-left {
+    float: left;
+    margin: 20px;
 }
 
 /* github gists */

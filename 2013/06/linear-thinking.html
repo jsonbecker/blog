@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+          <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        try {
+          var pageTracker = _gat._getTracker("UA-40920108-1");
+          pageTracker._trackPageview();
+        } catch(err) {}
+        </script>
+
+
+        <meta name='keywords' contents ="apple,ios7,osx,interface" />
+
+    <meta name="description" contents="Apple will be revealing new details for both of its major operating systems at WWDC on June 10, 2013. The focus of much speculation has been how Apple will improve multi-tasking and inter-app communication in iOS7. As batteries have grown, CPUs have become increasingly powerful, and the application ecosystem has ..." />
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>  Linear Thinking | jasonpbecker
+</title>
+
+    <link rel="stylesheet" href="../../theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../theme/css/font-awesome.css" type="text/css"/>
+  </head>
+  <body>
+    <div class=container>
+
+      <div class=navigation>
+        <ul>
+          <a href="../../index.html"> 
+            <li> <i class="icon-home icon-large"></i> </li> </a>
+          <a href="../../about.html"> 
+            <li> <i class="icon-user icon-large"></i> </li> </a>
+          <a href="../../archives.html"> 
+            <li> <i class="icon-archive icon-large"></i> </li> </a>
+        </ul>
+      </div>
+      <div class=separator></div>        
+        <div class=body>
+      <h1 class="title"> Linear Thinking</h1>
+    <p class=date> 2013-06-02 </p>
+    <p>Apple will be revealing new details for both of its major operating systems at <span class="caps">WWDC</span> on June 10, 2013. The focus of much speculation has been how Apple will improve multi-tasking and inter-app communication in iOS7. As batteries have grown, CPUs have become increasingly powerful, and the application <a href="../../2012/11/frictionless.html">ecosystem</a> has matured <sup id="fnref:viticci"><a class="footnote-ref" href="#fn:viticci" rel="footnote">1</a></sup>, the iOS sandboxing model has felt increasingly limiting and&nbsp;outdated.</p>
+<p>I think that there is a simple change that could dramatically increase the effectiveness of multitasking on iOS by re-examining how application switching&nbsp;works.</p>
+<p>Scrolling through a long list of applications, either through the basement shelf or via the four-finger gesture on an iPad, is both slow and lacking in contextual cues. In a simple case where I am working with two applications simultaneously, how do I switch between them? The list of open applications always places the current application in the first position. The previously used application sits in the second position. The first time I want to change to another application this is not so bad. I move to the &#8220;right&#8221; on the list to progress forward into the next application <sup id="fnref:next"><a class="footnote-ref" href="#fn:next" rel="footnote">2</a></sup>. </p>
+<p>The trouble comes when I want to return to where I was just working. The most natural mental model for this switch is to move &#8220;left&#8221; in the list. I moved &#8220;right&#8221; to get here and millions of years of evolution has taught me the the &#8220;undo button&#8221; for moving right is to move left <sup id="fnref:inform7"><a class="footnote-ref" href="#fn:inform7" rel="footnote">3</a></sup>. But of course, when I attempt to move &#8220;left&#8221;, I find no destination <sup id="fnref:youcant"><a class="footnote-ref" href="#fn:youcant" rel="footnote">4</a></sup>. I can pop an application from anywhere on the list, but I can only prepend new applications to the list <sup id="fnref:ignorant"><a class="footnote-ref" href="#fn:ignorant" rel="footnote">5</a></sup>.</p>
+<p>Apple needs to move away from its linear thinking and enter the second&nbsp;dimension.</p>
+<p>What if I could drag apps in the switcher on top of each other to make a new stack, not unlike the option on the <span class="caps">OS</span> X launch bar? Throughout this stack, position is maintained regardless of which application is in use/was last used. I can always move <strong>up</strong> from Chrome to ByWord, and <strong>down</strong> to Good Reader, for example, if I was writing a report. Apple might call this a Stack, mirroring the term in <span class="caps">OSX</span>, but I would prefer this to be called a <em>Flow</em>.</p>
+<p>The goal of this feature is to organize a <em>Flow</em> for a particular task that requires using multiple apps. One feature might be saving a &#8220;Flow&#8221;, this way each time I want to write a blog post, I tap the same home screen button and the same four apps in the same order launch in a <em>Flow</em>, ready for easy switching using the familiar four-finger swipe gesture up and down. I no longer have to worry about the sequence I have recently accessed applications which is confusing and requires me to look at the app switcher draw or needlessly and repeatedly swipe through applications. I never have to worry about lingering too long on one application while swiping through and switching to that app, changing my position to the origin of the list and starting over&nbsp;again. </p>
+<p>For all the calls for complex inter-app communication or having multiple apps active on the screen at the same time, it seems a simple interface change to application switching could complete change the way we multitask on&nbsp;iOS.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:viticci">
+<p>And Federico Viticci has either shown us the light or gone completely mad.&#160;<a class="footnote-backref" href="#fnref:viticci" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:next">
+<p>For now, lets assume the right application is next in the stack. I&#8217;ll get to that issue with my second change.&#160;<a class="footnote-backref" href="#fnref:next" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:inform7">
+<p><code>You are in a green room. &gt; Go east. You are in a red room. &gt; Go west. You are in a green room.</code>&#160;<a class="footnote-backref" href="#fnref:inform7" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:youcant">
+<p><code>You can't go that way.</code>&#160;<a class="footnote-backref" href="#fnref:youcant" rev="footnote" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ignorant">
+<p>I don&#8217;t know enough about data structures yet to name what&#8217;s going on here. I am tempted to think that the challenge is they have presented a list to users, with a decidedly horizontal metaphor, when they actually have created something more akin to a stack, with a decidedly vertical metaphor. But a stack isn&#8217;t quite the right way to understand the app switcher. You can &#8220;pop&#8221; an app from any arbitrary position on the app switcher, but funny enough can only push a new app on to the top of the switcher.&#160;<a class="footnote-backref" href="#fnref:ignorant" rev="footnote" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+    <p class=tags>This entry was tagged as
+      <a href="../../tag/apple.html">apple</a>
+      <a href="../../tag/ios7.html">ios7</a>
+      <a href="../../tag/osx.html">osx</a>
+      <a href="../../tag/interface.html">interface</a>
+    </p>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jasonpbecker'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        
+<div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'jason+sitemail';
+          s = 'jbecker.co';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/jasonpbecker" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://github.com/jasonpbecker" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="../../feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>    </div>
+  </body>
+</html>

@@ -3,6 +3,16 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+        <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        try {
+          var pageTracker = _gat._getTracker("UA-40920108-1");
+          pageTracker._trackPageview();
+        } catch(err) {}
+        </script>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -11,124 +21,81 @@
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/font-awesome.css" type="text/css"/>
-      </head>
+  </head>
   <body>
     <div class=container>
-                    
+
       <div class=navigation>
         <ul>
-                      <li><a href="../index.html">Blog</a> </li>
-                      <li><a href="../about.html">About</a> </li>
-                      <li><a href="../archives.html">Archive</a> </li>
-                  </ul>
+          <a href="../index.html"> 
+            <li> <i class="icon-home icon-large"></i> </li> </a>
+          <a href="../about.html"> 
+            <li> <i class="icon-user icon-large"></i> </li> </a>
+          <a href="../archives.html"> 
+            <li> <i class="icon-archive icon-large"></i> </li> </a>
+        </ul>
       </div>
-      <div class=separator></div>                
+      <div class=separator></div>        
         <div class=body>
-        
-            <h1 class="title">Providence Pensions-- Let's Call a Spade a Spade (or the COLA a Raise)<a href="../2012/01/providence-pensions-lets-call-a-spade-a-spade-or-the-cola-a-raise.html" class=perma>&#8734;</a></h1>
-      <p class=date> 2012-01-25 </p>
-      <p><a href="https://twitter.com/#!/tednesi">Ted Nesi</a> has done a pretty solid job tracing the <a href="http://www.wpri.com/dpp/news/local_news/providence/prov-pensions-hit-by-comedy-of-errors?2">history</a> of some awful decisions made by union-dominated boards that resulted in a significant number of retirees in the early-90s receiving 5% or 6% annually compounded interest on their retirement income. These are often called COLAs, or <a href="http://en.wikipedia.org/wiki/Cost-of-living_adjustment">cost-of-living adjustments</a>.</p>
-<p>Today, I am inspired by Nesi's <a href="http://blogs.wpri.com/2012/01/25/chart-the-decline-and-fall-of-the-providence-pension-system/">post</a> on the rapid decline of the Providence municipal pension fund health that occurred since 6% "COLA" was introduced in 1989 through today. You see, something has really been bugging me about the conversation on municipal pensions in Rhode Island. A true COLA is key to ensuring that purchasing power is maintained throughout retirement. Essentially, quality of life and ability to buy required goods should be consistent from the day you retire until the day you die. This is a goal that makes a lot of sense. But the cost of goods has not increased 5% or 6% year-over-year ever in the past twenty years <sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">2</a></sup>.</p>
-<p>So I chose a key moment in the history of Providence municipal pensions-- a 1991 consent decree <sup id="fnref:decree"><a class="footnote-ref" href="#fn:decree" rel="footnote">1</a></sup> that then Mayor Buddy Cianci signed, solidifying and legitimizing the extremely high "COLA" for workers. I wanted to know, "What would a worker retiring in the following year (1992) be making today if they retired with a \$25,000 annual pension and had a 6% 'COLA', 5% 'COLA', or a COLA based on the Northeast CPI-U?" Not wanting to make a key mistake and <a href="http://en.wikipedia.org/wiki/Cost-of-living_adjustment#CPI_is_not_a_COLA">equate a CPI with a COLA</a>, I increased the CPI-U for each year by 25%, figuring that this is a reasonable approximation of the marginal taxes that would be paid on additional income by these retirees.</p>
-<p>I suspected that 5% and 6% do not really result in a cost-of-living adjustment, but rather a clear wage increase for retired workers. I have no problem maintaining parity or near-parity with retirement level income, but there's absolute no reason someone who retired should receive a wage. My support for a true COLA is so strong that I made the adjustment for taxes on income!</p>
-<p>What were the results?</p>
-<p><img alt="Amazing what compound interest does" src="../static/images/inflation1.png" title="Comparing COLA to CPI-U" /></p>
-<p>A Providence employee who retired in 1992 with a \$25,000 pension would be receiving \$46,132 in 2011 if their retirement was increased by inflation + the marginal tax rate (assumed here as 25%). But a Providence employee who retired with the same pension in 1992 under the conditions in Providence could expect \$63,174 at 5% or \$75,640 at the 5% and 6% rates, respectively. This is a MASSIVE difference which cannot constitute a "COLA".</p>
-<p>So I move that we stop referring to these particular pensions as having a "COLA", because what really happened was a fixed raise was created to last for the rest of retirees' lives.</p>
-<p>Some additional neat facts:</p>
-<p>Over 20 years, an individual who has a 6% raise per year will have collected \$228,672 more than someone who had a COLA. An individual with a 5% raise per year will have collected \$135,681.10 over the same 20 year period.</p>
-<p>And of course, here's the code I used to produce the graph above in R<sup id="fnref:2"><a class="footnote-ref" href="#fn:2" rel="footnote">3</a></sup>:</p>
-<div class="highlight"><pre>compound <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>start<span class="p">,</span>rate<span class="p">,</span>timespan<span class="p">){</span>
-  x <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&#39;numeric&#39;</span><span class="p">,</span> length <span class="o">=</span> timespan<span class="p">)</span>
-  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>timespan<span class="p">){</span>
-    <span class="kr">if</span><span class="p">(</span>i <span class="o">==</span> <span class="m">1</span><span class="p">){</span>
-      x<span class="p">[</span>i<span class="p">]</span> <span class="o">&lt;-</span> start
-    <span class="p">}</span>
-    <span class="kr">else</span><span class="p">{</span>
-      x<span class="p">[</span>i<span class="p">]</span> <span class="o">&lt;-</span> x<span class="p">[</span>i<span class="m">-1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="m">1</span><span class="o">+</span>rate<span class="p">)</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  <span class="kr">return</span><span class="p">(</span>x<span class="p">)</span>
-<span class="p">}</span>
 
-inflate <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>start<span class="p">,</span> inflation<span class="p">){</span>
-  x <span class="o">&lt;-</span> vector<span class="p">(</span>mode<span class="o">=</span><span class="s">&#39;numeric&#39;</span><span class="p">,</span> length<span class="o">=</span>dim<span class="p">(</span>inflation<span class="p">)[</span><span class="m">1</span><span class="p">])</span>
-  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>dim<span class="p">(</span>inflation<span class="p">)[</span><span class="m">1</span><span class="p">]){</span>
-    <span class="kr">if</span><span class="p">(</span>i<span class="o">==</span><span class="m">1</span><span class="p">){</span>
-      x<span class="p">[</span>i<span class="p">]</span> <span class="o">&lt;-</span> start
-    <span class="p">}</span>
-    <span class="kr">else</span><span class="p">{</span>
-      x<span class="p">[</span>i<span class="p">]</span> <span class="o">&lt;-</span> x<span class="p">[</span>i<span class="m">-1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="m">1</span><span class="o">+</span><span class="p">(</span><span class="m">1.25</span><span class="o">*</span><span class="p">(</span>inflation<span class="p">[</span>i<span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="m">100</span><span class="p">)))</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-  <span class="kr">return</span><span class="p">(</span>x<span class="p">)</span>
-<span class="p">}</span>
+      
+        <h1 class="title">Economic Policy Institute is Wrong<a href="../2013/06/economic-policy-institute-is-wrong.html" class=perma>&#8734;</a></h1>
+        <p class=date> 2013-06-20 </p>
 
-cpiu <span class="o">&lt;-</span> cbind<span class="p">(</span>seq<span class="p">(</span>from<span class="o">=</span><span class="m">1992</span><span class="p">,</span>to<span class="o">=</span><span class="m">2011</span><span class="p">),</span> c<span class="p">(</span><span class="m">0.0</span><span class="p">,</span> <span class="m">2.8</span><span class="p">,</span> <span class="m">2.4</span><span class="p">,</span> <span class="m">2.6</span><span class="p">,</span> <span class="m">2.8</span><span class="p">,</span> <span class="m">2.4</span><span class="p">,</span> <span class="m">1.4</span><span class="p">,</span> 
-                                        <span class="m">2.1</span><span class="p">,</span> <span class="m">3.4</span><span class="p">,</span> <span class="m">2.8</span><span class="p">,</span> <span class="m">2.1</span><span class="p">,</span> <span class="m">2.8</span><span class="p">,</span> <span class="m">3.5</span><span class="p">,</span> <span class="m">3.6</span><span class="p">,</span>
-                                        <span class="m">3.6</span><span class="p">,</span> <span class="m">2.6</span><span class="p">,</span> <span class="m">4.0</span><span class="p">,</span> <span class="m">0.0</span><span class="p">,</span> <span class="m">2.0</span><span class="p">,</span> <span class="m">3.0</span><span class="p">))</span>
-
-inflation <span class="o">&lt;-</span> data.frame<span class="p">(</span>cbind<span class="p">(</span>cpiu<span class="p">[,</span><span class="m">1</span><span class="p">],</span> inflate<span class="p">(</span><span class="m">25000</span><span class="p">,</span> cpiu<span class="p">),</span> 
-                              compound<span class="p">(</span><span class="m">25000</span><span class="p">,</span> <span class="m">.05</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> 
-                              compound<span class="p">(</span><span class="m">25000</span><span class="p">,</span> <span class="m">.06</span><span class="p">,</span> <span class="m">20</span><span class="p">)))</span>
-
-names<span class="p">(</span>inflation<span class="p">)</span> <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;year&#39;</span><span class="p">,</span> <span class="s">&#39;NECPI.U&#39;</span><span class="p">,</span> <span class="s">&#39;FivePercent&#39;</span><span class="p">,</span> <span class="s">&#39;SixPercent&#39;</span><span class="p">)</span>
-png<span class="p">(</span>filename<span class="o">=</span><span class="s">&quot;inflation.png&quot;</span><span class="p">,</span> height<span class="o">=</span><span class="m">640</span><span class="p">,</span> width<span class="o">=</span><span class="m">800</span><span class="p">,</span> bg<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span>
-par<span class="p">(</span>mar<span class="o">=</span>c<span class="p">(</span><span class="m">6</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">3</span><span class="p">))</span>
-plot<span class="p">(</span>inflation<span class="o">$</span>NECPI.U<span class="p">,</span> type<span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> ylim<span class="o">=</span>c<span class="p">(</span><span class="m">20000</span><span class="p">,</span><span class="m">80000</span><span class="p">),</span> 
-     axes<span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span> ann<span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span> lwd<span class="o">=</span><span class="m">1.5</span><span class="p">)</span>
-axis<span class="p">(</span><span class="m">1</span><span class="p">,</span> at<span class="o">=</span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="p">,</span> lab<span class="o">=</span>inflation<span class="o">$</span>year<span class="p">)</span>
-axis<span class="p">(</span><span class="m">2</span><span class="p">,</span> las<span class="o">=</span><span class="m">1</span><span class="p">,</span> at<span class="o">=</span>seq<span class="p">(</span>from<span class="o">=</span><span class="m">20000</span><span class="p">,</span> to<span class="o">=</span><span class="m">80000</span><span class="p">,</span> by<span class="o">=</span><span class="m">10000</span><span class="p">))</span>
-lines<span class="p">(</span>inflation<span class="o">$</span>FivePercent<span class="p">,</span> type<span class="o">=</span><span class="s">&quot;o&quot;</span><span class="p">,</span> pch<span class="o">=</span><span class="m">22</span><span class="p">,</span> lty<span class="o">=</span><span class="m">2</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0.5</span><span class="p">),</span> 
-      lwd<span class="o">=</span><span class="m">1.5</span><span class="p">)</span>
-lines<span class="p">(</span>inflation<span class="o">$</span>SixPercent<span class="p">,</span> type<span class="o">=</span><span class="s">&quot;o&quot;</span><span class="p">,</span> pch<span class="o">=</span><span class="m">23</span><span class="p">,</span> lty<span class="o">=</span><span class="m">2</span><span class="p">,</span> col<span class="o">=</span><span class="s">&#39;red&#39;</span><span class="p">,</span> lwd<span class="o">=</span><span class="m">1.5</span><span class="p">)</span>
-title<span class="p">(</span>main<span class="o">=</span><span class="s">&quot;COLA or Raise?\n CPI-U v. Pension COLAs in Providence&quot;</span><span class="p">,</span> col.    main<span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span>
-title<span class="p">(</span>xlab<span class="o">=</span><span class="s">&quot;Year&quot;</span><span class="p">)</span>
-title<span class="p">(</span>ylab<span class="o">=</span><span class="s">&quot;Annual Pension in Dollars\n&quot;</span><span class="p">)</span>
-legend<span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">80000</span><span class="p">,</span> c<span class="p">(</span><span class="s">&#39;CPI-U NE + 25%&#39;</span><span class="p">,</span> <span class="s">&#39;Five Percent&#39;</span><span class="p">,</span> <span class="s">&#39;Six Percent&#39;</span><span class="p">),</span> col<span class="o">=</span>c<span class="p">(</span>   <span class="s">&#39;green&#39;</span><span class="p">,</span> <span class="s">&#39;blue&#39;</span><span class="p">,</span> <span class="s">&#39;red&#39;</span><span class="p">),</span> pch<span class="o">=</span><span class="m">21</span><span class="o">:</span><span class="m">23</span><span class="p">,</span> lty<span class="o">=</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span>
-text<span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">25000</span><span class="p">,</span> <span class="m">25000</span><span class="p">,</span> pos<span class="o">=</span><span class="m">3</span><span class="p">,</span> col<span class="o">=</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
-text<span class="p">(</span><span class="m">20</span><span class="p">,</span> max<span class="p">(</span>inflation<span class="o">$</span>SixPercent<span class="p">),</span> round<span class="p">(</span>max<span class="p">(</span>inflation<span class="o">$</span>SixPercent<span class="p">),</span> <span class="m">0</span><span class="p">),</span> pos<span class="o">=</span><span class="m">3</span><span class="p">,</span>     col<span class="o">=</span><span class="s">&#39;red&#39;</span><span class="p">)</span>
-text<span class="p">(</span><span class="m">20</span><span class="p">,</span> max<span class="p">(</span>inflation<span class="o">$</span>FivePercent<span class="p">),</span> round<span class="p">(</span>max<span class="p">(</span>inflation<span class="o">$</span>FivePercent<span class="p">),</span> <span class="m">0</span><span class="p">)</span>   <span class="p">,</span>pos<span class="o">=</span><span class="m">3</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0.5</span><span class="p">))</span>
-text<span class="p">(</span><span class="m">20</span><span class="p">,</span> max<span class="p">(</span>inflation<span class="o">$</span>NECPI.U<span class="p">),</span> round<span class="p">(</span>max<span class="p">(</span>inflation<span class="o">$</span>NECPI.U<span class="p">),</span> <span class="m">0</span><span class="p">),</span> pos<span class="o">=</span><span class="m">3</span><span class="p">,</span>     col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">0</span><span class="p">))</span>
-dev.off<span class="p">()</span>
-</pre></div>
-
-
-<p><em>This post reflects my personal views and opinions. I am a member of
-Local 2012 of the RIAFT and was a supporter of the statewide pension
-reform in the Fall of 2011. I am also a resident of Providence.</em></p>
+      <p>The <a href="http://www.epi.org/">Economic Policy Institute</a> has release a <a href="http://www.epi.org/files/2013/ib366-rhode-islands-hybrid-pension-plan.pdf">short issue brief</a> on the Rhode Island Retirement Security Act (<span class="caps">RIRSA</span>) by <a href="https://twitter.com/rhiltnsmth">Robert Hiltonsmith</a> that manages to get all of the details right but the big picture entirely&nbsp;wrong.</p>
+<p>The <span class="caps">EPI</span> Issue Brief details the differences between the retirement system for state workers before and after the passage of <span class="caps">RIRSA</span> as accurately and clearly as I have ever seen. Mr. Hiltonsmith has done a notable job explaining the differences between the new system and the old&nbsp;system.</p>
+<p>The brief, unfortunately, fails by engaging in two common fallacies to support its broader conclusions. The first is the <a href="http://en.wikipedia.org/wiki/Straw_man">straw man fallacy</a>. Mr. Hiltonsmith takes a limited set of the objectives of the entire <span class="caps">RIRSA</span> legislation and says defined contribution plans do not meet those objectives. That is true, but ignores the other objectives it does accomplish which were also part of the motivation behind <span class="caps">RIRSA</span>. The second is <a href="http://en.wikipedia.org/wiki/Circular_reasoning">circular reasoning</a>. In this case, Mr. Hiltonsmith states that the reason for a low funding ratio is because the state did not put 100% of its paper liability into the pension fund. This is a tautology and not in dispute and should not be trumpeted as a conclusion of&nbsp;analysis.</p>
+<p>Here are his three main points that he believes makes <span class="caps">RIRSA</span> a bad&nbsp;policy:</p>
+<ol>
+<li>The defined contribution plan does not save the state money from its annual pension&nbsp;contributions.</li>
+<li>The defined contribution plan is likely to earn lower returns and therefore result in lower benefits for&nbsp;retirees.</li>
+<li>The defined contribution plan does not solve the low funding ratio of the pension plan which exists because law makers did not make required&nbsp;contributions.</li>
+</ol>
+<p>Of course, the defined contribution portion of <span class="caps">RIRSA</span> was not in place to do any of these three things. The purpose of including a defined contribution plan in the new state pension system is to create stability in annual budget allocations and avoid locking the government into promises it has demonstrated it fails to keep. Defined benefit plans require the state to change pension contributions when there are market fluctuations and leads to anti-cyclical costs, where the state is forced to put substantially more resources into pensions when revenues are lowest and spending on social welfare is most important. The defined contribution plan keeps the payments required by the state consistent and highly predictable. This is far preferable from a budget&nbsp;perspective. </p>
+<p>It is unfortunate that there are lower returns to defined contribution plans which may lead to a decrease in overall benefits. It is my opinion that the unions in Rhode Island should be pushing for a substantially better match on the defined contribution portion of their plan that more closely resembles private sector match rates. This could more than alleviate the difference in benefits while maintaining the predictability, for budgeting purposes, of the defined contribution plan. I doubt this policy would have much hope of passing while Rhode Island slowly crawls out of a deep recession, but it is certainly a reasonable matter for future&nbsp;legislatures.</p>
+<p>There are only two ways to decrease the current pension fund shortfalls: increase payments to the fund or decrease benefits. There is no structural magic sauce to get around this. Structural changes in the pension system are aimed at reducing the likelihood that the state will reproduce its current situation, with liabilities well outstripping funds. It is true that the &#8220;savings&#8221; largely came from cutting benefits. I have not heard anyone claim otherwise. The only alternative was to put a big lump sum into the pension fund. That clearly was not a part of <span class="caps">RIRSA</span>.</p>
+<p>It is absurd to judge <span class="caps">RIRSA</span> on the ability of defined contribution plans to achieve policy objectives that are unrelated to the purpose of this structural&nbsp;change.</p>
+<p>Perhaps the most troubling conclusion of this brief was&nbsp;that, </p>
+<blockquote>
+<p>The shortfall in Rhode Island’s pension plan for public employees is largely due not to overly generous benefits, but to the failure of state and local government employers to pay their required share of pensions’&nbsp;cost.</p>
+</blockquote>
+<p>I read that and expected to see evidence of skipped payments or a discussion of overly ambitious expectations for investment returns, etc. Instead, it seems that this conclusion is based simply on the fact that the benefits in Rhode Island were not deemed outrageously large, and therefore Rhode Island should just pay the liability hole. The &#8220;failure&#8221; here is predicated entirely on the idea that the pensions as offered should be met, period, whatever the cost to the government. This is the &#8220;required share&#8221;. Which, of course, is technically true without a change in the law, but feels disingenuous. It is essentially a wholesale agreement with the union interpretation of the state pension system as an immutable contract. The courts will likely resolve whether or not this is true. My objection is that Mr. Hiltonsmith makes a definitive statement on this rationale without describing it. In such a lucid description of how the retirement system has changed, it seems this could only be intentional omission intended to support a predetermined conclusion rather than illuminate the&nbsp;unconvinced.</p>
+<p>Mr. Hiltonsmith also claims that, &#8220;Over the long term, <span class="caps">RIRSA</span> may cost the state upwards of \$15 million a year in additional contributions while providing a smaller benefit for the average full-career worker.&#8221; I am not 100% certain, but based on his use of the normal cost <sup id="fnref:normal cost"><a class="footnote-ref" href="#fn:normal cost" rel="footnote">1</a></sup> to do these calculations, it appears this conclusion is drawn only based on the marginal contributions to current employees. In other words, if we <em>completely ignore</em> the existing liability, the new plan cost the state more money marginally while potentially decreasing benefits for employees. It is my opinion that Mr. Hiltonsmith is intentionally creating the perception that <span class="caps">RIRSA</span> costs more than the current plan while providing fewer benefits. Again, this is true for future liabilities, but ignores that <span class="caps">RIRSA</span> also dramatically decreased the unfunded liabilities through cutting existing retiree benefits. So the overall cost for the act is far less, while the marginal cost was increased with the objective of decreasing the instability in government&nbsp;appropriations.</p>
+<p>We can have a serious debate about whether there is value in the state goals of a defined contribution plan. In my view, the purpose of switching to this structure is&nbsp;about: </p>
+<ol>
+<li>Portability of plans for more mobile workers, potentially serving to attract younger and more highly skilled&nbsp;employees. </li>
+<li>Stability in government expenditures on retiree benefits from year to year that are less susceptible to market forces. This includes avoiding the temptation to reduce payments when there are strong market returns as well as the crushing difficulty of increasing payments when the market (and almost certainly government receipts) are&nbsp;down.</li>
+<li>Insulating workers from a government that perpetually writes checks they can cash, as was the case with the current&nbsp;system.</li>
+</ol>
+<p>This paper does not address any of these objectives or others I might have forgotten. In essence, the brief looks at only one subset of the perceived costs of this structural change, but it is far from a comprehensive analysis of the potential universe of both costs and benefits. In fact, it fails to even address the most commonly cited benefits. That is why I view it as heavily biased and flawed, even if I might draw similar conclusions from a more thorough&nbsp;analysis.</p>
 <div class="footnote">
 <hr />
 <ol>
-<li id="fn:decree">
-<p>See the first link in this post&#160;<a class="footnote-backref" href="#fnref:decree" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:1">
-<p><a href="http://www.bls.gov/ro1/9140.htm">Consumer Price Index Northeast from the Bureau of Labor Statistics</a>&#160;<a class="footnote-backref" href="#fnref:1" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p>Sorry this code is not well-commented, but I believe it's fairly straight forward&#160;<a class="footnote-backref" href="#fnref:2" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<li id="fn:normal cost">
+<p>Definition: Active participants earn new benefits each year. Actuaries call that the normal cost. The normal cost is always reflected in the cash and accounting cost of the plan. <a href="http://www.actuary.org/pdf/pension/fundamentals_0704.pdf">Source</a> In other words, the normal cost only looks at the new benefits added to the liability, not the existing liability.&#160;<a class="footnote-backref" href="#fnref:normal cost" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
       
-            <p class=tags style="margin-bottom: 15em;">This entry was tagged as
-                <a href="../tag/non-mers.html">non-mers</a>
-                <a href="../tag/pension.html">pension</a>
-                <a href="../tag/pension-reform.html">pension reform</a>
-                <a href="../tag/politics.html">politics</a>
-                <a href="../tag/providence.html">providence</a>
-                <a href="../tag/public-sector-unions.html">public-sector unions</a>
-                <a href="../tag/rhode-island.html">rhode island</a>
-                <a href="../tag/ri.html">ri</a>
-                <a href="../tag/rstats.html">rstats</a>
-                <a href="../tag/union.html">union</a>
-              </p>
-            
+      <p class=tags style="margin-bottom: 15em;">This entry was tagged as
+        <a href="../tag/rirsa.html">rirsa</a>
+        <a href="../tag/ri.html">ri</a>
+        <a href="../tag/pension.html">pension</a>
+      </p>
+    <div class=separator></div>
+      <div class=entry-overview>
+        <div class=date>Jan 25, 2012</div>
+        <div class=detail>
+          <h1><a href="../2012/01/providence-pensions-lets-call-a-spade-a-spade-or-the-cola-a-raise.html">Providence Pensions-- Let's Call a Spade a Spade (or the COLA a Raise)</a></h1>
+            <div class=summary><p><p><a href="https://twitter.com/#!/tednesi">Ted Nesi</a> has done a pretty solid job tracing the <a href="http://www.wpri.com/dpp/news/local_news/providence/prov-pensions-hit-by-comedy-of-errors?2">history</a> of some awful decisions made by union-dominated boards that resulted in a significant number of retirees in the early-90s receiving 5% or 6% annually compounded interest on their retirement income. These are often called COLAs, or <a href="http://en.wikipedia.org/wiki/Cost-of-living_adjustment">cost-of-living adjustments</a>.</p>
+<p>Today ...</p></p></div>
+        </div>
+      </div>
+
 
         </div>
         
-                    <div class=footer>
+<div class=footer>
   <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
   <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
     Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
@@ -137,8 +104,8 @@ reform in the Fall of 2011. I am also a resident of Providence.</em></p>
     <div class=social style="font-size: 27px;">
       <ul>
         <script language="JavaScript">
-          u = 'jason.paul.becker';
-          s = 'gmail.com';
+          u = 'jason+sitemail';
+          s = 'jbecker.co';
           document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
         </script>
             <li><i class="icon-envelope icon-large"></i> </li>
@@ -149,6 +116,6 @@ reform in the Fall of 2011. I am also a resident of Providence.</em></p>
       </ul>
     </div>
   </p>
-</div>            </div>
-          </body>
+</div>    </div>
+  </body>
 </html>

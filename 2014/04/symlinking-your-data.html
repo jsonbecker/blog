@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+          <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        try {
+          var pageTracker = _gat._getTracker("UA-40920108-1");
+          pageTracker._trackPageview();
+        } catch(err) {}
+        </script>
+
+
+        <meta name='keywords' contents ="rstats,symlink,data,encryption,privacy" />
+
+    <meta name="description" contents="I frequently work with private data. Sometimes, it lives on my personal machine rather than on a database server. Sometimes, even if it lives on a remote database server, it is better that I use locally cached data than query the database each time I want to do analysis on ..." />
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>  Symlinking Your Data | jasonpbecker
+</title>
+
+    <link rel="stylesheet" href="../../theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../theme/css/font-awesome.css" type="text/css"/>
+  </head>
+  <body>
+    <div class=container>
+
+      <div class=navigation>
+        <ul>
+          <a href="../../index.html"> 
+            <li> <i class="icon-home icon-large"></i> </li> </a>
+          <a href="../../about.html"> 
+            <li> <i class="icon-user icon-large"></i> </li> </a>
+          <a href="../../archives.html"> 
+            <li> <i class="icon-archive icon-large"></i> </li> </a>
+        </ul>
+      </div>
+      <div class=separator></div>        
+        <div class=body>
+      <h1 class="title"> Symlinking Your Data</h1>
+    <p class=date> 2014-04-02 </p>
+    <p>I frequently work with private data. Sometimes, it lives on my personal machine rather than on a database server. Sometimes, even if it lives on a remote database server, it is better that I use locally cached data than query the database each time I want to do analysis on the data set. I have always dealt with this by <a href="http://support.apple.com/kb/HT1578?viewlocale=en_US&amp;locale=en_US">creating encrypted disk images</a> with secure passwords (stored in <a href="https://agilebits.com">1Password</a>). This is a nice extra layer of protection for private data served on a laptop, and it adds little complication to my workflow. I just have to remember to mount and unmount the disk&nbsp;images.</p>
+<p>However, it can be inconvenient from a project perspective to refer to data in a distant location like <code>/Volumes/ClientData/Entity/facttable.csv</code>. In most cases, I would prefer the data &#8220;reside&#8221; in <code>data/</code> or <code>cache/</code> <span class="dquo">&#8220;</span>inside&#8221; of my project&nbsp;directory.</p>
+<p>Luckily, there is a great way that allows me to point to <code>data/facttable.csv</code> in my R code without actually having <code>facttable.csv</code> reside there:&nbsp;symlinking.</p>
+<p>A <a href="http://en.wikipedia.org/wiki/Symbolic_link">symlink</a> is a <strong>symbolic link</strong> file that sits in the preferred location and references the file path to the actual file. This way, when I refer to <code>data/facttable.csv</code> the file system knows to direct all of that activity to the actual file in <code>/Volumes/ClientData/Entity/facttable.csv</code>. </p>
+<p>From the command line, a symlink can be generated with a simple&nbsp;command:</p>
+<div class="highlight"><pre>ln -s target_path link_path
+</pre></div>
+
+
+<p>R offers a function that does the same&nbsp;thing:</p>
+<div class="highlight"><pre>file.symlink<span class="p">(</span>target_path<span class="p">,</span> link_path<span class="p">)</span>
+</pre></div>
+
+
+<p>where <code>target_path</code> and <code>link_path</code> are both strings surrounded by quotation&nbsp;marks.</p>
+<p>One of the first things I do when setting up a new analysis is add common data storage file extensions like <code>.csv</code> and <code>.xls</code> to my <code>.gitignore</code> file so that I do not mistakenly put any data in a remote repository. The second thing I do is set up symlinks to the mount location of the encrypted&nbsp;data.</p>
+
+    <p class=tags>This entry was tagged as
+      <a href="../../tag/rstats.html">rstats</a>
+      <a href="../../tag/symlink.html">symlink</a>
+      <a href="../../tag/data.html">data</a>
+      <a href="../../tag/encryption.html">encryption</a>
+      <a href="../../tag/privacy.html">privacy</a>
+    </p>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jasonpbecker'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        
+<div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'jason+sitemail';
+          s = 'jbecker.co';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/jasonpbecker" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://github.com/jasonpbecker" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="../../feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>    </div>
+  </body>
+</html>

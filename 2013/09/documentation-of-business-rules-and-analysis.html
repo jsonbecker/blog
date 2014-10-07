@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+          <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        try {
+          var pageTracker = _gat._getTracker("UA-40920108-1");
+          pageTracker._trackPageview();
+        } catch(err) {}
+        </script>
+
+
+        <meta name='keywords' contents ="education,data,rstats" />
+
+    <meta name="description" contents="One of the most challenging aspects of being a data analyst is translating programmatic terms like “student mobility” into precise business rules. Almost any simple statistic involves a series of decisions that are often opaque to the ultimate users of that statistic. Documentation of business rules is a critical aspect ..." />
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>  Documentation of Business Rules and Analysis | jasonpbecker
+</title>
+
+    <link rel="stylesheet" href="../../theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../theme/css/font-awesome.css" type="text/css"/>
+  </head>
+  <body>
+    <div class=container>
+
+      <div class=navigation>
+        <ul>
+          <a href="../../index.html"> 
+            <li> <i class="icon-home icon-large"></i> </li> </a>
+          <a href="../../about.html"> 
+            <li> <i class="icon-user icon-large"></i> </li> </a>
+          <a href="../../archives.html"> 
+            <li> <i class="icon-archive icon-large"></i> </li> </a>
+        </ul>
+      </div>
+      <div class=separator></div>        
+        <div class=body>
+      <h1 class="title"> Documentation of Business Rules and Analysis</h1>
+    <p class=date> 2013-09-13 </p>
+    <p>One of the most challenging aspects of being a data analyst is translating programmatic terms like &#8220;student mobility&#8221; into precise business rules. Almost any simple statistic involves a series of decisions that are often opaque to the ultimate users of that&nbsp;statistic.</p>
+<p>Documentation of business rules is a critical aspect of a data analysts job that, in my experience, is often regrettably overlooked. If you have ever tried to reproduce someone else&#8217;s analysis, asked different people for the same statistic, or tried to compare data from multiple years, you have probably encountered difficulties getting a consistent answer on standard statistics, e.g. how many students were proficient in math, how many students graduated in four years, what proportion of students were chronically absent? All too often documentation of business rules is poor or non-existent. The result is that two analysts with the same data will produce inconsistent statistics. This is not because of something inherent in the quality of the data or an indictment of the analyst’s skills. In most cases, the undocumented business rules are essentially trivial, in that the results of any decision has a small impact on the final result and any of the decisions made by the analysts are equally&nbsp;defensible.</p>
+<p>This major problem of lax or non-existent documentation is one of the main reasons I feel that analysts, and in particular analysts working in the public sector, should extensively use tools for code sharing and version control like <a href="http://www.github.com/">Github</a>, use free tools whenever possible, and generally adhere to best practices in reproducible&nbsp;research.</p>
+<p>I am trying to put as much of my code on Github as I can these days. Much of what I write is still very disorganized and, frankly, embarrassing. A lot of what is in my Github repositories is old, abandoned code written as I was learning my craft. A lot of it is written to work with very specific, private data. Most of it is poorly documented because I am the only one who has ever had to use it, I don&#8217;t interact with anyone through practices like code reviews, and frankly I am lazy when pressed with a deadline. But that&#8217;s not really the point, is it? The worst documented code is code that is hidden away on a personal hard drive, written for an expensive proprietary environment most people and organizations cannot use, or worse, is not code at all but rather a series of destructive data edits and manipulations. <sup id="fnref:fuckexcel"><a class="footnote-ref" href="#fn:fuckexcel" rel="footnote">1</a></sup></p>
+<p>One way that I have been trying to improve the quality and utility of the code I write is by contributing to an open source R package, <code>eeptools</code>. This is a package written and maintained by Jared Knowles, an employee of the Wisconsin Department of Public Instruction, whom I met at a <a href="http://www.gse.harvard.edu/sdp/">Strategic Data Project</a> convening. <code>eeptools</code> is consolidating several functions in R for common tasks education data analysts are faced with. Because this package is available on <a href="http://cran.us.r-project.org/"><span class="caps">CRAN</span></a>, the primary repository for R packages, any education analyst can have access to its functions in one&nbsp;line: </p>
+<div class="highlight"><pre>install.packages<span class="p">(</span><span class="s">&#39;eeptools&#39;</span><span class="p">);</span> require<span class="p">(</span>eeptools<span class="p">)</span>
+</pre></div>
+
+
+<p>Submitting code to a <span class="caps">CRAN</span> package reinforces several habits. First, I get to practice writing R documentation,  explaining how to use a function, and therefore, articulating the assumptions and business rules I am applying. Second, I have to write my code with a wider tolerance for input data. One of the easy pitfalls of a beginning analyst is writing code that is too specific to the dataset in front of you. Most of the errors I have found in analyses during quality control stem from assumptions embedded in code that were perfectly reasonable with a single data set that lead to serious errors when using different data. One way to avoid this issue is through <a href="http://en.wikipedia.org/wiki/Test-driven_development">test-driven development</a>, writing a good testing suite that tests a wide range of unexpected inputs. I am not quite there yet, personally, but thinking about how my code would have to work with arbitrary inputs and ensuring it fails gracefully <sup id="fnref:fallingwithstyle"><a class="footnote-ref" href="#fn:fallingwithstyle" rel="footnote">2</a></sup> is an excellent side benefit of preparing a pull request <sup id="fnref:gitterms"><a class="footnote-ref" href="#fn:gitterms" rel="footnote">3</a></sup> . Third, it is an opportunity to write code for someone other than myself. Because I am often the sole analyst with my skillset working on a project, it is easy to not consider things like style, optimizations, clarity, etc. This can lead to large build-ups of <a href="http://en.wikipedia.org/wiki/Technical_debt">technical debt</a>, complacency toward learning new techniques, and general sloppiness. Submitting a pull request feels like publishing. The world has to read this, so it better be something I am proud of that can stand up to the scrutiny of third-party&nbsp;users.</p>
+<p>My first pull request, which was accepted into the package, calculates age in years, months, or days at an arbitrary date based on date of birth. While even a beginning R programmer can develop a similar function, it is the perfect example of an easily compartmentalized component, with a broad set of applications, that can be accessed frequently&nbsp;.</p>
+<p>Today I submitted by second pull request that I hope will be accepted. This time I covered a much more complex task&#8212; calculating student mobility. To be honest, I am completely unaware of existing business rules and algorithms used to produce the mobility numbers that are federally reported. I wrote this function from scratch thinking through how I would calculate the number of schools attended by a student in a given year. I am really proud of both the business rules I have developed and the code I wrote to apply those rules. My custom function can accept fairly arbitrary inputs, fails gracefully when it finds data it does not expect, and is pretty fast. The original version of my code took close to 10 minutes to run on ~30,000 rows of data. I have reduced that with a complete rewrite prior to submission to 16&nbsp;seconds.</p>
+<p>While I am not sure if this request will be accepted, I will be thrilled if it is. Mobility is a tremendously important statistic in education research and a standard, reproducible way to calculate it would be a great help to researchers. How great would it be if <code>eeptools</code> becomes one of the first packages education data analysts load and my mobility calculations are used broadly by researchers and analysts? But even if it’s not accepted because it falls out of scope, the process of developing the business rules, writing an initial implementation of those rules, and then refining that code to be far simpler, faster, and less error prone was incredibly&nbsp;rewarding.</p>
+<p>My next post will probably be a review of that process and some parts of my <code>moves_calc</code> function that I&#8217;m particularly proud&nbsp;of.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:fuckexcel">
+<p>Using a spreadsheet program, such as Excel, encourages directly manipulating and editing the source data. Each change permanently changes the data. Even if you keep an original version of the data, there is no recording of exactly what was done to change the data to produce your results. Reproducibility is all but impossible of any significant analysis done using spreadsheet software.&#160;<a class="footnote-backref" href="#fnref:fuckexcel" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:fallingwithstyle">
+<p>Instead of halting the function with hard to understand error when things go wrong, I do my best to &#8220;correct&#8221; easily anticipated errors or report back to users in a plain way what needs to be fixed. See also <a href="http://en.wikipedia.org/wiki/Fault-tolerant_system">fault-tolerant system</a>.&#160;<a class="footnote-backref" href="#fnref:fallingwithstyle" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:gitterms">
+<p>A <a href="https://help.github.com/articles/using-pull-requests">pull request</a> is when you submit your additions, deletions, or any other modifications to be incorporated in someone else&#8217;s repository.&#160;<a class="footnote-backref" href="#fnref:gitterms" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+    <p class=tags>This entry was tagged as
+      <a href="../../tag/education.html">education</a>
+      <a href="../../tag/data.html">data</a>
+      <a href="../../tag/rstats.html">rstats</a>
+    </p>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jasonpbecker'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        
+<div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'jason+sitemail';
+          s = 'jbecker.co';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/jasonpbecker" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://github.com/jasonpbecker" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="../../feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>    </div>
+  </body>
+</html>

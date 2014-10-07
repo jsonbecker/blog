@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+          <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        try {
+          var pageTracker = _gat._getTracker("UA-40920108-1");
+          pageTracker._trackPageview();
+        } catch(err) {}
+        </script>
+
+
+        <meta name='keywords' contents ="pinboard,markdown,python,code" />
+
+    <meta name="description" contents="I had never thought of a use for Brett Terpstra’s Marky the Markdownifier before listening today’s Systematic. Why would I want to turn a webpage into Markdown? When I heard that Marky has an API, I was inspired. Pinboard has a “description” field that allows up to 65 ..." />
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>  Pindown: Failed Dreams | jasonpbecker
+</title>
+
+    <link rel="stylesheet" href="../../theme/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../theme/css/font-awesome.css" type="text/css"/>
+  </head>
+  <body>
+    <div class=container>
+
+      <div class=navigation>
+        <ul>
+          <a href="../../index.html"> 
+            <li> <i class="icon-home icon-large"></i> </li> </a>
+          <a href="../../about.html"> 
+            <li> <i class="icon-user icon-large"></i> </li> </a>
+          <a href="../../archives.html"> 
+            <li> <i class="icon-archive icon-large"></i> </li> </a>
+        </ul>
+      </div>
+      <div class=separator></div>        
+        <div class=body>
+      <h1 class="title"> Pindown: Failed Dreams</h1>
+    <p class=date> 2014-05-13 </p>
+    <p>I had never thought of a use for <a href="http://www.brettterpstra.com">Brett Terpstra&#8217;s</a> <a href="http://heckyesmarkdown.com">Marky the Markdownifier</a> before listening today&#8217;s <a href="http://5by5.tv/systematic/96">Systematic</a>. Why would I want to turn a webpage into&nbsp;Markdown?</p>
+<p>When I heard that Marky has an <span class="caps">API</span>, I was inspired. <a href="http://pinboard.in">Pinboard</a> has a &#8220;description&#8221; field that allows up to 65,000 characters. I never know what to put in this box. Wouldn&#8217;t it be great to put the full content of the page in Markdown into this&nbsp;field?</p>
+<p>I set out to write a quick Python script&nbsp;to:</p>
+<ol>
+<li>Grab recent Pinboard&nbsp;links.</li>
+<li>Check to see if the URLs still&nbsp;resolve.</li>
+<li>Send the link to Marky and collect a Markdown version of the&nbsp;content.</li>
+<li>Post an updated link to Pinboard with the Markdown in the description&nbsp;field.</li>
+</ol>
+<p>If all went well, I would release this script on Github as <strong>Pindown</strong>, a great way to put Markdown page content into your Pinboard&nbsp;links.</p>
+<p>The script below is far from well-constructed. I would have spent more time cleaning it up with things like better error handling and a more complete <span class="caps">CLI</span> to give more granular control over which links receive Markdown&nbsp;content. </p>
+<p>Unfortunately, I found that Pinboard consistently returns a <a href="http://www.checkupdown.com/status/E414.html">414 error code</a> because the URLs are too long. Why is this a problem? Pinboard, in an attempt to <a href="https://pinboard.in/api/">maintain compatibility</a> with the <a href="http://del.ico.us">del.ico.us</a> <span class="caps">API</span> uses only <span class="caps">GET</span> requests, whereas this kind of request would typically use a <span class="caps">POST</span> end point. As a result, I cannot send along a data&nbsp;payload.</p>
+<p>So I&#8217;m sharing this just for folks who are interested in playing with Python, RESTful APIs, and Pinboard. I&#8217;m also posting for my own posterity since a <a href="https://groups.google.com/d/msg/pinboard-dev/Od6sCzREeBU/L-WKgX6vUDoJ">non-Del.ico.us compatible version 2 of the Pinboard <span class="caps">API</span> is coming</a>.</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+
+<span class="k">def</span> <span class="nf">getDataSet</span><span class="p">(</span><span class="n">call</span><span class="p">):</span>
+  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;https://api.pinboard.in/v1/posts/recent&#39;</span> <span class="o">+</span> <span class="n">call</span><span class="p">)</span>
+  <span class="n">data_set</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">_content</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">data_set</span>
+
+<span class="k">def</span> <span class="nf">checkURL</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+  <span class="n">newurl</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">newurl</span><span class="o">.</span><span class="n">status_code</span><span class="o">==</span><span class="mi">200</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">newurl</span><span class="o">.</span><span class="n">url</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;your message&#39;</span><span class="p">,</span> <span class="n">newurl</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">markyCall</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;http://heckyesmarkdown.com/go/?u=&#39;</span> <span class="o">+</span> <span class="n">url</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">_content</span>
+
+<span class="k">def</span> <span class="nf">process_site</span><span class="p">(</span><span class="n">call</span><span class="p">):</span>
+  <span class="n">data_set</span> <span class="o">=</span> <span class="n">getDataSet</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
+  <span class="n">processed_site</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">data_set</span><span class="p">[</span><span class="s">&#39;posts&#39;</span><span class="p">]:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">url</span> <span class="o">=</span> <span class="n">checkURL</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s">&#39;href&#39;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+      <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s">&#39;href&#39;</span><span class="p">])</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">markyCall</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">site</span><span class="p">[</span><span class="s">&#39;extended&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+    <span class="n">processed_site</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+  <span class="k">print</span> <span class="n">errors</span>
+  <span class="k">return</span> <span class="n">processed_site</span>
+
+<span class="k">def</span> <span class="nf">write_pinboard</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">auth_token</span><span class="p">):</span>
+  <span class="n">stem</span> <span class="o">=</span> <span class="s">&#39;https://api.pinboard.in/v1/posts/add?format=json&amp;auth_token=&#39;</span>
+  <span class="n">payload</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;href&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;extended&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;extended&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;tags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;tags&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;shared&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;extended&#39;</span><span class="p">,</span> <span class="s">&#39;no&#39;</span><span class="p">)</span>
+  <span class="n">payload</span><span class="p">[</span><span class="s">&#39;toread&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;toread&#39;</span><span class="p">,</span> <span class="s">&#39;no&#39;</span><span class="p">)</span>           
+  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stem</span> <span class="o">+</span> <span class="n">auth_token</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">payload</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s">&#39;href&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\t\t</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+  <span class="n">settings</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="s">&#39;AUTH.yaml&#39;</span><span class="p">,</span> <span class="s">&#39;rw&#39;</span><span class="p">)</span>
+  <span class="n">identity</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">AUTH</span><span class="o">.</span><span class="n">yaml</span><span class="p">)</span>
+  <span class="n">auth_token</span> <span class="o">=</span> <span class="n">identity</span><span class="p">[</span><span class="s">&#39;user_name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;:&#39;</span> <span class="o">+</span> <span class="n">identity</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]</span>
+  <span class="n">valid_sites</span> <span class="o">=</span> <span class="n">process_site</span><span class="p">(</span><span class="s">&#39;?format=json&amp;auth_token=&#39;</span> <span class="o">+</span> <span class="n">auth_token</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">valid_sites</span><span class="p">:</span>
+    <span class="n">write_pinboard</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">auth_token</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+  <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+    <p class=tags>This entry was tagged as
+      <a href="../../tag/pinboard.html">pinboard</a>
+      <a href="../../tag/markdown.html">markdown</a>
+      <a href="../../tag/python.html">python</a>
+      <a href="../../tag/code.html">code</a>
+    </p>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jasonpbecker'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>        </div>
+        
+<div class=footer>
+  <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
+  <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
+    Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
+  </p> 
+  <p>
+    <div class=social style="font-size: 27px;">
+      <ul>
+        <script language="JavaScript">
+          u = 'jason+sitemail';
+          s = 'jbecker.co';
+          document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
+        </script>
+            <li><i class="icon-envelope icon-large"></i> </li>
+        </a>
+        <a href="http://twitter.com/jasonpbecker" target="_blank"> <li> <i class="icon-twitter-sign icon-large"> </li></i> </a>
+        <a href="http://github.com/jasonpbecker" target="_blank"> <li> <i class="icon-github-sign icon-large"></i> </li> </a>
+        <a href="../../feeds/all.rss.xml" rel="alternate" title="Recent Blog Posts"><li> <i class="icon-rss icon-large"></i> </li></a>
+      </ul>
+    </div>
+  </p>
+</div>    </div>
+  </body>
+</html>

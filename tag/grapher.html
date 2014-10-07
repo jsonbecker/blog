@@ -3,6 +3,16 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+        <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        try {
+          var pageTracker = _gat._getTracker("UA-40920108-1");
+          pageTracker._trackPageview();
+        } catch(err) {}
+        </script>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -11,40 +21,46 @@
     <link rel="stylesheet" href="../theme/css/style.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../theme/css/font-awesome.css" type="text/css"/>
-      </head>
+  </head>
   <body>
     <div class=container>
-                    
+
       <div class=navigation>
         <ul>
-                      <li><a href="../index.html">Blog</a> </li>
-                      <li><a href="../about.html">About</a> </li>
-                      <li><a href="../archives.html">Archive</a> </li>
-                  </ul>
+          <a href="../index.html"> 
+            <li> <i class="icon-home icon-large"></i> </li> </a>
+          <a href="../about.html"> 
+            <li> <i class="icon-user icon-large"></i> </li> </a>
+          <a href="../archives.html"> 
+            <li> <i class="icon-archive icon-large"></i> </li> </a>
+        </ul>
       </div>
-      <div class=separator></div>                
+      <div class=separator></div>        
         <div class=body>
-        
-            <h1 class="title">GrapheR is an awesome GUI for R beginners<a href="../2011/12/grapher-is-an-awesome-gui-for-r-beginners.html" class=perma>&#8734;</a></h1>
-      <p class=date> 2011-12-19 </p>
-      <p>If you're just beginning to use R and want a quick and easy way to make some charts/graphs, etc, GrapheR is a great package to quickly produce high quality plots through a self-explanatory GUI. <a href="http://journal.r-project.org/archive/2011-2/RJournal_2011-2_Herve.pdf">Here</a>'s an article
-in The R Journal today.</p>
-<p>My only complaint is that GrapheR does not appear to have a way to export the code that produced the graph, which would be a very helpful feature for a beginner who wants to learn the guts of producing publication quality charts in R.</p>
-<p>To install and then run...</p>
+
+      
+        <h1 class="title">GrapheR is an awesome GUI for R beginners<a href="../2011/12/grapher-is-an-awesome-gui-for-r-beginners.html" class=perma>&#8734;</a></h1>
+        <p class=date> 2011-12-19 </p>
+
+      <p>If you&#8217;re just beginning to use R and want a quick and easy way to make some charts/graphs, etc, GrapheR is a great package to quickly produce high quality plots through a self-explanatory <span class="caps">GUI</span>. <a href="http://journal.r-project.org/archive/2011-2/RJournal_2011-2_Herve.pdf">Here</a>&#8216;s an article
+in The R Journal&nbsp;today.</p>
+<p>My only complaint is that GrapheR does not appear to have a way to export the code that produced the graph, which would be a very helpful feature for a beginner who wants to learn the guts of producing publication quality charts in&nbsp;R.</p>
+<p>To install and then&nbsp;run&#8230;</p>
 <div class="highlight"><pre>install.packages<span class="p">(</span><span class="s">&#39;GrapheR&#39;</span><span class="p">)</span>
 require<span class="p">(</span>GrapheR<span class="p">)</span>
 run.GrapheR<span class="p">()</span>
 </pre></div>
       
-            <p class=tags style="margin-bottom: 15em;">This entry was tagged as
-                <a href="../tag/grapher.html">GrapheR</a>
-                <a href="../tag/rstats.html">rstats</a>
-              </p>
-            
+      <p class=tags style="margin-bottom: 15em;">This entry was tagged as
+        <a href="../tag/grapher.html">GrapheR</a>
+        <a href="../tag/rstats.html">rstats</a>
+      </p>
+    <div class=separator></div>
+
 
         </div>
         
-                    <div class=footer>
+<div class=footer>
   <p>&copy; Copyright <script language="JavaScript">var date = new Date(); document.write(date.getFullYear());</script> by Jason P. Becker</p>
   <p> Powered by <a href="http://pypi.python.org/pypi/pelican/" target="_blank">Pelican</a>.  
     Theme modified from <a href="https://github.com/fjavieralba/flasky">flasky</a> by <a href="http://fjavieralba.com">fjavieralba</a>
@@ -53,8 +69,8 @@ run.GrapheR<span class="p">()</span>
     <div class=social style="font-size: 27px;">
       <ul>
         <script language="JavaScript">
-          u = 'jason.paul.becker';
-          s = 'gmail.com';
+          u = 'jason+sitemail';
+          s = 'jbecker.co';
           document.write('<a href=\"mailto:' + u + '@' + s + '\" target=\"_blank\">');
         </script>
             <li><i class="icon-envelope icon-large"></i> </li>
@@ -65,6 +81,6 @@ run.GrapheR<span class="p">()</span>
       </ul>
     </div>
   </p>
-</div>            </div>
-          </body>
+</div>    </div>
+  </body>
 </html>
