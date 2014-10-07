@@ -38,128 +38,39 @@
       <div class=separator></div>        
         <div class=body>
 
-      
-        <h1 class="title">Providence Real Estate Sales in R<a href="../2012/01/providence-real-estate-sales-in-r.html" class=perma>&#8734;</a></h1>
-        <p class=date> 2012-01-23 </p>
+    
+        <h1 class="title">
+        <a href='http://pbn.com/Report-Unequal-housing-burden-curtails-Latino-spending-saving,95365' title="Link">
+          Latinos in Rhode Island Face Housing Burden 
+          <i class="icon-external-link" style="font-size:0.5em;vertical-align:super;"></i>
+        </a>
+        <a href="../2014/02/latinos-in-rhode-island-face-housing-burden.html" class=perma title ="Permalink for Latinos in Rhode Island Face Housing Burden">&#8734;</a></h1>
+        <p class=date> 2014-02-27 </p>
 
-      <p>The past few months I&#8217;ve been learning how to use R. This morning, I decided to try out two first&#8212; importing a table of data that is being read of the web and overlaying location data onto a&nbsp;map.</p>
-<p>With a little bit of Google skills and just enough R know-how I was able to produce this&nbsp;image:</p>
-<p><img alt="Providence Home Sales 9-12-11 to 12-27-11" src="../images/homesales.png" title="Providence Home Sales 9-12-11 to 12-27-11" /></p>
-<p>There were a few things that were kind of tricky for me. First, for sometime I couldn&#8217;t get latitude and longitude components for the addresses. I figured there was something wrong with the way I was using the *apply class of functions in R. apply() (and the related class of functions lapply, sapply, etc.) are really handy if a bit tricky for beginning R users. This function permits quickly &#8220;applying&#8221; a function across multiple elements. Traditionally this is done with a loop, but the apply() functions &#8220;vectorize&#8221; this process (R folks always talk about making your code more vectorized which has something to do with the structure of objects in R but is beyond my computer science skills&#8212; essentially, vectorized code runs much faster and more efficiency than loops because of some underlying feature of the language). After playing around with apply, lapply, and sapply, I decided to move back into my &#8220;old&#8221; way of thinking and just write a&nbsp;loop:</p>
-<div class="highlight"><pre>latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">){</span>
-  lat <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
-  lng <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
-  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>length<span class="p">(</span>address<span class="p">)){</span>
-    latlong <span class="o">&lt;-</span> gGeoCode<span class="p">(</span>address<span class="p">[</span>i<span class="p">])</span>
-    lat<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">1</span><span class="p">]</span>
-    lng<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">2</span><span class="p">]</span>
-  <span class="p">}</span>
-  <span class="kr">return</span><span class="p">(</span>cbind<span class="p">(</span>lat<span class="p">,</span>lng<span class="p">))</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>This still didn&#8217;t work&#8212; I kept on getting a strange out-of-bounds call. So I decided to go down the rabbit hole of regular expressions and try and see if I could clean up my addresses any further (I couldn&#8217;t). So, now seemed as good a time as any to figure out how to print to the console while a loop is running to keep track of progress and where exactly my function was stopped. This turned out to be a bit tricky because I didn&#8217;t know you had to include a tricky line, <code>r flush.console()</code> in order to get the prints to work. When I figured this out I found out my loop was being caught on my 7th element, a perfectly well formed address. When I ran gGeoCode() on that address only it worked fine. So I thought, maybe Google is bouncing me out because I&#8217;m hitting it too fast? And bingo, the final (working&nbsp;version):</p>
-<div class="highlight"><pre>latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">){</span>
- lat <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
- lng <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
- <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>length<span class="p">(</span>address<span class="p">)){</span>
-  print<span class="p">(</span>i<span class="p">)</span>
-  flush.console<span class="p">()</span>
-  latlong <span class="o">&lt;-</span> gGeoCode<span class="p">(</span>address<span class="p">[</span>i<span class="p">])</span>
-  lat<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">1</span><span class="p">]</span>
-  lng<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">2</span><span class="p">]</span>
-  Sys.sleep<span class="p">(</span><span class="m">0.5</span><span class="p">)</span>
- <span class="p">}</span>
- <span class="kr">return</span><span class="p">(</span>cbind<span class="p">(</span>lat<span class="p">,</span>lng<span class="p">))</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>Other than that, the whole process was pretty straight forward. I have to thank Tony Breyal for <a href="http://stackoverflow.com/questions/3257441/geocoding-in-r-with-google-maps">posting the functions I used</a> to get latitude and longitude on <a href="http://stackoverflow.com/">Stack Overflow</a>. Also, I found the <a href="http://cran.r-project.org/web/packages/RgoogleMaps/vignettes/RgoogleMaps-intro.pdf">RgoogleMaps vignette</a> to be very helpful, although I wish it had slightly better explained what was going on in&nbsp;qbbox().</p>
-<p>Finally, my full source for the&nbsp;above:</p>
-<div class="highlight"><pre><span class="c1"># Providence Real Estate Transactions over the last 40 days.</span>
-<span class="c1"># Required Packages</span>
-require<span class="p">(</span><span class="s">&#39;<span class="caps">XML</span>&#39;</span><span class="p">)</span>
-require<span class="p">(</span><span class="s">&#39;RCurl&#39;</span><span class="p">)</span>
-require<span class="p">(</span><span class="s">&#39;<span class="caps">RJSONIO</span>&#39;</span><span class="p">)</span>
-require<span class="p">(</span><span class="s">&quot;RgoogleMaps&quot;</span><span class="p">)</span>
-<span class="c1"># Functions</span>
-<span class="c1"># Construct <span class="caps">URL</span> required to get the Lat and Long from Google Maps</span>
-construct.geocode.url <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">,</span> return.call <span class="o">=</span> <span class="s">&quot;json&quot;</span><span class="p">,</span> sensor <span class="o">=</span> <span class="s">&quot;false&quot;</span>   <span class="p">)</span> <span class="p">{</span>
- root <span class="o">&lt;-</span> <span class="s">&quot;http://maps.google.com/maps/api/geocode/&quot;</span>
- u <span class="o">&lt;-</span> paste<span class="p">(</span>root<span class="p">,</span> return.call<span class="p">,</span> <span class="s">&quot;?address=&quot;</span><span class="p">,</span> address<span class="p">,</span> <span class="s">&quot;&amp;sensor=&quot;</span><span class="p">,</span> sensor<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;&quot;</span>   <span class="p">)</span>
- <span class="kr">return</span><span class="p">(</span>URLencode<span class="p">(</span>u<span class="p">))</span>
-<span class="p">}</span>
-<span class="c1"># Now that we have the proper Google Maps address, get the resulting latitude     and longitude</span>
-gGeoCode <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">)</span> <span class="p">{</span>
- u <span class="o">&lt;-</span> construct.geocode.url<span class="p">(</span>address<span class="p">)</span>
- doc <span class="o">&lt;-</span> getURL<span class="p">(</span>u<span class="p">)</span>
- x <span class="o">&lt;-</span> fromJSON<span class="p">(</span>doc<span class="p">,</span>simplify <span class="o">=</span> <span class="kc"><span class="caps">FALSE</span></span><span class="p">)</span>
- lat <span class="o">&lt;-</span> x<span class="o">$</span>results<span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span>geometry<span class="o">$</span>location<span class="o">$</span>lat
- lng <span class="o">&lt;-</span> x<span class="o">$</span>results<span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span>geometry<span class="o">$</span>location<span class="o">$</span>lng
- <span class="kr">return</span><span class="p">(</span>c<span class="p">(</span>lat<span class="p">,</span> lng<span class="p">))</span>
-<span class="p">}</span>
-<span class="c1"># Roll through addresses to create lat long</span>
-latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">){</span>
-<span class="c1"># Initializing the length of a vector dramatically speeds up the code. Far </span>
-<span class="c1"># better than reassigning and resizing each time in the loop.</span>
- lat <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
- lng <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
- <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>length<span class="p">(</span>address<span class="p">)){</span>
-<span class="c1"># I kept the print in because this function takes a long time to run so I </span>
-<span class="c1"># like  to watch its progress.</span>
- print<span class="p">(</span>i<span class="p">)</span>
- flush.console<span class="p">()</span>
-<span class="c1"># To reduce the calls, I chose to store lat and long locally before </span>
-<span class="c1"># separating the two whereas initially I hit Google for each separately</span>
- latlong <span class="o">&lt;-</span> gGeoCode<span class="p">(</span>address<span class="p">[</span>i<span class="p">])</span>
- lat<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">1</span><span class="p">]</span>
- lng<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">2</span><span class="p">]</span>
-<span class="c1"># I&#39;ll have to experiment with the sleep time. I&#39;m certain 0.5 seconds is </span>
-<span class="c1"># too long (and this is the bulk of the time spent on the whole code).</span>
- Sys.sleep<span class="p">(</span><span class="m">0.5</span><span class="p">)</span>
- <span class="p">}</span>
- <span class="kr">return</span><span class="p">(</span>cbind<span class="p">(</span>lat<span class="p">,</span>lng<span class="p">))</span>
-<span class="p">}</span>
-
-<span class="c1"># Open to the most recent real estate transactions for Providence on the </span>
-<span class="c1"># Projo</span>
-site <span class="o">&lt;-</span> <span class="s">&#39;http://www.providencejournal.com/homes/real-estate-transactions/assets/pages/real-estate-transactions-providence.htm&#39;</span>
-<span class="c1"># Read in the table with the header as variable names.</span>
-realestate.table<span class="o">&lt;-</span>readHTMLTable<span class="p">(</span>site<span class="p">,</span>header<span class="o">=</span><span class="k-Variable">T</span><span class="p">,</span>which<span class="o">=</span><span class="m">1</span><span class="p">,</span>stringsAsFactors<span class="o">=</span><span class="k-Variable">F</span><span class="p">)</span>
-<span class="c1"># Remove the $ sign before the price</span>
-realestate.table<span class="o">$</span>Price <span class="o">&lt;-</span> gsub<span class="p">(</span><span class="s">&quot;([$]{1})([0-9]+)&quot;</span><span class="p">,</span> <span class="s">&quot;\\2&quot;</span><span class="p">,</span> 
-                               realestate.table<span class="o">$</span>Price<span class="p">)</span>
-<span class="c1"># Cast price character as numeric</span>
-realestate.table<span class="o">$</span>Price<span class="o">&lt;-</span>as.numeric<span class="p">(</span>realestate.table<span class="o">$</span>Price<span class="p">)</span>
-<span class="c1"># Cast date string as date type (lowercase %y means 2-digit year, </span>
-<span class="c1"># uppercase is 4 digit)</span>
-realestate.table<span class="o">$</span>Date <span class="o">&lt;-</span> as.Date<span class="p">(</span>realestate.table<span class="o">$</span>Date<span class="p">,</span>format<span class="o">=</span><span class="s">&#39;%m/%d/%y&#39;</span><span class="p">)</span>
-<span class="c1"># Dummy transactions or title changes have a price of $1, removing those </span>
-<span class="c1"># from data set</span>
-providence <span class="o">&lt;-</span> subset<span class="p">(</span>realestate.table<span class="p">,</span>Price<span class="o">&gt;</span><span class="m">1</span><span class="p">)</span>
-<span class="c1"># Removing properties that do not have an address that start with a street </span>
-<span class="c1"># number</span>
-providence <span class="o">&lt;-</span> subset<span class="p">(</span>providence<span class="p">,</span> grepl<span class="p">(</span><span class="s">&quot;^[0-9]+&quot;</span><span class="p">,</span> providence<span class="o">$</span>Address<span class="p">))</span>
-<span class="c1"># Add lat and lng coordinates to each address</span>
-providence<span class="o">&lt;-</span>cbind<span class="p">(</span>providence<span class="p">,</span> latlongroll<span class="p">(</span>providence<span class="p">[,</span><span class="m">3</span><span class="p">]))</span>
-<span class="c1"># Calculate boundary lat and long for map</span>
-bb <span class="o">&lt;-</span> qbbox<span class="p">(</span>providence<span class="o">$</span>lat<span class="p">,</span> providence<span class="o">$</span>lng<span class="p">)</span>
-<span class="c1"># Gets a map from Google Maps</span>
-map <span class="o">&lt;-</span> GetMap.bbox<span class="p">(</span>bb<span class="o">$</span>lonR<span class="p">,</span> bb<span class="o">$</span>latR<span class="p">,</span> zoom<span class="o">=</span><span class="m">12</span><span class="p">,</span> maptype<span class="o">=</span><span class="s">&quot;mobile&quot;</span><span class="p">)</span>
-<span class="c1"># plot the points</span>
-PlotOnStaticMap<span class="p">(</span>map<span class="p">,</span>lon<span class="o">=</span>providence<span class="o">$</span>lng<span class="p">,</span>lat<span class="o">=</span>providence<span class="o">$</span>lat<span class="p">)</span>
-</pre></div>
+      <p>We burden Latinos (and other traditionally underserved communities) with expensive housing because of the widespread practice of using <a href="https://www.providenceri.com/efile/3620">homestead exemptions</a> in Rhode Island. By lowering the real estate tax rate, typically by 50%, for owner occupied housing, we dramatically inflate the tax rate paid by Rhode Islanders who are&nbsp;renting. </p>
+<p>Echoing a newly filed lawsuit in New York City over <a href="http://www.bkreader.com/2014/02/class-action-law-suit-charges-black-and-hispanic-renters-pay-more-in-property-taxes-than-some-owners/">discriminatory real estate tax regimes</a>, this new report emphasizes the racist incentives built into our property&nbsp;tax. </p>
+<p>Homestead exemptions are built on the belief that renters are non-permanent residents of communities, care less for the properties they occupy and neighborhoods they live in, and are worse additions than homeowners. Frankly, it is an anti-White flight measure meant to assure people that only those with the means to purchase and the intent to stay will join their neighborhoods. Wealthy, largely White, property owners see homestead exemptions as fighting an influx of &#8220;slum lords&#8221;, which is basically the perception of anyone who purchases a home or builds apartments and rents them&nbsp;out.</p>
+<p>Rather than encouraging denser communities with higher land utilization and more housing to reduce the cost of living in dignity, we subsidize low value (per acre) construction that maintain inflated housing&nbsp;costs.</p>
+<p>Full disclosure: I own a condo in Providence and receive a 50% discount on my taxes. In fact, living in a condo Downcity, my home value is depressed because of the limited ways that I can use it. I could rent my current condo at market rate and lose money because of the doubling in taxes that I would endure versus turning a small monthly profit at the same rent with higher taxes. The flexibility to use my property as my own residence or as a rental unit more than pays for higher&nbsp;taxes.</p>
+<p>So while I do have personal reasons to support removing the homestead exemption, even if I lived in a single family home on the East Side that was not attractive as a rental property, I would still think this situation is absurd. Homeowners&#8217; taxes should easily be 20% higher to tax renters 30% less. Maybe some of our hulking, vacant infrastructure could be more viably converted into housing stock and lower the cost for all residents. Maybe we could even see denser development because there will actually be a market for renters at the monthly rates that would need to be charged to recuperate expenses. At least the rent wouldn&#8217;t be so damn high for too many people of color and people living in or near&nbsp;poverty.</p>
       
       <p class=tags style="margin-bottom: 15em;">This entry was tagged as
-        <a href="../tag/google-maps.html">google maps</a>
-        <a href="../tag/providence.html">providence</a>
+        <a href="../tag/tax.html">tax</a>
+        <a href="../tag/development.html">development</a>
+        <a href="../tag/homestead.html">homestead</a>
+        <a href="../tag/latinos.html">latinos</a>
+        <a href="../tag/property-tax.html">property tax</a>
         <a href="../tag/real-estate.html">real estate</a>
-        <a href="../tag/rhode-island.html">rhode island</a>
-        <a href="../tag/rstats.html">rstats</a>
       </p>
     <div class=separator></div>
+      <div class=entry-overview>
+        <div class=date>Jan 23, 2012</div>
+        <div class=detail>
+          <h1><a href="../2012/01/providence-real-estate-sales-in-r.html">Providence Real Estate Sales in R</a></h1>
+            <div class=summary><p><p>The past few months I&#8217;ve been learning how to use R. This morning, I decided to try out two first&#8212; importing a table of data that is being read of the web and overlaying location data onto a&nbsp;map.</p>
+<p>With a little bit of Google skills and just enough ...</p></p></div>
+        </div>
+      </div>
 
 
         </div>
