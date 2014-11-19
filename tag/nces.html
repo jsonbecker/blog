@@ -73,7 +73,7 @@ require<span class="p">(</span>scales<span class="p">)</span>
 <span class="c1">## multiplot takes in a bunch of plots and then puts them into one image</span>
 <span class="c1">## arranging them by columns equal to a paramter cols. Credit to:</span>
 <span class="c1">## http://wiki.stdout.org/rcookbook/Graphs/Multiple%20graphs%20on%20one%20page%20(    ggplot2)/</span>
-multiplot <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span><span class="kc">...</span><span class="p">,</span> plotlist<span class="o">=</span><span class="kc"><span class="caps">NULL</span></span><span class="p">,</span> cols<span class="p">)</span> <span class="p">{</span>
+multiplot <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span><span class="kc">...</span><span class="p">,</span> plotlist<span class="o">=</span><span class="kc">NULL</span><span class="p">,</span> cols<span class="p">)</span> <span class="p">{</span>
   require<span class="p">(</span>grid<span class="p">)</span>
   <span class="c1"># Make a list from the ... arguments and plotlist</span>
   plots <span class="o">&lt;-</span> c<span class="p">(</span>list<span class="p">(</span><span class="kc">...</span><span class="p">),</span> plotlist<span class="p">)</span>
@@ -93,11 +93,11 @@ multiplot <span class="o">&lt;-</span> <span class="kr">function</span><span cla
     print<span class="p">(</span>plots<span class="p">[[</span>i<span class="p">]],</span> vp <span class="o">=</span> vplayout<span class="p">(</span>curRow<span class="p">,</span> curCol <span class="p">))</span>
   <span class="p">}</span>
 <span class="p">}</span>
-<span class="c1">## Load data from the modified <span class="caps">CSV</span>. I made the following changes from the <span class="caps">NCES</span></span>
+<span class="c1">## Load data from the modified CSV. I made the following changes from the NCES</span>
 <span class="c1">## downloaded file: 1) I removed all of the description header so that row one</span>
-<span class="c1">## of the <span class="caps">CSV</span> is the attribute names; 2) I pasted the transposed state values</span>
+<span class="c1">## of the CSV is the attribute names; 2) I pasted the transposed state values</span>
 <span class="c1">## to the final observation so that I have a state observation row analogous to</span>
-<span class="c1">## the other <span class="caps">LEA</span> rows.</span>
+<span class="c1">## the other LEA rows.</span>
 
 raw_data <span class="o">&lt;-</span> read.csv<span class="p">(</span><span class="s">&#39;rawdata.csv&#39;</span><span class="p">)</span>
 <span class="c1">## Change name of first column to make things easier for later.</span>
@@ -122,7 +122,7 @@ create_ts <span class="o">&lt;-</span> <span class="kr">function</span><span cla
   state <span class="o">&lt;-</span> t<span class="p">(</span>subset<span class="p">(</span>raw_data<span class="p">,</span>distname<span class="o">==</span>name<span class="p">)[,</span>c<span class="p">(</span><span class="m">32</span><span class="o">:</span><span class="m">46</span><span class="p">)]</span><span class="o">/</span>
              subset<span class="p">(</span>raw_data<span class="p">,</span>distname<span class="o">==</span>name<span class="p">)[,</span>c<span class="p">(</span><span class="m">2</span><span class="o">:</span><span class="m">16</span><span class="p">)])</span>
   <span class="c1"># Putting state and local data together and getting rid of the nasty</span>
-  <span class="c1"># attribute names from <span class="caps">NCES</span> by just naming the rows with a sequence</span>
+  <span class="c1"># attribute names from NCES by just naming the rows with a sequence</span>
   <span class="c1"># of integers.</span>
   results <span class="o">&lt;-</span> data.frame<span class="p">(</span>local<span class="p">,</span>state<span class="p">,</span>row.names<span class="o">=</span>seq<span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">15</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
   <span class="c1"># Naming my two attributes</span>
@@ -130,7 +130,7 @@ create_ts <span class="o">&lt;-</span> <span class="kr">function</span><span cla
   <span class="c1"># Generating the year attribute</span>
   results<span class="p">[[</span><span class="s">&#39;year&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> seq<span class="p">(</span><span class="m">1995</span><span class="p">,</span> <span class="m">2009</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
   <span class="c1"># This command is a bit funky, but basically it makes my data as long as</span>
-  <span class="c1"># possible so that each line has an <span class="caps">ID</span> (year in this case) and one value</span>
+  <span class="c1"># possible so that each line has an ID (year in this case) and one value</span>
   <span class="c1"># (the dollars in this case). I also have a label that describes that value,</span>
   <span class="c1"># which is local or state.</span>
   results <span class="o">&lt;-</span> melt<span class="p">(</span>results<span class="p">,</span> id.vars<span class="o">=</span><span class="s">&#39;year&#39;</span><span class="p">)</span>
@@ -138,14 +138,14 @@ create_ts <span class="o">&lt;-</span> <span class="kr">function</span><span cla
   results
 <span class="p">}</span>
 <span class="c1">## Create the Woonsocket data-- note that R is case sensitive so I must use all</span>
-<span class="c1">## capitals to match the <span class="caps">NCES</span> convention.</span>
-woonsocket <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;<span class="caps">WOONSOCKET</span>&#39;</span><span class="p">)</span>
-pawtucket <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;<span class="caps">PAWTUCKET</span>&#39;</span><span class="p">)</span>
-providence <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;<span class="caps">PROVIDENCE</span>&#39;</span><span class="p">)</span>
-westwarwick <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;<span class="caps">WEST</span> <span class="caps">WARWICK</span>&#39;</span><span class="p">)</span>
-state <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;<span class="caps">STATE</span>&#39;</span><span class="p">)</span>
+<span class="c1">## capitals to match the NCES convention.</span>
+woonsocket <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;WOONSOCKET&#39;</span><span class="p">)</span>
+pawtucket <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;PAWTUCKET&#39;</span><span class="p">)</span>
+providence <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;PROVIDENCE&#39;</span><span class="p">)</span>
+westwarwick <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;WEST WARWICK&#39;</span><span class="p">)</span>
+state <span class="o">&lt;-</span> create_ts<span class="p">(</span><span class="s">&#39;STATE&#39;</span><span class="p">)</span>
 
-<span class="c1">## Developing a plot of <span class="caps">JUST</span> local revenues for the selected communities</span>
+<span class="c1">## Developing a plot of JUST local revenues for the selected communities</span>
 <span class="c1">## First I create a percentage change data frame. I think that looking at</span>
 <span class="c1">## percent change overtime is generally more fair. While the nominal dollar</span>
 <span class="c1">## changes are revealing, my analysis is drawing attention to the trend rather</span>
@@ -220,10 +220,10 @@ localperplot <span class="o">&lt;-</span> ggplot<span class="p">(</span>localfun
                           mapping<span class="o">=</span>aes<span class="p">(</span>year<span class="p">,</span>value<span class="p">,</span>
                                       label<span class="o">=</span>paste<span class="p">(</span><span class="m">100</span><span class="o">*</span>round<span class="p">(</span>value<span class="p">,</span><span class="m">3</span><span class="p">),</span><span class="s">&#39;%&#39;</span><span class="p">,</span>sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)),</span>
                           vjust<span class="o">=</span><span class="m">-.4</span><span class="p">)</span> <span class="o">+</span>
-                scale_y_continuous<span class="p">(</span><span class="s">&#39;Percent Change from <span class="caps">FY1995</span>&#39;</span><span class="p">,</span>
+                scale_y_continuous<span class="p">(</span><span class="s">&#39;Percent Change from FY1995&#39;</span><span class="p">,</span>
                                    label<span class="o">=</span>percent<span class="p">)</span> <span class="o">+</span>
                 scale_x_continuous<span class="p">(</span><span class="s">&#39;Year&#39;</span><span class="p">)</span> <span class="o">+</span>
-                opts<span class="p">(</span>title<span class="o">=</span><span class="s">&#39;Percent Change in Local Per Pupil Revenue, <span class="caps">FY1995</span>-    <span class="caps">FY2009</span>&#39;</span><span class="p">)</span> <span class="o">+</span>
+                opts<span class="p">(</span>title<span class="o">=</span><span class="s">&#39;Percent Change in Local Per Pupil Revenue, FY1995-    FY2009&#39;</span><span class="p">)</span> <span class="o">+</span>
                 opts<span class="p">(</span>plot.title<span class="o">=</span>theme_text<span class="p">(</span>size<span class="o">=</span><span class="m">16</span><span class="p">,</span>face<span class="o">=</span><span class="s">&#39;bold&#39;</span><span class="p">))</span> <span class="o">+</span>
                 opts<span class="p">(</span>legend.title<span class="o">=</span>theme_blank<span class="p">())</span> <span class="o">+</span>
                 opts<span class="p">(</span>legend.position<span class="o">=</span>c<span class="p">(</span><span class="m">.08</span><span class="p">,</span><span class="m">.82</span><span class="p">))</span>
@@ -233,10 +233,10 @@ stateperplot <span class="o">&lt;-</span> ggplot<span class="p">(</span>statefun
                           mapping<span class="o">=</span>aes<span class="p">(</span>year<span class="p">,</span>value<span class="p">,</span>
                           label<span class="o">=</span>paste<span class="p">(</span><span class="m">100</span><span class="o">*</span>round<span class="p">(</span>value<span class="p">,</span><span class="m">3</span><span class="p">),</span><span class="s">&#39;%&#39;</span><span class="p">,</span>sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)),</span>
                           vjust<span class="o">=</span><span class="m">-.4</span><span class="p">)</span> <span class="o">+</span>
-                scale_y_continuous<span class="p">(</span><span class="s">&#39;Percent Change from <span class="caps">FY1995</span>&#39;</span><span class="p">,</span>
+                scale_y_continuous<span class="p">(</span><span class="s">&#39;Percent Change from FY1995&#39;</span><span class="p">,</span>
                                    label<span class="o">=</span>percent<span class="p">)</span> <span class="o">+</span>
                 scale_x_continuous<span class="p">(</span><span class="s">&#39;Year&#39;</span><span class="p">)</span> <span class="o">+</span>
-                opts<span class="p">(</span>title<span class="o">=</span><span class="s">&#39;Percent Change in State Per Pupil Revenue, <span class="caps">FY1995</span>-    <span class="caps">FY2009</span>&#39;</span><span class="p">)</span> <span class="o">+</span>
+                opts<span class="p">(</span>title<span class="o">=</span><span class="s">&#39;Percent Change in State Per Pupil Revenue, FY1995-    FY2009&#39;</span><span class="p">)</span> <span class="o">+</span>
                 opts<span class="p">(</span>plot.title<span class="o">=</span>theme_text<span class="p">(</span>size<span class="o">=</span><span class="m">16</span><span class="p">,</span>face<span class="o">=</span><span class="s">&#39;bold&#39;</span><span class="p">))</span> <span class="o">+</span>
                 opts<span class="p">(</span>legend.title<span class="o">=</span>theme_blank<span class="p">())</span> <span class="o">+</span>
                 opts<span class="p">(</span>legend.position<span class="o">=</span>c<span class="p">(</span><span class="m">.08</span><span class="p">,</span><span class="m">.82</span><span class="p">))</span>
@@ -285,10 +285,10 @@ localpropplot <span class="o">&lt;-</span> ggplot<span class="p">(</span>locprop
                            mapping<span class="o">=</span>aes<span class="p">(</span>year<span class="p">,</span>perlocal<span class="p">,</span>
                            label<span class="o">=</span>paste<span class="p">(</span><span class="m">100</span><span class="o">*</span>round<span class="p">(</span>perlocal<span class="p">,</span><span class="m">3</span><span class="p">),</span><span class="s">&#39;%&#39;</span><span class="p">,</span>sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)),</span>
                            vjust<span class="o">=</span><span class="m">-.4</span><span class="p">)</span> <span class="o">+</span>
-                 scale_y_continuous<span class="p">(</span><span class="s">&#39;Percent Change from <span class="caps">FY1995</span>&#39;</span><span class="p">,</span>
+                 scale_y_continuous<span class="p">(</span><span class="s">&#39;Percent Change from FY1995&#39;</span><span class="p">,</span>
                                      label<span class="o">=</span>percent<span class="p">)</span> <span class="o">+</span>
                  scale_x_continuous<span class="p">(</span><span class="s">&#39;Year&#39;</span><span class="p">)</span> <span class="o">+</span>
-                 opts<span class="p">(</span>title<span class="o">=</span><span class="s">&#39;Percent Change in Local Proportion of Per Pupil    Revenue\n Excluding Federal Funding, <span class="caps">FY1995</span>-<span class="caps">FY2009</span>&#39;</span><span class="p">)</span> <span class="o">+</span>
+                 opts<span class="p">(</span>title<span class="o">=</span><span class="s">&#39;Percent Change in Local Proportion of Per Pupil    Revenue\n Excluding Federal Funding, FY1995-FY2009&#39;</span><span class="p">)</span> <span class="o">+</span>
                  opts<span class="p">(</span>plot.title<span class="o">=</span>theme_text<span class="p">(</span>size<span class="o">=</span><span class="m">16</span><span class="p">,</span>face<span class="o">=</span><span class="s">&#39;bold&#39;</span><span class="p">))</span> <span class="o">+</span>
                  opts<span class="p">(</span>legend.title<span class="o">=</span>theme_blank<span class="p">())</span> <span class="o">+</span>
                  opts<span class="p">(</span>legend.position<span class="o">=</span>c<span class="p">(</span><span class="m">.9</span><span class="p">,</span><span class="m">.65</span><span class="p">))</span>

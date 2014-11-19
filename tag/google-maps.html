@@ -39,7 +39,7 @@
         <div class=body>
 
       
-        <h1 class="title">Providence Real Estate Sales in R<a href="../2012/01/providence-real-estate-sales-in-r.html" class=perma>&#8734;</a></h1>
+        <h1 class="title">Providence Real Estate Sales in R<a href="../2012/01/providence-real-estate-sales-in-r.html" class=perma>&#8734;</a></h1>
         <p class=date> 2012-01-23 </p>
 
       <p>The past few months I&#8217;ve been learning how to use R. This morning, I decided to try out two first&#8212; importing a table of data that is being read of the web and overlaying location data onto a&nbsp;map.</p>
@@ -80,12 +80,12 @@
 <p>Finally, my full source for the&nbsp;above:</p>
 <div class="highlight"><pre><span class="c1"># Providence Real Estate Transactions over the last 40 days.</span>
 <span class="c1"># Required Packages</span>
-require<span class="p">(</span><span class="s">&#39;<span class="caps">XML</span>&#39;</span><span class="p">)</span>
+require<span class="p">(</span><span class="s">&#39;XML&#39;</span><span class="p">)</span>
 require<span class="p">(</span><span class="s">&#39;RCurl&#39;</span><span class="p">)</span>
-require<span class="p">(</span><span class="s">&#39;<span class="caps">RJSONIO</span>&#39;</span><span class="p">)</span>
+require<span class="p">(</span><span class="s">&#39;RJSONIO&#39;</span><span class="p">)</span>
 require<span class="p">(</span><span class="s">&quot;RgoogleMaps&quot;</span><span class="p">)</span>
 <span class="c1"># Functions</span>
-<span class="c1"># Construct <span class="caps">URL</span> required to get the Lat and Long from Google Maps</span>
+<span class="c1"># Construct URL required to get the Lat and Long from Google Maps</span>
 construct.geocode.url <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">,</span> return.call <span class="o">=</span> <span class="s">&quot;json&quot;</span><span class="p">,</span> sensor <span class="o">=</span> <span class="s">&quot;false&quot;</span>   <span class="p">)</span> <span class="p">{</span>
  root <span class="o">&lt;-</span> <span class="s">&quot;http://maps.google.com/maps/api/geocode/&quot;</span>
  u <span class="o">&lt;-</span> paste<span class="p">(</span>root<span class="p">,</span> return.call<span class="p">,</span> <span class="s">&quot;?address=&quot;</span><span class="p">,</span> address<span class="p">,</span> <span class="s">&quot;&amp;sensor=&quot;</span><span class="p">,</span> sensor<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;&quot;</span>   <span class="p">)</span>
@@ -95,7 +95,7 @@ construct.geocode.url <span class="o">&lt;-</span> <span class="kr">function</sp
 gGeoCode <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">)</span> <span class="p">{</span>
  u <span class="o">&lt;-</span> construct.geocode.url<span class="p">(</span>address<span class="p">)</span>
  doc <span class="o">&lt;-</span> getURL<span class="p">(</span>u<span class="p">)</span>
- x <span class="o">&lt;-</span> fromJSON<span class="p">(</span>doc<span class="p">,</span>simplify <span class="o">=</span> <span class="kc"><span class="caps">FALSE</span></span><span class="p">)</span>
+ x <span class="o">&lt;-</span> fromJSON<span class="p">(</span>doc<span class="p">,</span>simplify <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
  lat <span class="o">&lt;-</span> x<span class="o">$</span>results<span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span>geometry<span class="o">$</span>location<span class="o">$</span>lat
  lng <span class="o">&lt;-</span> x<span class="o">$</span>results<span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span>geometry<span class="o">$</span>location<span class="o">$</span>lng
  <span class="kr">return</span><span class="p">(</span>c<span class="p">(</span>lat<span class="p">,</span> lng<span class="p">))</span>

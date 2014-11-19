@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>jasonpbecker</title><link href="http://blog.jsonbecker.com/" rel="alternate"></link><link href="http://blog.jsonbecker.com/feeds/data.atom.xml" rel="self"></link><id>http://blog.jsonbecker.com/</id><updated>2012-08-22T09:55:00-04:00</updated><entry><title>There must be an easier way... survey questions in R</title><link href="http://blog.jsonbecker.com/2012/08/there-must-be-an-easier-way-survey-questions-in-r.html" rel="alternate"></link><updated>2012-08-22T09:55:00-04:00</updated><author><name>Jason</name></author><id>tag:blog.jsonbecker.com,2012-08-22:2012/08/there-must-be-an-easier-way-survey-questions-in-r.html</id><summary type="html">&lt;p&gt;So I have this great little custom function I&amp;#8217;ve used when looking at survey data in R. I call this function &lt;code&gt;pull()&lt;/code&gt;. The goal of &lt;code&gt;pull()&lt;/code&gt; is to quickly produce frequency tables with n sizes from individual-level survey&amp;nbsp;data.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>jasonpbecker</title><link href="http://blog.jsonbecker.com/" rel="alternate"></link><link href="http://blog.jsonbecker.com/feeds/data.atom.xml" rel="self"></link><id>http://blog.jsonbecker.com/</id><updated>2012-08-22T09:55:00-04:00</updated><entry><title>There must be an easier way… survey questions in R</title><link href="http://blog.jsonbecker.com/2012/08/there-must-be-an-easier-way-survey-questions-in-r.html" rel="alternate"></link><updated>2012-08-22T09:55:00-04:00</updated><author><name>Jason</name></author><id>tag:blog.jsonbecker.com,2012-08-22:2012/08/there-must-be-an-easier-way-survey-questions-in-r.html</id><summary type="html">&lt;p&gt;So I have this great little custom function I&amp;#8217;ve used when looking at survey data in R. I call this function &lt;code&gt;pull()&lt;/code&gt;. The goal of &lt;code&gt;pull()&lt;/code&gt; is to quickly produce frequency tables with n sizes from individual-level survey&amp;nbsp;data.&lt;/p&gt;
 &lt;p&gt;Before using &lt;code&gt;pull()&lt;/code&gt;, I create a big table that includes information about the survey questions I want to pull. The data are structured like&amp;nbsp;this:&lt;/p&gt;
 &lt;table align="center"&gt;
 &lt;/p&gt;
@@ -191,7 +191,7 @@ visualize &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;fu
                                   &lt;span class="s"&gt;&amp;#39;Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
                                   &lt;span class="s"&gt;&amp;#39;Strongly Agree&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
                       desc&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Title&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                      rm.neutral&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;&lt;span class="caps"&gt;TRUE&lt;/span&gt;&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+                      rm.neutral&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;TRUE&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
   &lt;span class="c1"&gt;# This function will create net stacked distribution graphs. These are&lt;/span&gt;
   &lt;span class="c1"&gt;# a particularly useful visualization of Likert data when there is a neutral&lt;/span&gt;
   &lt;span class="c1"&gt;# option available and/or when emphasizing the difference between positive and&lt;/span&gt;
@@ -203,7 +203,7 @@ visualize &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;fu
   &lt;span class="c1"&gt;#         question text.&lt;/span&gt;
   &lt;span class="c1"&gt;#   rm.neutral: This is a single element logical vector that determines if the&lt;/span&gt;
   &lt;span class="c1"&gt;#               neutral response should be removed from the data. The default&lt;/span&gt;
-  &lt;span class="c1"&gt;#               value is &lt;span class="caps"&gt;TRUE&lt;/span&gt;.&lt;/span&gt;
+  &lt;span class="c1"&gt;#               value is TRUE.&lt;/span&gt;
   &lt;span class="kr"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;i &lt;span class="kr"&gt;in&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;ceiling&lt;span class="p"&gt;(&lt;/span&gt;length&lt;span class="p"&gt;(&lt;/span&gt;responses&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
       &lt;span class="c1"&gt;# This loop negates all the negative, non-neutral responses regardless of&lt;/span&gt;
       &lt;span class="c1"&gt;# the number of possible responses. This will center the non-neutral&lt;/span&gt;
@@ -240,10 +240,10 @@ visualize &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;fu
                                      limits&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
                                      breaks&lt;span class="o"&gt;=&lt;/span&gt;seq&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;.2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                   scale_fill_manual&lt;span class="p"&gt;(&lt;/span&gt;limits&lt;span class="o"&gt;=&lt;/span&gt;responses&lt;span class="p"&gt;,&lt;/span&gt;
-                                    values&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;AA1111&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                                             &lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;BB6666&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                                             &lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;66BB66&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-                                             &lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;11AA11&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                                    values&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#AA1111&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                             &lt;span class="s"&gt;&amp;#39;#BB6666&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                             &lt;span class="s"&gt;&amp;#39;#66BB66&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                                             &lt;span class="s"&gt;&amp;#39;#11AA11&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                   coord_flip&lt;span class="p"&gt;()&lt;/span&gt;
   stackedchart
 &lt;span class="p"&gt;}&lt;/span&gt;
@@ -386,7 +386,7 @@ coord_flip&lt;span class="p"&gt;())&lt;/span&gt;
   &lt;span class="c1"&gt;# is furthest left and strongly agree is furthest right.&lt;/span&gt;
   quest&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;variable&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; factor&lt;span class="p"&gt;(&lt;/span&gt;quest&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;variable&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]],&lt;/span&gt;
                                 levels&lt;span class="o"&gt;=&lt;/span&gt;scale&lt;span class="p"&gt;,&lt;/span&gt;
-                                ordered&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;&lt;span class="caps"&gt;TRUE&lt;/span&gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+                                ordered&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;TRUE&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
   &lt;span class="c1"&gt;# Build the plot using ggplot(). Layers are used so that positive and negative&lt;/span&gt;
   &lt;span class="c1"&gt;# can be drawn separately. This is important because the order of the negative&lt;/span&gt;
@@ -424,7 +424,7 @@ coord_flip&lt;span class="p"&gt;())&lt;/span&gt;
 
   &lt;span class="p"&gt;}&lt;/span&gt;
   &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;sdsa&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;neal&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)){&lt;/span&gt;
-    colors &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;AA1111&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;BB6666&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;66BB66&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;11AA11&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    colors &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#AA1111&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#BB6666&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#66BB66&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#11AA11&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt;  stackedchart &lt;span class="o"&gt;+&lt;/span&gt;
       scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;labels&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;,&lt;/span&gt;
                          limits&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;x_axis_lims&lt;span class="m"&gt;-.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; x_axis_lims&lt;span class="m"&gt;+.1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
@@ -432,7 +432,7 @@ coord_flip&lt;span class="p"&gt;())&lt;/span&gt;
                                     round&lt;span class="p"&gt;(&lt;/span&gt;x_axis_lims&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="m"&gt;+.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
                                     &lt;span class="m"&gt;.2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
   &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;scaleName &lt;span class="o"&gt;%in%&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;ny&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;da&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)){&lt;/span&gt;
-    colors &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;BB6666&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#&lt;span class="caps"&gt;66BB66&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    colors &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#BB6666&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;#66BB66&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     stackedchart &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt;  stackedchart &lt;span class="o"&gt;+&lt;/span&gt;
       scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;labels&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;,&lt;/span&gt;
                          limits&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;x_axis_lims&lt;span class="m"&gt;-.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; x_axis_lims&lt;span class="m"&gt;+.1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;

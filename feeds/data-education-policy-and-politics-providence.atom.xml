@@ -30,7 +30,7 @@ require&lt;span class="p"&gt;(&lt;/span&gt;scales&lt;span class="p"&gt;)&lt;/spa
 &lt;span class="c1"&gt;## multiplot takes in a bunch of plots and then puts them into one image&lt;/span&gt;
 &lt;span class="c1"&gt;## arranging them by columns equal to a paramter cols. Credit to:&lt;/span&gt;
 &lt;span class="c1"&gt;## http://wiki.stdout.org/rcookbook/Graphs/Multiple%20graphs%20on%20one%20page%20(    ggplot2)/&lt;/span&gt;
-multiplot &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;...&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; plotlist&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;&lt;span class="caps"&gt;NULL&lt;/span&gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; cols&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+multiplot &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;...&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; plotlist&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; cols&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
   require&lt;span class="p"&gt;(&lt;/span&gt;grid&lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="c1"&gt;# Make a list from the ... arguments and plotlist&lt;/span&gt;
   plots &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;list&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;...&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; plotlist&lt;span class="p"&gt;)&lt;/span&gt;
@@ -50,11 +50,11 @@ multiplot &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;fu
     print&lt;span class="p"&gt;(&lt;/span&gt;plots&lt;span class="p"&gt;[[&lt;/span&gt;i&lt;span class="p"&gt;]],&lt;/span&gt; vp &lt;span class="o"&gt;=&lt;/span&gt; vplayout&lt;span class="p"&gt;(&lt;/span&gt;curRow&lt;span class="p"&gt;,&lt;/span&gt; curCol &lt;span class="p"&gt;))&lt;/span&gt;
   &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="c1"&gt;## Load data from the modified &lt;span class="caps"&gt;CSV&lt;/span&gt;. I made the following changes from the &lt;span class="caps"&gt;NCES&lt;/span&gt;&lt;/span&gt;
+&lt;span class="c1"&gt;## Load data from the modified CSV. I made the following changes from the NCES&lt;/span&gt;
 &lt;span class="c1"&gt;## downloaded file: 1) I removed all of the description header so that row one&lt;/span&gt;
-&lt;span class="c1"&gt;## of the &lt;span class="caps"&gt;CSV&lt;/span&gt; is the attribute names; 2) I pasted the transposed state values&lt;/span&gt;
+&lt;span class="c1"&gt;## of the CSV is the attribute names; 2) I pasted the transposed state values&lt;/span&gt;
 &lt;span class="c1"&gt;## to the final observation so that I have a state observation row analogous to&lt;/span&gt;
-&lt;span class="c1"&gt;## the other &lt;span class="caps"&gt;LEA&lt;/span&gt; rows.&lt;/span&gt;
+&lt;span class="c1"&gt;## the other LEA rows.&lt;/span&gt;
 
 raw_data &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; read.csv&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;rawdata.csv&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="c1"&gt;## Change name of first column to make things easier for later.&lt;/span&gt;
@@ -79,7 +79,7 @@ create_ts &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;fu
   state &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; t&lt;span class="p"&gt;(&lt;/span&gt;subset&lt;span class="p"&gt;(&lt;/span&gt;raw_data&lt;span class="p"&gt;,&lt;/span&gt;distname&lt;span class="o"&gt;==&lt;/span&gt;name&lt;span class="p"&gt;)[,&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;32&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;46&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;
              subset&lt;span class="p"&gt;(&lt;/span&gt;raw_data&lt;span class="p"&gt;,&lt;/span&gt;distname&lt;span class="o"&gt;==&lt;/span&gt;name&lt;span class="p"&gt;)[,&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;16&lt;/span&gt;&lt;span class="p"&gt;)])&lt;/span&gt;
   &lt;span class="c1"&gt;# Putting state and local data together and getting rid of the nasty&lt;/span&gt;
-  &lt;span class="c1"&gt;# attribute names from &lt;span class="caps"&gt;NCES&lt;/span&gt; by just naming the rows with a sequence&lt;/span&gt;
+  &lt;span class="c1"&gt;# attribute names from NCES by just naming the rows with a sequence&lt;/span&gt;
   &lt;span class="c1"&gt;# of integers.&lt;/span&gt;
   results &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; data.frame&lt;span class="p"&gt;(&lt;/span&gt;local&lt;span class="p"&gt;,&lt;/span&gt;state&lt;span class="p"&gt;,&lt;/span&gt;row.names&lt;span class="o"&gt;=&lt;/span&gt;seq&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;15&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
   &lt;span class="c1"&gt;# Naming my two attributes&lt;/span&gt;
@@ -87,7 +87,7 @@ create_ts &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;fu
   &lt;span class="c1"&gt;# Generating the year attribute&lt;/span&gt;
   results&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;year&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; seq&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1995&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;2009&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
   &lt;span class="c1"&gt;# This command is a bit funky, but basically it makes my data as long as&lt;/span&gt;
-  &lt;span class="c1"&gt;# possible so that each line has an &lt;span class="caps"&gt;ID&lt;/span&gt; (year in this case) and one value&lt;/span&gt;
+  &lt;span class="c1"&gt;# possible so that each line has an ID (year in this case) and one value&lt;/span&gt;
   &lt;span class="c1"&gt;# (the dollars in this case). I also have a label that describes that value,&lt;/span&gt;
   &lt;span class="c1"&gt;# which is local or state.&lt;/span&gt;
   results &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; melt&lt;span class="p"&gt;(&lt;/span&gt;results&lt;span class="p"&gt;,&lt;/span&gt; id.vars&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;year&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -95,14 +95,14 @@ create_ts &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;fu
   results
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;span class="c1"&gt;## Create the Woonsocket data-- note that R is case sensitive so I must use all&lt;/span&gt;
-&lt;span class="c1"&gt;## capitals to match the &lt;span class="caps"&gt;NCES&lt;/span&gt; convention.&lt;/span&gt;
-woonsocket &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;span class="caps"&gt;WOONSOCKET&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-pawtucket &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;span class="caps"&gt;PAWTUCKET&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-providence &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;span class="caps"&gt;PROVIDENCE&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-westwarwick &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;span class="caps"&gt;WEST&lt;/span&gt; &lt;span class="caps"&gt;WARWICK&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-state &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;span class="caps"&gt;STATE&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;## capitals to match the NCES convention.&lt;/span&gt;
+woonsocket &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;WOONSOCKET&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+pawtucket &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;PAWTUCKET&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+providence &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;PROVIDENCE&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+westwarwick &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;WEST WARWICK&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+state &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; create_ts&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;STATE&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="c1"&gt;## Developing a plot of &lt;span class="caps"&gt;JUST&lt;/span&gt; local revenues for the selected communities&lt;/span&gt;
+&lt;span class="c1"&gt;## Developing a plot of JUST local revenues for the selected communities&lt;/span&gt;
 &lt;span class="c1"&gt;## First I create a percentage change data frame. I think that looking at&lt;/span&gt;
 &lt;span class="c1"&gt;## percent change overtime is generally more fair. While the nominal dollar&lt;/span&gt;
 &lt;span class="c1"&gt;## changes are revealing, my analysis is drawing attention to the trend rather&lt;/span&gt;
@@ -177,10 +177,10 @@ localperplot &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class="
                           mapping&lt;span class="o"&gt;=&lt;/span&gt;aes&lt;span class="p"&gt;(&lt;/span&gt;year&lt;span class="p"&gt;,&lt;/span&gt;value&lt;span class="p"&gt;,&lt;/span&gt;
                                       label&lt;span class="o"&gt;=&lt;/span&gt;paste&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;100&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;round&lt;span class="p"&gt;(&lt;/span&gt;value&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;%&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;sep&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt;
                           vjust&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;-.4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
-                scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change from &lt;span class="caps"&gt;FY1995&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change from FY1995&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
                                    label&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                 scale_x_continuous&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Year&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
-                opts&lt;span class="p"&gt;(&lt;/span&gt;title&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change in Local Per Pupil Revenue, &lt;span class="caps"&gt;FY1995&lt;/span&gt;-    &lt;span class="caps"&gt;FY2009&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                opts&lt;span class="p"&gt;(&lt;/span&gt;title&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change in Local Per Pupil Revenue, FY1995-    FY2009&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                 opts&lt;span class="p"&gt;(&lt;/span&gt;plot.title&lt;span class="o"&gt;=&lt;/span&gt;theme_text&lt;span class="p"&gt;(&lt;/span&gt;size&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;16&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;face&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;bold&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                 opts&lt;span class="p"&gt;(&lt;/span&gt;legend.title&lt;span class="o"&gt;=&lt;/span&gt;theme_blank&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                 opts&lt;span class="p"&gt;(&lt;/span&gt;legend.position&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;.08&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;.82&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
@@ -190,10 +190,10 @@ stateperplot &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class="
                           mapping&lt;span class="o"&gt;=&lt;/span&gt;aes&lt;span class="p"&gt;(&lt;/span&gt;year&lt;span class="p"&gt;,&lt;/span&gt;value&lt;span class="p"&gt;,&lt;/span&gt;
                           label&lt;span class="o"&gt;=&lt;/span&gt;paste&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;100&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;round&lt;span class="p"&gt;(&lt;/span&gt;value&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;%&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;sep&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt;
                           vjust&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;-.4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
-                scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change from &lt;span class="caps"&gt;FY1995&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change from FY1995&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
                                    label&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                 scale_x_continuous&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Year&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
-                opts&lt;span class="p"&gt;(&lt;/span&gt;title&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change in State Per Pupil Revenue, &lt;span class="caps"&gt;FY1995&lt;/span&gt;-    &lt;span class="caps"&gt;FY2009&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                opts&lt;span class="p"&gt;(&lt;/span&gt;title&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change in State Per Pupil Revenue, FY1995-    FY2009&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                 opts&lt;span class="p"&gt;(&lt;/span&gt;plot.title&lt;span class="o"&gt;=&lt;/span&gt;theme_text&lt;span class="p"&gt;(&lt;/span&gt;size&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;16&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;face&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;bold&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                 opts&lt;span class="p"&gt;(&lt;/span&gt;legend.title&lt;span class="o"&gt;=&lt;/span&gt;theme_blank&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                 opts&lt;span class="p"&gt;(&lt;/span&gt;legend.position&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;.08&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;.82&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
@@ -242,10 +242,10 @@ localpropplot &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class=
                            mapping&lt;span class="o"&gt;=&lt;/span&gt;aes&lt;span class="p"&gt;(&lt;/span&gt;year&lt;span class="p"&gt;,&lt;/span&gt;perlocal&lt;span class="p"&gt;,&lt;/span&gt;
                            label&lt;span class="o"&gt;=&lt;/span&gt;paste&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;100&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;round&lt;span class="p"&gt;(&lt;/span&gt;perlocal&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;%&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;sep&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt;
                            vjust&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;-.4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
-                 scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change from &lt;span class="caps"&gt;FY1995&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                 scale_y_continuous&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change from FY1995&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
                                      label&lt;span class="o"&gt;=&lt;/span&gt;percent&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                  scale_x_continuous&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Year&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
-                 opts&lt;span class="p"&gt;(&lt;/span&gt;title&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change in Local Proportion of Per Pupil    Revenue\n Excluding Federal Funding, &lt;span class="caps"&gt;FY1995&lt;/span&gt;-&lt;span class="caps"&gt;FY2009&lt;/span&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+                 opts&lt;span class="p"&gt;(&lt;/span&gt;title&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Percent Change in Local Proportion of Per Pupil    Revenue\n Excluding Federal Funding, FY1995-FY2009&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                  opts&lt;span class="p"&gt;(&lt;/span&gt;plot.title&lt;span class="o"&gt;=&lt;/span&gt;theme_text&lt;span class="p"&gt;(&lt;/span&gt;size&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;16&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;face&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;bold&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                  opts&lt;span class="p"&gt;(&lt;/span&gt;legend.title&lt;span class="o"&gt;=&lt;/span&gt;theme_blank&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
                  opts&lt;span class="p"&gt;(&lt;/span&gt;legend.position&lt;span class="o"&gt;=&lt;/span&gt;c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;.9&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="m"&gt;.65&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
