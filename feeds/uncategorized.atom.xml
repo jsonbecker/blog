@@ -8,34 +8,34 @@
 &lt;p&gt;This presents a great opportunity to learn a little Python. So I have begun to scrounge together some basic Python knowledge to write some scripts to clean up my Markdown files and convert the syntax of the short codes that I have used to properly formatted Markdown so that when I run the pelican script it will accurately reproduce each&amp;nbsp;post.&lt;/p&gt;
 &lt;p&gt;Unfortunately, I&amp;#8217;ve hit a snag with my very first attempt. Footnotes are a big deal to me and have standard Markdown interpretation. In Markdown, footnotes are inserted in the text where &amp;#8220;[\^#]&amp;#8221; appears in the text, where # = the footnote identifier/key. Then, at the end of the document, surrounded by new lines, the footnote text is found with &amp;#8220;[\^#]: footnote text&amp;#8221; where # is the same identifier. So I needed to write a script that found each instance of text surrounded by two parentheses, insert the [\^#] part in place of the footnote, and then add the footnote at the bottom of the post in the right&amp;nbsp;format.&lt;/p&gt;
 &lt;p&gt;I created a test text&amp;nbsp;file:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;This&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="n"&gt;footnote&lt;/span&gt;&lt;span class="p"&gt;)).&lt;/span&gt;
-&lt;span class="n"&gt;And&lt;/span&gt; &lt;span class="n"&gt;here&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;another&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;footnote2&lt;/span&gt;&lt;span class="p"&gt;)).&lt;/span&gt; &lt;span class="n"&gt;Why&lt;/span&gt; &lt;span class="n"&gt;not&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;third&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;Three&lt;/span&gt;
-&lt;span class="n"&gt;Three&lt;/span&gt;&lt;span class="p"&gt;)).&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;This is a test ((test footnote)).
+And here is another test ((footnote2)). Why not add a third? ((Three
+Three)).
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;The goal was to end up with a file like&amp;nbsp;this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;This&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt; &lt;span class="n"&gt;And&lt;/span&gt; &lt;span class="n"&gt;here&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;another&lt;/span&gt;
-&lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt; &lt;span class="n"&gt;Why&lt;/span&gt; &lt;span class="n"&gt;not&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;third&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;This is a test [^1]. And here is another
+test [^2]. Why not add a third? [^3].
 
-&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="n"&gt;footnote&lt;/span&gt;
+[^1]: test footnote
 
-&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;footnote2&lt;/span&gt;
+[^2]: footnote2
 
-&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Three&lt;/span&gt; &lt;span class="n"&gt;Three&lt;/span&gt;
+[^3]: Three Three
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Unfortunately, the output isn&amp;#8217;t quite right. My best attempt resulted in
 a file like&amp;nbsp;this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;This&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;And&lt;/span&gt; &lt;span class="n"&gt;here&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;another&lt;/span&gt; &lt;span class="n"&gt;te&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;])).&lt;/span&gt; &lt;span class="n"&gt;Why&lt;/span&gt; &lt;span class="n"&gt;not&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
-&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="n"&gt;ree&lt;/span&gt;&lt;span class="p"&gt;)).&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;This is a test [^1] And here is another te[^2])). Why not add a
+t[^3]ree)).
 
-&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="n"&gt;footnote&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+[^1]: ((test footnote))
 
-&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;footnote2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+[^2]: ((footnote2))
 
-&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;Three&lt;/span&gt; &lt;span class="n"&gt;Three&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+[^3]: ((Three Three))
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -161,7 +161,7 @@ in The R Journal&amp;nbsp;today.&lt;/p&gt;
 &lt;p&gt;My only complaint is that GrapheR does not appear to have a way to export the code that produced the graph, which would be a very helpful feature for a beginner who wants to learn the guts of producing publication quality charts in&amp;nbsp;R.&lt;/p&gt;
 &lt;p&gt;To install and then&amp;nbsp;run&amp;#8230;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;install.packages&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;GrapheR&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-require&lt;span class="p"&gt;(&lt;/span&gt;GrapheR&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="kn"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;GrapheR&lt;span class="p"&gt;)&lt;/span&gt;
 run.GrapheR&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;</summary><category term="GrapheR"></category><category term="rstats"></category></entry><entry><title>How Social Reading Should Work</title><link href="http://blog.jsonbecker.com/2011/12/how-social-reading-should-work.html" rel="alternate"></link><updated>2011-12-08T19:32:00-05:00</updated><author><name>Jason</name></author><id>tag:blog.jsonbecker.com,2011-12-08:2011/12/how-social-reading-should-work.html</id><summary type="html">&lt;p&gt;I am becoming increasingly frustrated by the failure of all the major players to get social right. I have a very simple dream for how the social web should work and its baffling to me that many obvious use-cases have not been addressed at all by Facebook, Twitter, or&amp;nbsp;Google.&lt;/p&gt;
 &lt;p&gt;This is the first of two posts that will describe what I view as a viable framework for a social web experience. The whole goal of social web, in my view, is to read, share, discover, and communicate about found content. This post will focus on finding and reading content. The second will focus on sharing and discussing that&amp;nbsp;content.&lt;/p&gt;

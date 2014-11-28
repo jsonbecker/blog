@@ -46,24 +46,24 @@
     <p class=date> 2013-06-12 </p>
     <p>A few months back I wrote some code to calculate age from a date of birth and arbitrary end date. It is not a real tricky task, but it is certainly one that comes up often when doing research on individual-level&nbsp;data.</p>
 <p>I was a bit surprised to only find bits and pieces of code and advice on how to best go about this task. After reading through some old R-help and Stack Overflow responses on various ways to do date math in R, this is the function I wrote <sup id="fnref:wrote"><a class="footnote-ref" href="#fn:wrote" rel="footnote">1</a></sup>:</p>
-<div class="highlight"><pre>age_calc <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dob<span class="p">,</span> enddate<span class="o">=</span>Sys.Date<span class="p">(),</span> units<span class="o">=</span><span class="s">&#39;months&#39;</span><span class="p">){</span>
-  <span class="kr">if</span> <span class="p">(</span><span class="o">!</span>inherits<span class="p">(</span>dob<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="o">!</span>inherits<span class="p">(</span>enddate<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">))</span>
-    stop<span class="p">(</span><span class="s">&quot;Both dob and enddate must be Date class objects&quot;</span><span class="p">)</span>
-  start <span class="o">&lt;-</span> as.POSIXlt<span class="p">(</span>dob<span class="p">)</span>
-  end <span class="o">&lt;-</span> as.POSIXlt<span class="p">(</span>enddate<span class="p">)</span>
+<div class="highlight"><pre>age_calc <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>dob<span class="p">,</span> enddate<span class="o">=</span><span class="kp">Sys.Date</span><span class="p">(),</span> units<span class="o">=</span><span class="s">&#39;months&#39;</span><span class="p">){</span>
+  <span class="kr">if</span> <span class="p">(</span><span class="o">!</span><span class="kp">inherits</span><span class="p">(</span>dob<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="o">!</span><span class="kp">inherits</span><span class="p">(</span>enddate<span class="p">,</span> <span class="s">&quot;Date&quot;</span><span class="p">))</span>
+    <span class="kp">stop</span><span class="p">(</span><span class="s">&quot;Both dob and enddate must be Date class objects&quot;</span><span class="p">)</span>
+  start <span class="o">&lt;-</span> <span class="kp">as.POSIXlt</span><span class="p">(</span>dob<span class="p">)</span>
+  end <span class="o">&lt;-</span> <span class="kp">as.POSIXlt</span><span class="p">(</span>enddate<span class="p">)</span>
 
   years <span class="o">&lt;-</span> end<span class="o">$</span>year <span class="o">-</span> start<span class="o">$</span>year
   <span class="kr">if</span><span class="p">(</span>units<span class="o">==</span><span class="s">&#39;years&#39;</span><span class="p">){</span>
-    result <span class="o">&lt;-</span> ifelse<span class="p">((</span>end<span class="o">$</span>mon <span class="o">&lt;</span> start<span class="o">$</span>mon<span class="p">)</span> <span class="o">|</span> 
+    result <span class="o">&lt;-</span> <span class="kp">ifelse</span><span class="p">((</span>end<span class="o">$</span>mon <span class="o">&lt;</span> start<span class="o">$</span>mon<span class="p">)</span> <span class="o">|</span> 
                       <span class="p">((</span>end<span class="o">$</span>mon <span class="o">==</span> start<span class="o">$</span>mon<span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>end<span class="o">$</span>mday <span class="o">&lt;</span> start<span class="o">$</span>mday<span class="p">)),</span>
                       years <span class="o">-</span> <span class="m">1</span><span class="p">,</span> years<span class="p">)</span>    
   <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>units<span class="o">==</span><span class="s">&#39;months&#39;</span><span class="p">){</span>
     months <span class="o">&lt;-</span> <span class="p">(</span>years<span class="m">-1</span><span class="p">)</span> <span class="o">*</span> <span class="m">12</span>
     result <span class="o">&lt;-</span> months <span class="o">+</span> start<span class="o">$</span>mon
   <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>units<span class="o">==</span><span class="s">&#39;days&#39;</span><span class="p">){</span>
-    result <span class="o">&lt;-</span> difftime<span class="p">(</span>end<span class="p">,</span> start<span class="p">,</span> units<span class="o">=</span><span class="s">&#39;days&#39;</span><span class="p">)</span>
-  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
-    stop<span class="p">(</span><span class="s">&quot;Unrecognized units. Please choose years, months, or days.&quot;</span><span class="p">)</span>
+    result <span class="o">&lt;-</span> <span class="kp">difftime</span><span class="p">(</span>end<span class="p">,</span> start<span class="p">,</span> units<span class="o">=</span><span class="s">&#39;days&#39;</span><span class="p">)</span>
+  <span class="p">}</span><span class="kp">else</span><span class="p">{</span>
+    <span class="kp">stop</span><span class="p">(</span><span class="s">&quot;Unrecognized units. Please choose years, months, or days.&quot;</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="kr">return</span><span class="p">(</span>result<span class="p">)</span>
 <span class="p">}</span>

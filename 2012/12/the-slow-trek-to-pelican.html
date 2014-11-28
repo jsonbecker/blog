@@ -53,34 +53,34 @@
 <p>This presents a great opportunity to learn a little Python. So I have begun to scrounge together some basic Python knowledge to write some scripts to clean up my Markdown files and convert the syntax of the short codes that I have used to properly formatted Markdown so that when I run the pelican script it will accurately reproduce each&nbsp;post.</p>
 <p>Unfortunately, I&#8217;ve hit a snag with my very first attempt. Footnotes are a big deal to me and have standard Markdown interpretation. In Markdown, footnotes are inserted in the text where &#8220;[\^#]&#8221; appears in the text, where # = the footnote identifier/key. Then, at the end of the document, surrounded by new lines, the footnote text is found with &#8220;[\^#]: footnote text&#8221; where # is the same identifier. So I needed to write a script that found each instance of text surrounded by two parentheses, insert the [\^#] part in place of the footnote, and then add the footnote at the bottom of the post in the right&nbsp;format.</p>
 <p>I created a test text&nbsp;file:</p>
-<div class="highlight"><pre><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">test</span> <span class="p">((</span><span class="n">test</span> <span class="n">footnote</span><span class="p">)).</span>
-<span class="n">And</span> <span class="n">here</span> <span class="n">is</span> <span class="n">another</span> <span class="n">test</span> <span class="p">((</span><span class="n">footnote2</span><span class="p">)).</span> <span class="n">Why</span> <span class="n">not</span> <span class="n">add</span> <span class="n">a</span> <span class="n">third</span><span class="o">?</span> <span class="p">((</span><span class="n">Three</span>
-<span class="n">Three</span><span class="p">)).</span>
+<div class="highlight"><pre>This is a test ((test footnote)).
+And here is another test ((footnote2)). Why not add a third? ((Three
+Three)).
 </pre></div>
 
 
 <p>The goal was to end up with a file like&nbsp;this:</p>
-<div class="highlight"><pre><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">test</span> <span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">].</span> <span class="n">And</span> <span class="n">here</span> <span class="n">is</span> <span class="n">another</span>
-<span class="n">test</span> <span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">].</span> <span class="n">Why</span> <span class="n">not</span> <span class="n">add</span> <span class="n">a</span> <span class="n">third</span><span class="o">?</span> <span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">].</span>
+<div class="highlight"><pre>This is a test [^1]. And here is another
+test [^2]. Why not add a third? [^3].
 
-<span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="n">test</span> <span class="n">footnote</span>
+[^1]: test footnote
 
-<span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="n">footnote2</span>
+[^2]: footnote2
 
-<span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="n">Three</span> <span class="n">Three</span>
+[^3]: Three Three
 </pre></div>
 
 
 <p>Unfortunately, the output isn&#8217;t quite right. My best attempt resulted in
 a file like&nbsp;this:</p>
-<div class="highlight"><pre><span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">test</span> <span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">]</span> <span class="n">And</span> <span class="n">here</span> <span class="n">is</span> <span class="n">another</span> <span class="n">te</span><span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">])).</span> <span class="n">Why</span> <span class="n">not</span> <span class="n">add</span> <span class="n">a</span>
-<span class="n">t</span><span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">]</span><span class="n">ree</span><span class="p">)).</span>
+<div class="highlight"><pre>This is a test [^1] And here is another te[^2])). Why not add a
+t[^3]ree)).
 
-<span class="p">[</span><span class="o">^</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span> <span class="p">((</span><span class="n">test</span> <span class="n">footnote</span><span class="p">))</span>
+[^1]: ((test footnote))
 
-<span class="p">[</span><span class="o">^</span><span class="mi">2</span><span class="p">]</span><span class="o">:</span> <span class="p">((</span><span class="n">footnote2</span><span class="p">))</span>
+[^2]: ((footnote2))
 
-<span class="p">[</span><span class="o">^</span><span class="mi">3</span><span class="p">]</span><span class="o">:</span> <span class="p">((</span><span class="n">Three</span> <span class="n">Three</span><span class="p">))</span>
+[^3]: ((Three Three))
 </pre></div>
 
 

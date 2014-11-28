@@ -53,12 +53,12 @@
 <p>Implementing this rule turned out to be more complex than it appeared using R, especially with performant code. In fact, it was this business rule that led me to learn how to use the <code>data.table</code> package.</p>
 <p>First, I developed a small test set of data to help me make sure my code accurately reflected the expected results based on the business&nbsp;rule:</p>
 <div class="highlight"><pre><span class="c1"># Generate test data for modal_attribute().</span>
-modal_test <span class="o">&lt;-</span> data.frame<span class="p">(</span>sid <span class="o">=</span> c<span class="p">(</span><span class="s">&#39;1000&#39;</span><span class="p">,</span> <span class="s">&#39;1001&#39;</span><span class="p">,</span> <span class="s">&#39;1000&#39;</span><span class="p">,</span> <span class="s">&#39;1000&#39;</span><span class="p">,</span> <span class="s">&#39;1005&#39;</span><span class="p">,</span> 
-                                 <span class="s">&#39;1005&#39;</span><span class="p">,</span> rep<span class="p">(</span><span class="s">&#39;1006&#39;</span><span class="p">,</span><span class="m">4</span><span class="p">)),</span>
-                         race <span class="o">=</span> c<span class="p">(</span><span class="s">&#39;Black&#39;</span><span class="p">,</span> <span class="s">&#39;White&#39;</span><span class="p">,</span> <span class="s">&#39;Black&#39;</span><span class="p">,</span> <span class="s">&#39;Hispanic&#39;</span><span class="p">,</span>
-                                  <span class="s">&#39;White&#39;</span><span class="p">,</span> <span class="s">&#39;White&#39;</span><span class="p">,</span> rep<span class="p">(</span><span class="s">&#39;Black&#39;</span><span class="p">,</span><span class="m">2</span><span class="p">),</span> 
-                                  rep<span class="p">(</span><span class="s">&#39;Hispanic&#39;</span><span class="p">,</span><span class="m">2</span><span class="p">)),</span>
-                         year <span class="o">=</span> c<span class="p">(</span><span class="m">2006</span><span class="p">,</span> <span class="m">2006</span><span class="p">,</span> <span class="m">2007</span><span class="p">,</span> <span class="m">2008</span><span class="p">,</span>
+modal_test <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>sid <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;1000&#39;</span><span class="p">,</span> <span class="s">&#39;1001&#39;</span><span class="p">,</span> <span class="s">&#39;1000&#39;</span><span class="p">,</span> <span class="s">&#39;1000&#39;</span><span class="p">,</span> <span class="s">&#39;1005&#39;</span><span class="p">,</span> 
+                                 <span class="s">&#39;1005&#39;</span><span class="p">,</span> <span class="kp">rep</span><span class="p">(</span><span class="s">&#39;1006&#39;</span><span class="p">,</span><span class="m">4</span><span class="p">)),</span>
+                         race <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Black&#39;</span><span class="p">,</span> <span class="s">&#39;White&#39;</span><span class="p">,</span> <span class="s">&#39;Black&#39;</span><span class="p">,</span> <span class="s">&#39;Hispanic&#39;</span><span class="p">,</span>
+                                  <span class="s">&#39;White&#39;</span><span class="p">,</span> <span class="s">&#39;White&#39;</span><span class="p">,</span> <span class="kp">rep</span><span class="p">(</span><span class="s">&#39;Black&#39;</span><span class="p">,</span><span class="m">2</span><span class="p">),</span> 
+                                  <span class="kp">rep</span><span class="p">(</span><span class="s">&#39;Hispanic&#39;</span><span class="p">,</span><span class="m">2</span><span class="p">)),</span>
+                         year <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">2006</span><span class="p">,</span> <span class="m">2006</span><span class="p">,</span> <span class="m">2007</span><span class="p">,</span> <span class="m">2008</span><span class="p">,</span>
                                   <span class="m">2010</span><span class="p">,</span> <span class="m">2011</span><span class="p">,</span> <span class="m">2007</span><span class="p">,</span> <span class="m">2008</span><span class="p">,</span>
                                   <span class="m">2010</span><span class="p">,</span> <span class="m">2011</span><span class="p">))</span>
 </pre></div>
@@ -160,33 +160,33 @@ modal_person_attribute_dt <span class="o">&lt;-</span> <span class="kr">function
   <span class="c1"># attribute: vector name to calculate the modal value</span>
   <span class="c1"># Calculate the number of instances an attributed is associated with an id</span>
   dt <span class="o">&lt;-</span> data.table<span class="p">(</span>df<span class="p">,</span> key<span class="o">=</span><span class="s">&#39;sasid&#39;</span><span class="p">)</span>
-  mode <span class="o">&lt;-</span> dt<span class="p">[,</span> rle<span class="p">(</span>as.character<span class="p">(</span>.SD<span class="p">[[</span>attribute<span class="p">]])),</span> by<span class="o">=</span>sasid<span class="p">]</span>
-  setnames<span class="p">(</span>mode<span class="p">,</span> c<span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> <span class="s">&#39;counts&#39;</span><span class="p">,</span> as.character<span class="p">(</span>attribute<span class="p">)))</span>
-  setkeyv<span class="p">(</span>mode<span class="p">,</span> c<span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> <span class="s">&#39;counts&#39;</span><span class="p">))</span>
+  mode <span class="o">&lt;-</span> dt<span class="p">[,</span> <span class="kp">rle</span><span class="p">(</span><span class="kp">as.character</span><span class="p">(</span><span class="m">.</span>SD<span class="p">[[</span>attribute<span class="p">]])),</span> by<span class="o">=</span>sasid<span class="p">]</span>
+  setnames<span class="p">(</span><span class="kp">mode</span><span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> <span class="s">&#39;counts&#39;</span><span class="p">,</span> <span class="kp">as.character</span><span class="p">(</span>attribute<span class="p">)))</span>
+  setkeyv<span class="p">(</span><span class="kp">mode</span><span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> <span class="s">&#39;counts&#39;</span><span class="p">))</span>
   <span class="c1"># Only include attributes with the maximum values. This is equivalent to the</span>
   <span class="c1"># mode with two records when there is a tie.</span>
-  mode <span class="o">&lt;-</span> mode<span class="p">[,</span>subset<span class="p">(</span>.SD<span class="p">,</span> counts<span class="o">==</span>max<span class="p">(</span>counts<span class="p">)),</span> by<span class="o">=</span>sasid<span class="p">]</span>
-  mode<span class="p">[,</span>counts<span class="o">:=</span><span class="kc">NULL</span><span class="p">]</span>
-  setnames<span class="p">(</span>mode<span class="p">,</span> c<span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> attribute<span class="p">))</span>
-  setkeyv<span class="p">(</span>mode<span class="p">,</span> c<span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span>attribute<span class="p">))</span>
+  mode <span class="o">&lt;-</span> <span class="kp">mode</span><span class="p">[,</span><span class="kp">subset</span><span class="p">(</span><span class="m">.</span>SD<span class="p">,</span> counts<span class="o">==</span><span class="kp">max</span><span class="p">(</span>counts<span class="p">)),</span> by<span class="o">=</span>sasid<span class="p">]</span>
+  <span class="kp">mode</span><span class="p">[,</span>counts<span class="o">:=</span><span class="kc">NULL</span><span class="p">]</span>
+  setnames<span class="p">(</span><span class="kp">mode</span><span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> attribute<span class="p">))</span>
+  setkeyv<span class="p">(</span><span class="kp">mode</span><span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span>attribute<span class="p">))</span>
   <span class="c1"># Produce the maximum year value associated with each ID-attribute </span>
   <span class="c1"># pairing    </span>
-  setkeyv<span class="p">(</span>dt<span class="p">,</span> c<span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span>attribute<span class="p">))</span>
-  mode <span class="o">&lt;-</span> dt<span class="p">[,</span>list<span class="p">(</span>schoolyear<span class="o">=</span>max<span class="p">(</span>schoolyear<span class="p">)),</span> by<span class="o">=</span>c<span class="p">(</span><span class="s">&quot;sasid&quot;</span><span class="p">,</span> attribute<span class="p">)][</span>mode<span class="p">]</span>
-  setkeyv<span class="p">(</span>mode<span class="p">,</span> c<span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> <span class="s">&#39;schoolyear&#39;</span><span class="p">))</span>
+  setkeyv<span class="p">(</span>dt<span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span>attribute<span class="p">))</span>
+  mode <span class="o">&lt;-</span> dt<span class="p">[,</span><span class="kt">list</span><span class="p">(</span>schoolyear<span class="o">=</span><span class="kp">max</span><span class="p">(</span>schoolyear<span class="p">)),</span> by<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">&quot;sasid&quot;</span><span class="p">,</span> attribute<span class="p">)][</span><span class="kp">mode</span><span class="p">]</span>
+  setkeyv<span class="p">(</span><span class="kp">mode</span><span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> <span class="s">&#39;schoolyear&#39;</span><span class="p">))</span>
   <span class="c1"># Select the last observation for each ID, which is equivalent to the highest</span>
   <span class="c1"># schoolyear value associated with the most frequent attribute.</span>
-  result <span class="o">&lt;-</span> mode<span class="p">[,</span>lapply<span class="p">(</span>.SD<span class="p">,</span> tail<span class="p">,</span> <span class="m">1</span><span class="p">),</span> by<span class="o">=</span>sasid<span class="p">]</span>
+  result <span class="o">&lt;-</span> <span class="kp">mode</span><span class="p">[,</span><span class="kp">lapply</span><span class="p">(</span><span class="m">.</span>SD<span class="p">,</span> <span class="kp">tail</span><span class="p">,</span> <span class="m">1</span><span class="p">),</span> by<span class="o">=</span>sasid<span class="p">]</span>
   <span class="c1"># Remove the schoolyear to clean up the result</span>
   result <span class="o">&lt;-</span> result<span class="p">[,</span>schoolyear<span class="o">:=</span><span class="kc">NULL</span><span class="p">]</span>
-  <span class="kr">return</span><span class="p">(</span>as.data.frame<span class="p">(</span>result<span class="p">))</span>
+  <span class="kr">return</span><span class="p">(</span><span class="kp">as.data.frame</span><span class="p">(</span>result<span class="p">))</span>
 <span class="p">}</span>
 </pre></div>
 
 
 <p>This approached seemed &#8220;natural&#8221; in <code>data.table</code>, although it took me a while to refine and debug since it was my first time using the package <sup id="fnref:2012"><a class="footnote-ref" href="#fn:2012" rel="footnote">1</a></sup>. Essentially, I use <code>rle</code>, a nifty function I used in the past for my <a href="../../2012/07/ranked-likert-scale-visualization.html">Net-Stacked Likert</a> code to count the number of instances of an attribute each student had in their record. I then subset the data to only the max count value for each student and merge these values back to the original data set. Then I order the data by student id and year in order to select only the last observation per&nbsp;student.</p>
 <p>I get a quick, accurate answer when I run the test data through this function. Unfortunately, when I ran the same code on approximately 57,000 unique student IDs and 211,000 total records, the results were less inspiring. My Macbook Air&#8217;s fans spin up to full speed and timings are&nbsp;terrible:</p>
-<div class="highlight"><pre><span class="o">&gt;</span> system.time<span class="p">(</span>modal_person_attribute<span class="p">(</span>all_years<span class="p">,</span> <span class="s">&#39;sex&#39;</span><span class="p">))</span>
+<div class="highlight"><pre><span class="o">&gt;</span> <span class="kp">system.time</span><span class="p">(</span>modal_person_attribute<span class="p">(</span>all_years<span class="p">,</span> <span class="s">&#39;sex&#39;</span><span class="p">))</span>
  user  system elapsed 
  <span class="m">40.452</span>   <span class="m">0.246</span>  <span class="m">41.346</span> 
 </pre></div>
@@ -196,19 +196,19 @@ modal_person_attribute_dt <span class="o">&lt;-</span> <span class="kr">function
 <p>With the release of <code>dplyr</code>, I wanted to reexamine this particular function because it is one of the slowest steps in my analysis. I thought with fresh eyes and a new way of expressing R code, I may be able to improve on the original function. Even if its performance ended up being fairly similar, I hoped the <code>dplyr</code> code would be easier to maintain since I frequently use <code>dplyr</code> and only turn to <code>data.table</code> in specific, sticky situations where performance&nbsp;matters.</p>
 <p>In about a tenth the time it took to develop the original code, I came up with this new&nbsp;function:</p>
 <div class="highlight"><pre>modal_person_attribute <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> sid<span class="p">,</span> attribute<span class="p">,</span> year<span class="p">){</span>
-  grouping <span class="o">&lt;-</span> lapply<span class="p">(</span>list<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">),</span> as.symbol<span class="p">)</span>
+  grouping <span class="o">&lt;-</span> <span class="kp">lapply</span><span class="p">(</span><span class="kt">list</span><span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">),</span> <span class="kp">as.symbol</span><span class="p">)</span>
   original <span class="o">&lt;-</span> x
   max_attributes <span class="o">&lt;-</span> x <span class="o">%.%</span> 
                     regroup<span class="p">(</span>grouping<span class="p">)</span> <span class="o">%.%</span>
                     summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span> <span class="o">%.%</span>
-                    filter<span class="p">(</span>count <span class="o">==</span> max<span class="p">(</span>count<span class="p">))</span>
+                    filter<span class="p">(</span>count <span class="o">==</span> <span class="kp">max</span><span class="p">(</span>count<span class="p">))</span>
   recent_max <span class="o">&lt;-</span> left_join<span class="p">(</span>original<span class="p">,</span> max_attributes<span class="p">)</span> <span class="o">%.%</span>
-                regroup<span class="p">(</span>list<span class="p">(</span>grouping<span class="p">[[</span><span class="m">1</span><span class="p">]]))</span> <span class="o">%.%</span>
-                filter<span class="p">(</span><span class="o">!</span>is.na<span class="p">(</span>count<span class="p">)</span> <span class="o">&amp;</span> count <span class="o">==</span> max<span class="p">(</span>count<span class="p">))</span>
+                regroup<span class="p">(</span><span class="kt">list</span><span class="p">(</span>grouping<span class="p">[[</span><span class="m">1</span><span class="p">]]))</span> <span class="o">%.%</span>
+                filter<span class="p">(</span><span class="o">!</span><span class="kp">is.na</span><span class="p">(</span>count<span class="p">)</span> <span class="o">&amp;</span> count <span class="o">==</span> <span class="kp">max</span><span class="p">(</span>count<span class="p">))</span>
   results <span class="o">&lt;-</span> recent_max <span class="o">%.%</span> 
-             regroup<span class="p">(</span>list<span class="p">(</span>grouping<span class="p">[[</span><span class="m">1</span><span class="p">]]))</span> <span class="o">%.%</span>
-             filter<span class="p">(</span>year <span class="o">==</span> max<span class="p">(</span>year<span class="p">))</span>
-  <span class="kr">return</span><span class="p">(</span>results<span class="p">[,</span>c<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)])</span>
+             regroup<span class="p">(</span><span class="kt">list</span><span class="p">(</span>grouping<span class="p">[[</span><span class="m">1</span><span class="p">]]))</span> <span class="o">%.%</span>
+             filter<span class="p">(</span>year <span class="o">==</span> <span class="kp">max</span><span class="p">(</span>year<span class="p">))</span>
+  <span class="kr">return</span><span class="p">(</span>results<span class="p">[,</span><span class="kt">c</span><span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)])</span>
 <span class="p">}</span>
 </pre></div>
 
@@ -216,9 +216,9 @@ modal_person_attribute_dt <span class="o">&lt;-</span> <span class="kr">function
 <p>At least to my eyes, this code is far more expressive and elegant. First, I generate a <code>data.frame</code> with only the rows that have the most common attribute per student by grouping on student and attribute, counting the size of those groups, and filtering to most common group per student. Then, I do join on the original data and remove any records without a count from the previous step, finding the maximum count per student <span class="caps">ID</span>. This recovers the year value for each of the students so that in the next step I can just choose the rows with the highest&nbsp;year.</p>
 <p>There are a few funky things (note the use of regroup and grouping, which are related to <code>dplyr</code><span class="quo">&#8216;</span>s poor handling of strings as arguments), but for the most part I have shorter, clearer code that closely resembles the plain-English stated business&nbsp;rule.</p>
 <p>But was this code more performant? Imagine my glee when this&nbsp;happened:</p>
-<div class="highlight"><pre><span class="o">&gt;</span> system.time<span class="p">(</span>modal_person_attribute_dplyr<span class="p">(</span>all_years<span class="p">,</span> sid<span class="o">=</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> 
+<div class="highlight"><pre><span class="o">&gt;</span> <span class="kp">system.time</span><span class="p">(</span>modal_person_attribute_dplyr<span class="p">(</span>all_years<span class="p">,</span> sid<span class="o">=</span><span class="s">&#39;sasid&#39;</span><span class="p">,</span> 
 <span class="o">&gt;</span> attribute<span class="o">=</span><span class="s">&#39;sex&#39;</span><span class="p">,</span> year<span class="o">=</span><span class="s">&#39;schoolyear&#39;</span><span class="p">))</span>
-Joining by<span class="o">:</span> c<span class="p">(</span><span class="s">&quot;sasid&quot;</span><span class="p">,</span> <span class="s">&quot;sex&quot;</span><span class="p">)</span>
+Joining <span class="kp">by</span><span class="o">:</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;sasid&quot;</span><span class="p">,</span> <span class="s">&quot;sex&quot;</span><span class="p">)</span>
    user  system elapsed 
   <span class="m">1.657</span>   <span class="m">0.087</span>   <span class="m">1.852</span> 
 </pre></div>
@@ -231,25 +231,25 @@ Joining by<span class="o">:</span> c<span class="p">(</span><span class="s">&quo
 <p>I have made some improvements to this function to simplify things. I will be maintaining this code in my <a href="https://github.com/jasonpbecker/PPSDCollegeReadiness/blob/master/R/modal_person_attribute.R">PPSDCollegeReadiness repository</a>.</p>
 <div class="highlight"><pre>modal_person_attribute <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">,</span> sid<span class="p">,</span> attribute<span class="p">,</span> year<span class="p">){</span>
   <span class="c1"># Select only the important columns</span>
-  x <span class="o">&lt;-</span> x<span class="p">[,</span>c<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">,</span> year<span class="p">)]</span>
-  names<span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;sid&#39;</span><span class="p">,</span> <span class="s">&#39;attribute&#39;</span><span class="p">,</span> <span class="s">&#39;year&#39;</span><span class="p">)</span>
+  x <span class="o">&lt;-</span> x<span class="p">[,</span><span class="kt">c</span><span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">,</span> year<span class="p">)]</span>
+  <span class="kp">names</span><span class="p">(</span>x<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;sid&#39;</span><span class="p">,</span> <span class="s">&#39;attribute&#39;</span><span class="p">,</span> <span class="s">&#39;year&#39;</span><span class="p">)</span>
   <span class="c1"># Clean up years</span>
-  <span class="kr">if</span><span class="p">(</span><span class="kc">TRUE</span> <span class="o">%in%</span> grepl<span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">,</span> x<span class="o">$</span>year<span class="p">)){</span>
-    x<span class="o">$</span>year <span class="o">&lt;-</span> gsub<span class="p">(</span>pattern<span class="o">=</span><span class="s">&#39;[0-9]{4}_([0-9]{4})&#39;</span><span class="p">,</span> <span class="s">&#39;\\1&#39;</span><span class="p">,</span> x<span class="o">$</span>year<span class="p">)</span>
+  <span class="kr">if</span><span class="p">(</span><span class="kc">TRUE</span> <span class="o">%in%</span> <span class="kp">grepl</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">,</span> x<span class="o">$</span>year<span class="p">)){</span>
+    x<span class="o">$</span>year <span class="o">&lt;-</span> <span class="kp">gsub</span><span class="p">(</span>pattern<span class="o">=</span><span class="s">&#39;[0-9]{4}_([0-9]{4})&#39;</span><span class="p">,</span> <span class="s">&#39;\\1&#39;</span><span class="p">,</span> x<span class="o">$</span>year<span class="p">)</span>
   <span class="p">}</span>  
   <span class="c1"># Calculate the count for each person-attribute combo and select max</span>
   max_attributes <span class="o">&lt;-</span> x <span class="o">%.%</span> 
                     group_by<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)</span> <span class="o">%.%</span>
                     summarize<span class="p">(</span>count <span class="o">=</span> n<span class="p">())</span> <span class="o">%.%</span>
-                    filter<span class="p">(</span>count <span class="o">==</span> max<span class="p">(</span>count<span class="p">))</span> <span class="o">%.%</span>
+                    filter<span class="p">(</span>count <span class="o">==</span> <span class="kp">max</span><span class="p">(</span>count<span class="p">))</span> <span class="o">%.%</span>
                     select<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)</span>
   <span class="c1"># Find the max year for each person-attribute combo</span>
   results <span class="o">&lt;-</span> max_attributes <span class="o">%.%</span> 
              left_join<span class="p">(</span>x<span class="p">)</span> <span class="o">%.%</span>
              group_by<span class="p">(</span>sid<span class="p">)</span> <span class="o">%.%</span>
-             filter<span class="p">(</span>year <span class="o">==</span> max<span class="p">(</span>year<span class="p">))</span> <span class="o">%.%</span>
+             filter<span class="p">(</span>year <span class="o">==</span> <span class="kp">max</span><span class="p">(</span>year<span class="p">))</span> <span class="o">%.%</span>
              select<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)</span>
-  names<span class="p">(</span>results<span class="p">)</span> <span class="o">&lt;-</span> c<span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)</span>
+  <span class="kp">names</span><span class="p">(</span>results<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span>sid<span class="p">,</span> attribute<span class="p">)</span>
   <span class="kr">return</span><span class="p">(</span>results<span class="p">)</span>
 <span class="p">}</span>
 </pre></div>

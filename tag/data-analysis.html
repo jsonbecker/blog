@@ -49,40 +49,40 @@
 <p><img alt="Greaterthan" src="../images/rankedlikert.png" title="Example of a Net Stacked Likert" /> <sup id="fnref:netstacked"><a class="footnote-ref" href="#fn:netstacked" rel="footnote">1</a></sup></p>
 <p>My preferred method for visualizing Likert-scale data from surveys is using <a href="http://www.organizationview.com/net-stacked-distribution-a-better-way-to-visualize-likert-data">net stacked distribution graphs</a>. There are two major benefits of these kinds of graphs. First, they immediately draw attention to <em>how strongly</em> respondents feel about a question, particularly when multiple questions are visualized at once. The total width of any bar is equal to the total number of responded who had a non-neutral answer. Second, these graphs make it very easy to distinguish between positive and negative responses. In some cases, it is critical to view the distribution of data to visualize the differences in responses to one question or another. However, most of the time it is informative enough to simply know how positive or negative responses are. I find this is particularly true with 3, 4, and 5-point Likert scales, the most common I come across in education&nbsp;research.</p>
 <p>Anyway, without further ado, some starter code for producing net stacked distribution&nbsp;graphs.</p>
-<div class="highlight"><pre>require<span class="p">(</span>ggplot2<span class="p">)</span>
-require<span class="p">(</span>scales<span class="p">)</span>
-require<span class="p">(</span>plyr<span class="p">)</span>
-dataSet <span class="o">&lt;-</span> data.frame<span class="p">(</span>
-  q1<span class="o">=</span>as.ordered<span class="p">(</span>round<span class="p">(</span>runif<span class="p">(</span><span class="m">1500</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">15</span><span class="p">)</span> <span class="o">+</span> runif<span class="p">(</span><span class="m">1500</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">15</span><span class="p">))),</span>
-  q2<span class="o">=</span>as.ordered<span class="p">(</span>round<span class="p">(</span>runif<span class="p">(</span><span class="m">1500</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">15</span><span class="p">)</span> <span class="o">+</span> runif<span class="p">(</span><span class="m">1500</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">15</span><span class="p">))))</span>
-dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>dataSet<span class="p">,</span> ifelse<span class="p">(</span>q1<span class="o">&lt;</span><span class="m">7</span><span class="p">,</span><span class="m">1</span><span class="p">,</span>
-                                       ifelse<span class="p">(</span>q1<span class="o">&gt;=</span><span class="m">7</span> <span class="o">&amp;</span> q1<span class="o">&lt;</span><span class="m">13</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
-                                             ifelse<span class="p">(</span>q1<span class="o">&gt;=</span><span class="m">13</span> <span class="o">&amp;</span> q1<span class="o">&lt;</span><span class="m">20</span><span class="p">,</span><span class="m">3</span><span class="p">,</span>
-                                                   ifelse<span class="p">(</span>q1<span class="o">&gt;=</span><span class="m">20</span> <span class="o">&amp;</span> q1<span class="o">&lt;</span><span class="m">26</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">5</span><span class="p">)))))</span>
-dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> with<span class="p">(</span>dataSet<span class="p">,</span> ifelse<span class="p">(</span>q2<span class="o">&lt;</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span>
-                                       ifelse<span class="p">(</span>q2<span class="o">&gt;=</span><span class="m">3</span> <span class="o">&amp;</span> q2<span class="o">&lt;</span><span class="m">14</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
-                                             ifelse<span class="p">(</span>q2<span class="o">&gt;=</span><span class="m">14</span> <span class="o">&amp;</span> q2<span class="o">&lt;</span><span class="m">26</span><span class="p">,</span><span class="m">3</span><span class="p">,</span>
-                                                   ifelse<span class="p">(</span>q2<span class="o">&gt;=</span><span class="m">26</span> <span class="o">&amp;</span> q2<span class="o">&lt;</span><span class="m">28</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">5</span><span class="p">)))))</span>
-dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> as.ordered<span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]])</span>
-dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> as.ordered<span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]])</span>
-levels<span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]])</span> <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span>
+<div class="highlight"><pre><span class="kn">require</span><span class="p">(</span>ggplot2<span class="p">)</span>
+<span class="kn">require</span><span class="p">(</span>scales<span class="p">)</span>
+<span class="kn">require</span><span class="p">(</span>plyr<span class="p">)</span>
+dataSet <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>
+  q1<span class="o">=</span><span class="kp">as.ordered</span><span class="p">(</span><span class="kp">round</span><span class="p">(</span>runif<span class="p">(</span><span class="m">1500</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">15</span><span class="p">)</span> <span class="o">+</span> runif<span class="p">(</span><span class="m">1500</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">15</span><span class="p">))),</span>
+  q2<span class="o">=</span><span class="kp">as.ordered</span><span class="p">(</span><span class="kp">round</span><span class="p">(</span>runif<span class="p">(</span><span class="m">1500</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">15</span><span class="p">)</span> <span class="o">+</span> runif<span class="p">(</span><span class="m">1500</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">15</span><span class="p">))))</span>
+dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> <span class="kp">with</span><span class="p">(</span>dataSet<span class="p">,</span> <span class="kp">ifelse</span><span class="p">(</span>q1<span class="o">&lt;</span><span class="m">7</span><span class="p">,</span><span class="m">1</span><span class="p">,</span>
+                                       <span class="kp">ifelse</span><span class="p">(</span>q1<span class="o">&gt;=</span><span class="m">7</span> <span class="o">&amp;</span> q1<span class="o">&lt;</span><span class="m">13</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                                             <span class="kp">ifelse</span><span class="p">(</span>q1<span class="o">&gt;=</span><span class="m">13</span> <span class="o">&amp;</span> q1<span class="o">&lt;</span><span class="m">20</span><span class="p">,</span><span class="m">3</span><span class="p">,</span>
+                                                   <span class="kp">ifelse</span><span class="p">(</span>q1<span class="o">&gt;=</span><span class="m">20</span> <span class="o">&amp;</span> q1<span class="o">&lt;</span><span class="m">26</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">5</span><span class="p">)))))</span>
+dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> <span class="kp">with</span><span class="p">(</span>dataSet<span class="p">,</span> <span class="kp">ifelse</span><span class="p">(</span>q2<span class="o">&lt;</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span>
+                                       <span class="kp">ifelse</span><span class="p">(</span>q2<span class="o">&gt;=</span><span class="m">3</span> <span class="o">&amp;</span> q2<span class="o">&lt;</span><span class="m">14</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                                             <span class="kp">ifelse</span><span class="p">(</span>q2<span class="o">&gt;=</span><span class="m">14</span> <span class="o">&amp;</span> q2<span class="o">&lt;</span><span class="m">26</span><span class="p">,</span><span class="m">3</span><span class="p">,</span>
+                                                   <span class="kp">ifelse</span><span class="p">(</span>q2<span class="o">&gt;=</span><span class="m">26</span> <span class="o">&amp;</span> q2<span class="o">&lt;</span><span class="m">28</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">5</span><span class="p">)))))</span>
+dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> <span class="kp">as.ordered</span><span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]])</span>
+dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> <span class="kp">as.ordered</span><span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]])</span>
+<span class="kp">levels</span><span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]])</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span>
                              <span class="s">&#39;Disagree&#39;</span><span class="p">,</span>
                              <span class="s">&#39;Neither Agree or Disagree&#39;</span><span class="p">,</span>
                              <span class="s">&#39;Agree&#39;</span><span class="p">,</span>
                              <span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
-levels<span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]])</span> <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span>
+<span class="kp">levels</span><span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]])</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span>
                              <span class="s">&#39;Disagree&#39;</span><span class="p">,</span>
                              <span class="s">&#39;Neither Agree or Disagree&#39;</span><span class="p">,</span>
                              <span class="s">&#39;Agree&#39;</span><span class="p">,</span>
                              <span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
 <span class="c1"># Convert the integer levels to have meaning.</span>
-q1Proportions <span class="o">&lt;-</span> data.frame<span class="p">(</span>Name<span class="o">=</span><span class="s">&#39;q1&#39;</span><span class="p">,</span> prop.table<span class="p">(</span>table<span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]])))</span>
-q2Proportions <span class="o">&lt;-</span> data.frame<span class="p">(</span>Name<span class="o">=</span><span class="s">&#39;q2&#39;</span><span class="p">,</span> prop.table<span class="p">(</span>table<span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]])))</span>
+q1Proportions <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>Name<span class="o">=</span><span class="s">&#39;q1&#39;</span><span class="p">,</span> <span class="kp">prop.table</span><span class="p">(</span><span class="kp">table</span><span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q1&#39;</span><span class="p">]])))</span>
+q2Proportions <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>Name<span class="o">=</span><span class="s">&#39;q2&#39;</span><span class="p">,</span> <span class="kp">prop.table</span><span class="p">(</span><span class="kp">table</span><span class="p">(</span>dataSet<span class="p">[[</span><span class="s">&#39;q2&#39;</span><span class="p">]])))</span>
 <span class="c1"># Produces a data frame with the proportions of respondents in each level.</span>
 
 <span class="c1"># ggplot2 function for graphs</span>
 visualize <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>data<span class="p">,</span>
-                      responses<span class="o">=</span>c<span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span>
+                      responses<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span>
                                   <span class="s">&#39;Disagree&#39;</span><span class="p">,</span>
                                   <span class="s">&#39;Neither Agree or Disagree&#39;</span><span class="p">,</span>
                                   <span class="s">&#39;Agree&#39;</span><span class="p">,</span>
@@ -101,23 +101,23 @@ visualize <span class="o">&lt;-</span> <span class="kr">function</span><span cla
   <span class="c1">#   rm.neutral: This is a single element logical vector that determines if the</span>
   <span class="c1">#               neutral response should be removed from the data. The default</span>
   <span class="c1">#               value is TRUE.</span>
-  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>ceiling<span class="p">(</span>length<span class="p">(</span>responses<span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">)</span><span class="m">-1</span><span class="p">){</span>
+  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span><span class="kp">ceiling</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>responses<span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">)</span><span class="m">-1</span><span class="p">){</span>
       <span class="c1"># This loop negates all the negative, non-neutral responses regardless of</span>
       <span class="c1"># the number of possible responses. This will center the non-neutral</span>
       <span class="c1"># responses around 0.</span>
       data<span class="p">[</span>i<span class="p">,</span><span class="m">3</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="o">-</span>data<span class="p">[</span>i<span class="p">,</span><span class="m">3</span><span class="p">]</span>
   <span class="p">}</span>
-  <span class="kr">if</span><span class="p">(</span>rm.neutral<span class="o">==</span><span class="k-Variable">T</span><span class="p">){</span>
-    data <span class="o">&lt;-</span> ddply<span class="p">(</span>data<span class="p">,</span>.<span class="p">(</span>Name<span class="p">),</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> x<span class="p">[</span><span class="o">-</span><span class="p">(</span>ceiling<span class="p">(</span>length<span class="p">(</span>responses<span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">)),])</span>
-    responses <span class="o">&lt;-</span> responses<span class="p">[</span><span class="o">-</span><span class="p">(</span>ceiling<span class="p">(</span>length<span class="p">(</span>responses<span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">))]</span>
+  <span class="kr">if</span><span class="p">(</span>rm.neutral<span class="o">==</span><span class="bp">T</span><span class="p">){</span>
+    data <span class="o">&lt;-</span> ddply<span class="p">(</span>data<span class="p">,</span><span class="m">.</span><span class="p">(</span>Name<span class="p">),</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">)</span> x<span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="kp">ceiling</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>responses<span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">)),])</span>
+    responses <span class="o">&lt;-</span> responses<span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="kp">ceiling</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>responses<span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">))]</span>
   <span class="p">}</span>
-  <span class="kr">else</span><span class="p">{</span>
+  <span class="kp">else</span><span class="p">{</span>
 
   <span class="p">}</span>
-  print<span class="p">(</span>data<span class="p">)</span>
+  <span class="kp">print</span><span class="p">(</span>data<span class="p">)</span>
   stackedchart <span class="o">&lt;-</span> ggplot<span class="p">()</span> <span class="o">+</span>
                   layer<span class="p">(</span>data<span class="o">=</span>data<span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">,],</span>
-                        mapping<span class="o">=</span>aes<span class="p">(</span>Name<span class="p">,</span>Freq<span class="p">,</span>fill<span class="o">=</span>Var1<span class="p">,</span>order<span class="o">=-</span>as.numeric<span class="p">(</span>Var1<span class="p">)),</span>
+                        mapping<span class="o">=</span>aes<span class="p">(</span>Name<span class="p">,</span>Freq<span class="p">,</span>fill<span class="o">=</span>Var1<span class="p">,</span>order<span class="o">=-</span><span class="kp">as.numeric</span><span class="p">(</span>Var1<span class="p">)),</span>
                         geom<span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">,</span>
                         position<span class="o">=</span><span class="s">&#39;stack&#39;</span><span class="p">,</span>
                         stat<span class="o">=</span><span class="s">&#39;identity&#39;</span><span class="p">)</span>
@@ -134,10 +134,10 @@ visualize <span class="o">&lt;-</span> <span class="kr">function</span><span cla
                   opts<span class="p">(</span>axis.title.y<span class="o">=</span>theme_blank<span class="p">())</span> <span class="o">+</span>
                   opts<span class="p">(</span>title<span class="o">=</span>desc<span class="p">)</span> <span class="o">+</span>
                   scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>percent<span class="p">,</span>
-                                     limits<span class="o">=</span>c<span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">1</span><span class="p">),</span>
-                                     breaks<span class="o">=</span>seq<span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">.2</span><span class="p">))</span> <span class="o">+</span>
+                                     limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">1</span><span class="p">),</span>
+                                     breaks<span class="o">=</span><span class="kp">seq</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">.2</span><span class="p">))</span> <span class="o">+</span>
                   scale_fill_manual<span class="p">(</span>limits<span class="o">=</span>responses<span class="p">,</span>
-                                    values<span class="o">=</span>c<span class="p">(</span><span class="s">&#39;#AA1111&#39;</span><span class="p">,</span>
+                                    values<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="s">&#39;#AA1111&#39;</span><span class="p">,</span>
                                              <span class="s">&#39;#BB6666&#39;</span><span class="p">,</span>
                                              <span class="s">&#39;#66BB66&#39;</span><span class="p">,</span>
                                              <span class="s">&#39;#11AA11&#39;</span><span class="p">))</span> <span class="o">+</span>
@@ -155,27 +155,27 @@ visualize <span class="o">&lt;-</span> <span class="kr">function</span><span cla
 <p>Hi Ethan! Super excited to see this post. This is exactly why I put up my code&#8212; so others could run with it. There are a few things that you do here that I actually already had implemented into my code and removed in an attempt to be more neutral to scale that I really&nbsp;like.</p>
 <p>For starters, in my actual production code I also separate out the positive and negative responses. In my code, I have a parameter called <code>scaleName</code> that allows me to switch between all of the scales that are available in my survey data. This includes Strongly Disagree to Strongly Agree (<code>scaleName=='sdsa'</code>), Never -> Always (<code>scaleName=='sdsa'</code>) and even simple yes/no (<code>scaleName=='ny'</code>). This is not ideal because it does require 1) knowing all possible scales and including some work in the function to treat them differently 2) including an additional parameter. However, because I use this work to analyze just a few surveys, the upfront work of including this as a parameter has made this very flexible in dealing with multiple scales. As a result, I do not need to require that the columns are ordered in any particular way, just that the titles match existing scales. So I have a long set of if elseif statements that look something like&nbsp;this:</p>
 <div class="highlight"><pre><span class="kr">if</span><span class="p">(</span>scaleName<span class="o">==</span><span class="s">&#39;sdsa&#39;</span><span class="p">){</span>
-scale <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
-pos <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
-neg <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Disagree&#39;</span><span class="p">)</span>
+scale <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
+pos <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
+neg <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Disagree&#39;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 
 
 <p>This is actually really helpful for producing negative values and including some scales in my function which do not have values that are negative (so that it can be used for general stacked charts instead of just&nbsp;net-stacked):</p>
-<div class="highlight"><pre><span class="kr">if</span><span class="p">(</span>length<span class="p">(</span>neg<span class="p">)</span><span class="o">&gt;</span><span class="m">0</span><span class="p">){</span>
-quest<span class="p">[,</span>names<span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> c<span class="p">(</span>neg<span class="p">)]</span> <span class="o">&lt;-</span> <span class="o">-</span><span class="p">(</span>quest<span class="p">[,</span>names<span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> c<span class="p">(</span>neg<span class="p">)])</span>
+<div class="highlight"><pre><span class="kr">if</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>neg<span class="p">)</span><span class="o">&gt;</span><span class="m">0</span><span class="p">){</span>
+quest<span class="p">[,</span><span class="kp">names</span><span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span>neg<span class="p">)]</span> <span class="o">&lt;-</span> <span class="o">-</span><span class="p">(</span>quest<span class="p">[,</span><span class="kp">names</span><span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span>neg<span class="p">)])</span>
 </pre></div>
 
 
 <p>(Recall that quest is what I call the dataframe and is equivalent to x in your&nbsp;code)</p>
 <p>Another neat trick that I have instituted is having dynamic x-axis limits rather than always going from -100 to 100. I generally like to keep my scales representing the full logical range of data (0 - 100 for percentages, etc) so I might consider this a manipulation. However, after getting many charts with stubby centers, I found I was not really seeing sufficient variation by sticking to my -100 to 100 setup. So I added&nbsp;this:</p>
 <div class="highlight"><pre>pos_lims <span class="o">=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">1</span><span class="p">,]),</span>
-sum<span class="p">(</span>subset<span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span>c<span class="p">(</span>which<span class="p">(</span>quest<span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&gt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">2</span><span class="p">,])))</span>
-neg_lims <span class="o">&lt;-</span> max<span class="p">(</span>abs<span class="p">(</span>c<span class="p">(</span>sum<span class="p">(</span>subset<span class="p">(</span>quest<span class="p">,</span> 
-                                 select<span class="o">=</span>c<span class="p">(</span>which<span class="p">(</span>quest<span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&lt;=</span><span class="m">0</span><span class="p">)</span> <span class="o">+</span> <span class="m">1</span><span class="p">))[</span><span class="m">1</span><span class="p">,]),</span>
-sum<span class="p">(</span>subset<span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span>c<span class="p">(</span>which<span class="p">(</span>quest<span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&lt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">2</span><span class="p">,]))))</span>
-x_axis_lims <span class="o">&lt;-</span> max<span class="p">(</span>pos_lims<span class="p">,</span>neg_lims<span class="p">)</span>
+<span class="kp">sum</span><span class="p">(</span><span class="kp">subset</span><span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="kp">which</span><span class="p">(</span>quest<span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&gt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">2</span><span class="p">,])))</span>
+neg_lims <span class="o">&lt;-</span> <span class="kp">max</span><span class="p">(</span><span class="kp">abs</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="kp">sum</span><span class="p">(</span><span class="kp">subset</span><span class="p">(</span>quest<span class="p">,</span> 
+                                 select<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="kp">which</span><span class="p">(</span>quest<span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&lt;=</span><span class="m">0</span><span class="p">)</span> <span class="o">+</span> <span class="m">1</span><span class="p">))[</span><span class="m">1</span><span class="p">,]),</span>
+<span class="kp">sum</span><span class="p">(</span><span class="kp">subset</span><span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="kp">which</span><span class="p">(</span>quest<span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&lt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">2</span><span class="p">,]))))</span>
+x_axis_lims <span class="o">&lt;-</span> <span class="kp">max</span><span class="p">(</span>pos_lims<span class="p">,</span>neg_lims<span class="p">)</span>
 </pre></div>
 
 
@@ -197,7 +197,7 @@ is probably to have a separate function that makes it easy to select the
 color scheme you want and apply it so that your final call could be
 something like <code>colorNetStacked(net_stacked(x), 'blues')</code>.</p>
 <p>My actual final return looks like&nbsp;this:</p>
-<div class="highlight"><pre><span class="kr">return</span><span class="p">(</span>stackedchart <span class="o">+</span> scale_fill_manual<span class="p">(</span>limits<span class="o">=</span>scale<span class="p">,</span>
+<div class="highlight"><pre><span class="kr">return</span><span class="p">(</span>stackedchart <span class="o">+</span> scale_fill_manual<span class="p">(</span>limits<span class="o">=</span><span class="kp">scale</span><span class="p">,</span>
 values<span class="o">=</span>colors<span class="p">)</span> <span class="o">+</span>
 coord_flip<span class="p">())</span>
 </pre></div>
@@ -221,58 +221,58 @@ coord_flip<span class="p">())</span>
   <span class="c1"># magnitude to either the positive or negative responses.</span>
 
   <span class="kr">if</span><span class="p">(</span>scaleName<span class="o">==</span><span class="s">&#39;sdsa&#39;</span><span class="p">){</span>
-    scale <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
-    pos   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
-    neg   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Disagree&#39;</span><span class="p">)</span>
+    scale <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
+    pos   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Agree&#39;</span><span class="p">,</span><span class="s">&#39;Strongly Agree&#39;</span><span class="p">)</span>
+    neg   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Strongly Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Disagree&#39;</span><span class="p">)</span>
   <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName<span class="o">==</span><span class="s">&#39;da&#39;</span><span class="p">){</span>
-    scale <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Agree&#39;</span><span class="p">)</span>
-    pos   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Agree&#39;</span><span class="p">)</span>
-    neg   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Disagree&#39;</span><span class="p">)</span>
+    scale <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Disagree&#39;</span><span class="p">,</span><span class="s">&#39;Agree&#39;</span><span class="p">)</span>
+    pos   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Agree&#39;</span><span class="p">)</span>
+    neg   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Disagree&#39;</span><span class="p">)</span>
   <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName<span class="o">==</span><span class="s">&#39;neal&#39;</span><span class="p">){</span>
-    scale <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Never&#39;</span><span class="p">,</span><span class="s">&#39;Sometimes&#39;</span><span class="p">,</span><span class="s">&#39;Usually&#39;</span><span class="p">,</span><span class="s">&#39;Always&#39;</span><span class="p">)</span>
-    pos   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Usually&#39;</span><span class="p">,</span><span class="s">&#39;Always&#39;</span><span class="p">)</span>
-    neg   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Never&#39;</span><span class="p">,</span><span class="s">&#39;Sometimes&#39;</span><span class="p">)</span>
+    scale <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Never&#39;</span><span class="p">,</span><span class="s">&#39;Sometimes&#39;</span><span class="p">,</span><span class="s">&#39;Usually&#39;</span><span class="p">,</span><span class="s">&#39;Always&#39;</span><span class="p">)</span>
+    pos   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Usually&#39;</span><span class="p">,</span><span class="s">&#39;Always&#39;</span><span class="p">)</span>
+    neg   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Never&#39;</span><span class="p">,</span><span class="s">&#39;Sometimes&#39;</span><span class="p">)</span>
   <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName<span class="o">==</span><span class="s">&#39;noalot&#39;</span><span class="p">){</span>
-    scale <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;None&#39;</span><span class="p">,</span><span class="s">&#39;A Little&#39;</span><span class="p">,</span><span class="s">&#39;Some&#39;</span><span class="p">,</span><span class="s">&#39;A Lot&#39;</span><span class="p">)</span>
-    pos   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;None&#39;</span><span class="p">,</span><span class="s">&#39;A Little&#39;</span><span class="p">,</span><span class="s">&#39;Some&#39;</span><span class="p">,</span><span class="s">&#39;A Lot&#39;</span><span class="p">)</span>
-    neg   <span class="o">&lt;-</span> c<span class="p">()</span>
+    scale <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;None&#39;</span><span class="p">,</span><span class="s">&#39;A Little&#39;</span><span class="p">,</span><span class="s">&#39;Some&#39;</span><span class="p">,</span><span class="s">&#39;A Lot&#39;</span><span class="p">)</span>
+    pos   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;None&#39;</span><span class="p">,</span><span class="s">&#39;A Little&#39;</span><span class="p">,</span><span class="s">&#39;Some&#39;</span><span class="p">,</span><span class="s">&#39;A Lot&#39;</span><span class="p">)</span>
+    neg   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">()</span>
   <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName<span class="o">==</span><span class="s">&#39;noall&#39;</span><span class="p">){</span>
-    scale <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;None of them&#39;</span><span class="p">,</span><span class="s">&#39;Some&#39;</span><span class="p">,</span><span class="s">&#39;Most&#39;</span><span class="p">,</span><span class="s">&#39;All of them&#39;</span><span class="p">)</span>
-    pos   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;None of them&#39;</span><span class="p">,</span><span class="s">&#39;Some&#39;</span><span class="p">,</span><span class="s">&#39;Most&#39;</span><span class="p">,</span><span class="s">&#39;All of them&#39;</span><span class="p">)</span>
-    neg   <span class="o">&lt;-</span> c<span class="p">()</span>
+    scale <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;None of them&#39;</span><span class="p">,</span><span class="s">&#39;Some&#39;</span><span class="p">,</span><span class="s">&#39;Most&#39;</span><span class="p">,</span><span class="s">&#39;All of them&#39;</span><span class="p">)</span>
+    pos   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;None of them&#39;</span><span class="p">,</span><span class="s">&#39;Some&#39;</span><span class="p">,</span><span class="s">&#39;Most&#39;</span><span class="p">,</span><span class="s">&#39;All of them&#39;</span><span class="p">)</span>
+    neg   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">()</span>
   <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName<span class="o">==</span><span class="s">&#39;neda&#39;</span><span class="p">){</span>
-    scale <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Never&#39;</span><span class="p">,</span><span class="s">&#39;A Few Times a Year&#39;</span><span class="p">,</span><span class="s">&#39;Monthly&#39;</span><span class="p">,</span><span class="s">&#39;Weekly&#39;</span><span class="p">,</span><span class="s">&#39;Daily&#39;</span><span class="p">)</span>
-    pos   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Never&#39;</span><span class="p">,</span><span class="s">&#39;A Few Times a Year&#39;</span><span class="p">,</span><span class="s">&#39;Monthly&#39;</span><span class="p">,</span><span class="s">&#39;Weekly&#39;</span><span class="p">,</span><span class="s">&#39;Daily&#39;</span><span class="p">)</span>
-    neg   <span class="o">&lt;-</span> c<span class="p">()</span>
+    scale <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Never&#39;</span><span class="p">,</span><span class="s">&#39;A Few Times a Year&#39;</span><span class="p">,</span><span class="s">&#39;Monthly&#39;</span><span class="p">,</span><span class="s">&#39;Weekly&#39;</span><span class="p">,</span><span class="s">&#39;Daily&#39;</span><span class="p">)</span>
+    pos   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Never&#39;</span><span class="p">,</span><span class="s">&#39;A Few Times a Year&#39;</span><span class="p">,</span><span class="s">&#39;Monthly&#39;</span><span class="p">,</span><span class="s">&#39;Weekly&#39;</span><span class="p">,</span><span class="s">&#39;Daily&#39;</span><span class="p">)</span>
+    neg   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">()</span>
   <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName<span class="o">==</span><span class="s">&#39;ny&#39;</span><span class="p">){</span>
-    scale <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;No&#39;</span><span class="p">,</span><span class="s">&#39;Yes&#39;</span><span class="p">)</span>
-    pos   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;Yes&#39;</span><span class="p">)</span>
-    neg   <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;No&#39;</span><span class="p">)</span>
-  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
-    print<span class="p">(</span><span class="s">&#39;Unrecognized Scale Name&#39;</span><span class="p">)</span>
+    scale <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;No&#39;</span><span class="p">,</span><span class="s">&#39;Yes&#39;</span><span class="p">)</span>
+    pos   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;Yes&#39;</span><span class="p">)</span>
+    neg   <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;No&#39;</span><span class="p">)</span>
+  <span class="p">}</span><span class="kp">else</span><span class="p">{</span>
+    <span class="kp">print</span><span class="p">(</span><span class="s">&#39;Unrecognized Scale Name&#39;</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="c1"># Remove neutral and non-response based values in the pull tables like</span>
   <span class="c1"># n-size, Not Applicable, etc.</span>
-  quest <span class="o">&lt;-</span> quest<span class="p">[,</span><span class="o">!</span>names<span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span>
-    c<span class="p">(</span><span class="s">&#39;n&#39;</span><span class="p">,</span><span class="s">&#39;Not Applicable&#39;</span><span class="p">,</span><span class="s">&quot;I don&#39;t know&quot;</span><span class="p">)]</span>
+  quest <span class="o">&lt;-</span> quest<span class="p">[,</span><span class="o">!</span><span class="kp">names</span><span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span>
+    <span class="kt">c</span><span class="p">(</span><span class="s">&#39;n&#39;</span><span class="p">,</span><span class="s">&#39;Not Applicable&#39;</span><span class="p">,</span><span class="s">&quot;I don&#39;t know&quot;</span><span class="p">)]</span>
 
   <span class="c1"># Produce values less than 0 for negative responses</span>
-  <span class="kr">if</span><span class="p">(</span>length<span class="p">(</span>neg<span class="p">)</span><span class="o">&gt;</span><span class="m">0</span><span class="p">){</span>
-  quest<span class="p">[,</span>names<span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> c<span class="p">(</span>neg<span class="p">)]</span> <span class="o">&lt;-</span>
-    <span class="o">-</span><span class="p">(</span>quest<span class="p">[,</span>names<span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> c<span class="p">(</span>neg<span class="p">)])</span>
+  <span class="kr">if</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>neg<span class="p">)</span><span class="o">&gt;</span><span class="m">0</span><span class="p">){</span>
+  quest<span class="p">[,</span><span class="kp">names</span><span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span>neg<span class="p">)]</span> <span class="o">&lt;-</span>
+    <span class="o">-</span><span class="p">(</span>quest<span class="p">[,</span><span class="kp">names</span><span class="p">(</span>quest<span class="p">)</span> <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span>neg<span class="p">)])</span>
   <span class="c1"># pos_lims and neg_lims subset each row of the data based on sign, then</span>
   <span class="c1"># sums the values that remain (gettting the total positive or negative</span>
   <span class="c1"># percentage for each row). Then, the max of the rows is saved as a candidate</span>
   <span class="c1"># for the magnitude of the axis.</span>
-  pos_lims <span class="o">&lt;-</span> max<span class="p">(</span>c<span class="p">(</span>sum<span class="p">(</span>subset<span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span>c<span class="p">(</span>which<span class="p">(</span>quest<span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&gt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">1</span><span class="p">,]),</span>
-                    sum<span class="p">(</span>subset<span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span>c<span class="p">(</span>which<span class="p">(</span>quest<span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&gt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">2</span><span class="p">,])))</span>
-  neg_lims <span class="o">&lt;-</span> max<span class="p">(</span>abs<span class="p">(</span>c<span class="p">(</span>sum<span class="p">(</span>subset<span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span>c<span class="p">(</span>which<span class="p">(</span>quest<span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&lt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">1</span><span class="p">,]),</span>
-                        sum<span class="p">(</span>subset<span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span>c<span class="p">(</span>which<span class="p">(</span>quest<span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&lt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">2</span><span class="p">,]))))</span>
+  pos_lims <span class="o">&lt;-</span> <span class="kp">max</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="kp">sum</span><span class="p">(</span><span class="kp">subset</span><span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="kp">which</span><span class="p">(</span>quest<span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&gt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">1</span><span class="p">,]),</span>
+                    <span class="kp">sum</span><span class="p">(</span><span class="kp">subset</span><span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="kp">which</span><span class="p">(</span>quest<span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&gt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">2</span><span class="p">,])))</span>
+  neg_lims <span class="o">&lt;-</span> <span class="kp">max</span><span class="p">(</span><span class="kp">abs</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="kp">sum</span><span class="p">(</span><span class="kp">subset</span><span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="kp">which</span><span class="p">(</span>quest<span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&lt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">1</span><span class="p">,]),</span>
+                        <span class="kp">sum</span><span class="p">(</span><span class="kp">subset</span><span class="p">(</span>quest<span class="p">,</span>select<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="kp">which</span><span class="p">(</span>quest<span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">-1</span><span class="p">]</span><span class="o">&lt;=</span><span class="m">0</span><span class="p">)</span><span class="m">+1</span><span class="p">))[</span><span class="m">2</span><span class="p">,]))))</span>
 
   <span class="c1"># The actual magnitude of the axis is the largest magnitude listed in pos_lims</span>
   <span class="c1"># or neg_lims, and will be inflated by .1 in each direction in the scale later</span>
-  x_axis_lims <span class="o">&lt;-</span> max<span class="p">(</span>pos_lims<span class="p">,</span>neg_lims<span class="p">)</span>
-  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+  x_axis_lims <span class="o">&lt;-</span> <span class="kp">max</span><span class="p">(</span>pos_lims<span class="p">,</span>neg_lims<span class="p">)</span>
+  <span class="p">}</span><span class="kp">else</span><span class="p">{</span>
 
   <span class="p">}</span>
   <span class="c1"># Reshape the data so that each row has one value with a variable label.</span>
@@ -281,8 +281,8 @@ coord_flip<span class="p">())</span>
   <span class="c1"># Factoring and ordering the response label ensures they are listed in the</span>
   <span class="c1"># proper order in the legend and on the stacked chart, i.e. strongly disagree</span>
   <span class="c1"># is furthest left and strongly agree is furthest right.</span>
-  quest<span class="p">[[</span><span class="s">&#39;variable&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> factor<span class="p">(</span>quest<span class="p">[[</span><span class="s">&#39;variable&#39;</span><span class="p">]],</span>
-                                levels<span class="o">=</span>scale<span class="p">,</span>
+  quest<span class="p">[[</span><span class="s">&#39;variable&#39;</span><span class="p">]]</span> <span class="o">&lt;-</span> <span class="kp">factor</span><span class="p">(</span>quest<span class="p">[[</span><span class="s">&#39;variable&#39;</span><span class="p">]],</span>
+                                levels<span class="o">=</span><span class="kp">scale</span><span class="p">,</span>
                                 ordered<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
 
   <span class="c1"># Build the plot using ggplot(). Layers are used so that positive and negative</span>
@@ -293,11 +293,11 @@ coord_flip<span class="p">())</span>
   <span class="c1">##### business requirements call for 0-100 scale with no indication of</span>
   <span class="c1">##### positive or negative, i.e. the neda, noalot, and noall scaleName.</span>
   stackedchart <span class="o">&lt;-</span> ggplot<span class="p">()</span> <span class="o">+</span>
-    layer<span class="p">(</span>data<span class="o">=</span>subset<span class="p">(</span>quest<span class="p">,</span>
+    layer<span class="p">(</span>data<span class="o">=</span><span class="kp">subset</span><span class="p">(</span>quest<span class="p">,</span>
                       variable <span class="o">%in%</span> pos<span class="p">),</span>
           mapping<span class="o">=</span>aes<span class="p">(</span>Var1<span class="p">,</span>
                       value<span class="p">,</span>
-                      fill<span class="o">=</span>factor<span class="p">(</span>variable<span class="p">)),</span>
+                      fill<span class="o">=</span><span class="kp">factor</span><span class="p">(</span>variable<span class="p">)),</span>
           geom<span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">,</span>
           stat<span class="o">=</span><span class="s">&#39;identity&#39;</span><span class="p">,</span>
           position<span class="o">=</span><span class="s">&#39;stack&#39;</span><span class="p">)</span> <span class="o">+</span>
@@ -306,52 +306,52 @@ coord_flip<span class="p">())</span>
     opts<span class="p">(</span>axis.title.x<span class="o">=</span>theme_blank<span class="p">())</span> <span class="o">+</span>
     opts<span class="p">(</span>axis.title.y<span class="o">=</span>theme_blank<span class="p">())</span> <span class="o">+</span>
     opts<span class="p">(</span>title<span class="o">=</span>desc<span class="p">)</span>
-  <span class="kr">if</span><span class="p">(</span>length<span class="p">(</span>neg<span class="p">)</span><span class="o">&gt;</span><span class="m">0</span><span class="p">){</span>
+  <span class="kr">if</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>neg<span class="p">)</span><span class="o">&gt;</span><span class="m">0</span><span class="p">){</span>
     stackedchart <span class="o">&lt;-</span> stackedchart <span class="o">+</span>
-      layer<span class="p">(</span>data<span class="o">=</span>subset<span class="p">(</span>quest<span class="p">,</span>
+      layer<span class="p">(</span>data<span class="o">=</span><span class="kp">subset</span><span class="p">(</span>quest<span class="p">,</span>
                         variable <span class="o">%in%</span> neg<span class="p">),</span>
             mapping<span class="o">=</span>aes<span class="p">(</span>Var1<span class="p">,</span>
                         value<span class="p">,</span>
-                        fill<span class="o">=</span>factor<span class="p">(</span>variable<span class="p">),</span>
-                        order<span class="o">=-</span>as.numeric<span class="p">(</span>variable<span class="p">)),</span>
+                        fill<span class="o">=</span><span class="kp">factor</span><span class="p">(</span>variable<span class="p">),</span>
+                        order<span class="o">=-</span><span class="kp">as.numeric</span><span class="p">(</span>variable<span class="p">)),</span>
             geom<span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">,</span>
             stat<span class="o">=</span><span class="s">&#39;identity&#39;</span><span class="p">,</span>
             position<span class="o">=</span><span class="s">&#39;stack&#39;</span><span class="p">)</span>
-  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
+  <span class="p">}</span><span class="kp">else</span><span class="p">{</span>
 
   <span class="p">}</span>
-  <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> c<span class="p">(</span><span class="s">&#39;sdsa&#39;</span><span class="p">,</span><span class="s">&#39;neal&#39;</span><span class="p">)){</span>
-    colors <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;#AA1111&#39;</span><span class="p">,</span><span class="s">&#39;#BB6666&#39;</span><span class="p">,</span><span class="s">&#39;#66BB66&#39;</span><span class="p">,</span><span class="s">&#39;#11AA11&#39;</span><span class="p">)</span>
+  <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;sdsa&#39;</span><span class="p">,</span><span class="s">&#39;neal&#39;</span><span class="p">)){</span>
+    colors <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;#AA1111&#39;</span><span class="p">,</span><span class="s">&#39;#BB6666&#39;</span><span class="p">,</span><span class="s">&#39;#66BB66&#39;</span><span class="p">,</span><span class="s">&#39;#11AA11&#39;</span><span class="p">)</span>
     stackedchart <span class="o">&lt;-</span>  stackedchart <span class="o">+</span>
       scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>percent<span class="p">,</span>
-                         limits<span class="o">=</span>c<span class="p">(</span><span class="o">-</span>x_axis_lims<span class="m">-.1</span><span class="p">,</span> x_axis_lims<span class="m">+.1</span><span class="p">),</span>
-                         breaks<span class="o">=</span>seq<span class="p">(</span><span class="o">-</span>round<span class="p">(</span>x_axis_lims<span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="m">-.1</span><span class="p">,</span>
-                                    round<span class="p">(</span>x_axis_lims<span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="m">+.1</span><span class="p">,</span>
+                         limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="o">-</span>x_axis_lims<span class="m">-.1</span><span class="p">,</span> x_axis_lims<span class="m">+.1</span><span class="p">),</span>
+                         breaks<span class="o">=</span><span class="kp">seq</span><span class="p">(</span><span class="o">-</span><span class="kp">round</span><span class="p">(</span>x_axis_lims<span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="m">-.1</span><span class="p">,</span>
+                                    <span class="kp">round</span><span class="p">(</span>x_axis_lims<span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="m">+.1</span><span class="p">,</span>
                                     <span class="m">.2</span><span class="p">))</span>
-  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> c<span class="p">(</span><span class="s">&#39;ny&#39;</span><span class="p">,</span><span class="s">&#39;da&#39;</span><span class="p">)){</span>
-    colors <span class="o">&lt;-</span> c<span class="p">(</span><span class="s">&#39;#BB6666&#39;</span><span class="p">,</span><span class="s">&#39;#66BB66&#39;</span><span class="p">)</span>
+  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;ny&#39;</span><span class="p">,</span><span class="s">&#39;da&#39;</span><span class="p">)){</span>
+    colors <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;#BB6666&#39;</span><span class="p">,</span><span class="s">&#39;#66BB66&#39;</span><span class="p">)</span>
     stackedchart <span class="o">&lt;-</span>  stackedchart <span class="o">+</span>
       scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>percent<span class="p">,</span>
-                         limits<span class="o">=</span>c<span class="p">(</span><span class="o">-</span>x_axis_lims<span class="m">-.1</span><span class="p">,</span> x_axis_lims<span class="m">+.1</span><span class="p">),</span>
-                         breaks<span class="o">=</span>seq<span class="p">(</span><span class="o">-</span>round<span class="p">(</span>x_axis_lims<span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="m">-.1</span><span class="p">,</span>
-                                    round<span class="p">(</span>x_axis_lims<span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="m">+.1</span><span class="p">,</span>
+                         limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="o">-</span>x_axis_lims<span class="m">-.1</span><span class="p">,</span> x_axis_lims<span class="m">+.1</span><span class="p">),</span>
+                         breaks<span class="o">=</span><span class="kp">seq</span><span class="p">(</span><span class="o">-</span><span class="kp">round</span><span class="p">(</span>x_axis_lims<span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="m">-.1</span><span class="p">,</span>
+                                    <span class="kp">round</span><span class="p">(</span>x_axis_lims<span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="m">+.1</span><span class="p">,</span>
                                     <span class="m">.2</span><span class="p">))</span>
-  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> c<span class="p">(</span><span class="s">&#39;noalot&#39;</span><span class="p">,</span><span class="s">&#39;noall&#39;</span><span class="p">)){</span>
+  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;noalot&#39;</span><span class="p">,</span><span class="s">&#39;noall&#39;</span><span class="p">)){</span>
     colors <span class="o">&lt;-</span> brewer.pal<span class="p">(</span>name<span class="o">=</span><span class="s">&#39;Blues&#39;</span><span class="p">,</span>n<span class="o">=</span><span class="m">6</span><span class="p">)[</span><span class="m">3</span><span class="o">:</span><span class="m">6</span><span class="p">]</span>
     stackedchart <span class="o">&lt;-</span>  stackedchart <span class="o">+</span>
       scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>percent<span class="p">,</span>
-                         limits<span class="o">=</span>c<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1.05</span><span class="p">),</span>
-                         breaks<span class="o">=</span>seq<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">.1</span><span class="p">))</span>
-  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> c<span class="p">(</span><span class="s">&#39;neda&#39;</span><span class="p">)){</span>
+                         limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1.05</span><span class="p">),</span>
+                         breaks<span class="o">=</span><span class="kp">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">.1</span><span class="p">))</span>
+  <span class="p">}</span><span class="kr">else</span> <span class="kr">if</span><span class="p">(</span>scaleName <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#39;neda&#39;</span><span class="p">)){</span>
     colors <span class="o">&lt;-</span> brewer.pal<span class="p">(</span>name<span class="o">=</span><span class="s">&#39;Blues&#39;</span><span class="p">,</span>n<span class="o">=</span><span class="m">7</span><span class="p">)[</span><span class="m">3</span><span class="o">:</span><span class="m">7</span><span class="p">]</span>
     stackedchart <span class="o">&lt;-</span>  stackedchart <span class="o">+</span>
       scale_y_continuous<span class="p">(</span>labels<span class="o">=</span>percent<span class="p">,</span>
-                         limits<span class="o">=</span>c<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1.05</span><span class="p">),</span>
-                         breaks<span class="o">=</span>seq<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">.1</span><span class="p">))</span>
-  <span class="p">}</span><span class="kr">else</span><span class="p">{</span>
-    print<span class="p">(</span><span class="s">&#39;Unrecognized scaleName&#39;</span><span class="p">)</span>
+                         limits<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1.05</span><span class="p">),</span>
+                         breaks<span class="o">=</span><span class="kp">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">.1</span><span class="p">))</span>
+  <span class="p">}</span><span class="kp">else</span><span class="p">{</span>
+    <span class="kp">print</span><span class="p">(</span><span class="s">&#39;Unrecognized scaleName&#39;</span><span class="p">)</span>
   <span class="p">}</span>
-  <span class="kr">return</span><span class="p">(</span>stackedchart <span class="o">+</span> scale_fill_manual<span class="p">(</span>limits<span class="o">=</span>scale<span class="p">,</span>
+  <span class="kr">return</span><span class="p">(</span>stackedchart <span class="o">+</span> scale_fill_manual<span class="p">(</span>limits<span class="o">=</span><span class="kp">scale</span><span class="p">,</span>
                                           values<span class="o">=</span>colors<span class="p">)</span> <span class="o">+</span>
                         coord_flip<span class="p">())</span>
 <span class="p">}</span>

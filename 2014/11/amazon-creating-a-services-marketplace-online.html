@@ -13,14 +13,14 @@
         </script>
 
 
-        <meta name='keywords' contents ="rstats,dplyr,hadleyverse" />
+        <meta name='keywords' contents ="service,home improvement" />
 
-    <meta name="description" contents="Hadley Wickham has once again1 made R ridiculously better. Not only is dplyr incredibly fast, but the new syntax allows for some really complex operations to be expressed in a ridiculously beautiful way. Consider a data set, course, with a student identifier, sid, a course identifier, courseno, a quarter ..." />
+    <meta name="description" contents="A few thoughts: This is a very interesting way to take advantage of a number of existing Amazon technologies—primarily their payment processing and review system. Services are an increasingly important part of the economy and is less subject to commoditization. This is Amazon dipping into a massive growth area ..." />
 
     <link href='http://fonts.googleapis.com/css?family=Open+Sans|Merriweather' rel='stylesheet' type='text/css' />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>  Appreciating the Beauty of dplyr | jasonpbecker
+    <title>  Amazon Creating A Services Marketplace Online | jasonpbecker
 </title>
 
     <link rel="stylesheet" href="../../theme/css/style.css" type="text/css" />
@@ -42,33 +42,21 @@
       </div>
       <div class=separator></div>        
         <div class=body>
-      <h1 class="title"> Appreciating the Beauty of dplyr</h1>
-    <p class=date> 2014-02-18 </p>
-    <p><a href="http://had.co.nz">Hadley Wickham</a> has <a href="https://github.com/hadley">once again</a><sup id="fnref:seriously"><a class="footnote-ref" href="#fn:seriously" rel="footnote">1</a></sup> made R ridiculously better. Not only is <code>dplyr</code> incredibly fast, but the new syntax allows for some really complex operations to be expressed in a ridiculously beautiful&nbsp;way.</p>
-<p>Consider a data set, <code>course</code>, with a student identifier, <code>sid</code>, a course identifier, <code>courseno</code>, a quarter, <code>quarter</code>, and a grade on a scale of 0 to 4, <code>gpa</code>. What if I wanted to know the number of a courses a student has failed over the entire year, as defined by having an overall grade of less than a&nbsp;1.0?</p>
-<p>In&nbsp;dplyr:</p>
-<div class="highlight"><pre>course <span class="o">%.%</span> 
-group_by<span class="p">(</span>sid<span class="p">,</span> courseno<span class="p">)</span> <span class="o">%.%</span>
-summarise<span class="p">(</span>gpa <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>gpa<span class="p">))</span> <span class="o">%.%</span>
-filter<span class="p">(</span>gpa <span class="o">&lt;=</span> <span class="m">1.0</span><span class="p">)</span> <span class="o">%.%</span>
-summarise<span class="p">(</span>fails <span class="o">=</span> n<span class="p">())</span>
-</pre></div>
-
-
-<p>I refuse to even sully this post with the way I would have solved this problem in the&nbsp;past.</p>
-<div class="footnote">
-<hr />
+      <h1 class="title"><a href='http://services.amazon.com/selling-services/benefits.htm?ld=EL-www.amazon.comAS' title="Link">
+        Amazon Creating A Services Marketplace Online <i class="icon-external-link" style="font-size:0.5em;vertical-align:super;"></i>
+      </a></h1>
+    <p class=date> 2014-11-28 </p>
+    <p>A few&nbsp;thoughts:</p>
 <ol>
-<li id="fn:seriously">
-<p>Seriously, how many of the packages he has managed/written are indispensable to using R today? It is no exaggeration to say that the world would have many more Stata, <span class="caps">SPSS</span>, and <span class="caps">SAS</span> users if not for Hadleyverse.&#160;<a class="footnote-backref" href="#fnref:seriously" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
+<li>This is a very interesting way to take advantage of a number of existing Amazon technologies&#8212;primarily their payment processing and review&nbsp;system.</li>
+<li>Services are an increasingly important part of the economy and is less subject to commoditization. This is Amazon dipping into a massive growth area by commoditizing discovery and payment. It also offloads some of the risk from both sides of the transaction. It&#8217;s very bold, possibly&nbsp;brilliant.</li>
+<li>If you have tried to find a reliable carpenter, electrician, plumber, house cleaning service, etc lately, it should be obvious the value that Amazon can provide. Even as a subscriber to Angie&#8217;s List, which has been invaluable, finding reliable, affordable, and quality services is still a frustrating&nbsp;experience.</li>
+<li>This is why technology companies get huge valuations. It is hard to anticipate just how technologies to become the first online booksellers will lead to a massive number of accounts with credit cards and a strongly trusted brand. It is hard to anticipate how book reviews and powerful search andfiltering become the way you find people to come into your home and fix a toilet. But truly, it&#8217;s hard to anticipate the limits of a company with massive reach into people&#8217;s wallets that&nbsp;scales.</li>
 </ol>
-</div>
 
     <p class=tags>This entry was tagged as
-      <a href="../../tag/rstats.html">rstats</a>
-      <a href="../../tag/dplyr.html">dplyr</a>
-      <a href="../../tag/hadleyverse.html">hadleyverse</a>
+      <a href="../../tag/service.html">service</a>
+      <a href="../../tag/home-improvement.html">home improvement</a>
     </p>
 <div id="disqus_thread"></div>
 <script type="text/javascript">

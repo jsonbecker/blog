@@ -144,27 +144,27 @@ schoolcode
 
   <span class="c1"># Break each component of the vector rows into separate single-element vectors</span>
   <span class="c1"># for convenience and clarity.</span>
-  quest <span class="o">&lt;-</span> as.character<span class="p">(</span>rows<span class="p">[</span><span class="m">1</span><span class="p">])</span>
-  survey <span class="o">&lt;-</span> as.character<span class="p">(</span>rows<span class="p">[</span><span class="m">2</span><span class="p">])</span>
-  year  <span class="o">&lt;-</span> as.character<span class="p">(</span>rows<span class="p">[</span><span class="m">3</span><span class="p">])</span>
-  <span class="kr">break</span> <span class="o">&lt;-</span> as.character<span class="p">(</span>rows<span class="p">[</span><span class="m">4</span><span class="p">])</span>
-  data <span class="o">&lt;-</span> get<span class="p">(</span>paste<span class="p">(</span>level<span class="p">,</span>year<span class="p">,</span>sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">))</span>
+  quest <span class="o">&lt;-</span> <span class="kp">as.character</span><span class="p">(</span>rows<span class="p">[</span><span class="m">1</span><span class="p">])</span>
+  survey <span class="o">&lt;-</span> <span class="kp">as.character</span><span class="p">(</span>rows<span class="p">[</span><span class="m">2</span><span class="p">])</span>
+  year  <span class="o">&lt;-</span> <span class="kp">as.character</span><span class="p">(</span>rows<span class="p">[</span><span class="m">3</span><span class="p">])</span>
+  <span class="kr">break</span> <span class="o">&lt;-</span> <span class="kp">as.character</span><span class="p">(</span>rows<span class="p">[</span><span class="m">4</span><span class="p">])</span>
+  data <span class="o">&lt;-</span> <span class="kp">get</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span>level<span class="p">,</span>year<span class="p">,</span>sep<span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">))</span>
   <span class="c1"># Data is an alias for the data.frame described by level and year.</span>
   <span class="c1"># This alias reduces the number of &quot;get&quot; calls to speed up code and increase</span>
   <span class="c1"># clarity.</span>
-  results <span class="o">&lt;-</span> with<span class="p">(</span>data<span class="p">,</span>
-                  dcast<span class="p">(</span>data.frame<span class="p">(</span>prop.table<span class="p">(</span>table<span class="p">(</span>data<span class="p">[[</span><span class="kr">break</span><span class="p">]],</span>
+  results <span class="o">&lt;-</span> <span class="kp">with</span><span class="p">(</span>data<span class="p">,</span>
+                  dcast<span class="p">(</span><span class="kt">data.frame</span><span class="p">(</span><span class="kp">prop.table</span><span class="p">(</span><span class="kp">table</span><span class="p">(</span>data<span class="p">[[</span><span class="kr">break</span><span class="p">]],</span>
                                                     data<span class="p">[[</span>quest<span class="p">]]),</span>
                                               <span class="m">1</span><span class="p">))</span>
                         <span class="p">,</span>Var1<span class="o">~</span>Var2<span class="p">,</span>value.var<span class="o">=</span><span class="s">&#39;Freq&#39;</span><span class="p">))</span>
   <span class="c1"># Produces a table with the proportions for each response in wide format.</span>
-  n <span class="o">&lt;-</span> data.frame<span class="p">(</span>Var1<span class="o">=</span>rle<span class="p">(</span>sort<span class="p">(</span>
-    subset<span class="p">(</span>data<span class="p">,</span> 
-           is.na<span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span> <span class="o">&amp;</span> is.na<span class="p">(</span>data<span class="p">[[</span><span class="kr">break</span><span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span><span class="p">)[[</span><span class="kr">break</span><span class="p">]]))</span><span class="o">$</span>values<span class="p">,</span>
-                  n<span class="o">=</span>rle<span class="p">(</span>sort<span class="p">(</span>
-                    subset<span class="p">(</span>data<span class="p">,</span>
-                           is.na<span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span> <span class="o">&amp;</span>
-                             is.na<span class="p">(</span>data<span class="p">[[</span><span class="kr">break</span><span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span><span class="p">)[[</span><span class="kr">break</span><span class="p">]]))</span><span class="o">$</span>lengths<span class="p">)</span>
+  n <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>Var1<span class="o">=</span><span class="kp">rle</span><span class="p">(</span><span class="kp">sort</span><span class="p">(</span>
+    <span class="kp">subset</span><span class="p">(</span>data<span class="p">,</span> 
+           <span class="kp">is.na</span><span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])</span><span class="o">==</span><span class="bp">F</span> <span class="o">&amp;</span> <span class="kp">is.na</span><span class="p">(</span>data<span class="p">[[</span><span class="kr">break</span><span class="p">]])</span><span class="o">==</span><span class="bp">F</span><span class="p">)[[</span><span class="kr">break</span><span class="p">]]))</span><span class="o">$</span>values<span class="p">,</span>
+                  n<span class="o">=</span><span class="kp">rle</span><span class="p">(</span><span class="kp">sort</span><span class="p">(</span>
+                    <span class="kp">subset</span><span class="p">(</span>data<span class="p">,</span>
+                           <span class="kp">is.na</span><span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])</span><span class="o">==</span><span class="bp">F</span> <span class="o">&amp;</span>
+                             <span class="kp">is.na</span><span class="p">(</span>data<span class="p">[[</span><span class="kr">break</span><span class="p">]])</span><span class="o">==</span><span class="bp">F</span><span class="p">)[[</span><span class="kr">break</span><span class="p">]]))</span><span class="o">$</span>lengths<span class="p">)</span>
   <span class="c1"># Generates a data frame with each break element and the &quot;length&quot; of that break</span>
   <span class="c1"># element. rle counts the occurrences of a value in a vector in order. So first</span>
   <span class="c1"># you sort the vector so all common break values are adjacent then you use rle</span>
@@ -172,20 +172,20 @@ schoolcode
   <span class="c1"># two components: [[values]] which represent the values in the original, sorted</span>
   <span class="c1"># vector and [[length]] which is the count of their uninterupted repeated</span>
   <span class="c1"># appearance in that vector.</span>
-  results <span class="o">&lt;-</span> merge<span class="p">(</span>results<span class="p">,</span> n<span class="p">,</span> by<span class="o">=</span><span class="s">&#39;Var1&#39;</span><span class="p">)</span>
+  results <span class="o">&lt;-</span> <span class="kp">merge</span><span class="p">(</span>results<span class="p">,</span> n<span class="p">,</span> by<span class="o">=</span><span class="s">&#39;Var1&#39;</span><span class="p">)</span>
   <span class="c1"># Combines N values with the results table.</span>
 
-  state <span class="o">&lt;-</span> data.frame<span class="p">(</span>t<span class="p">(</span>c<span class="p">(</span>Var1<span class="o">=</span><span class="s">&#39;Rhode Island&#39;</span><span class="p">,</span> 
-                          prop.table<span class="p">(</span>table<span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])),</span>
-                          n<span class="o">=</span>dim<span class="p">(</span>subset<span class="p">(</span>data<span class="p">,</span>is.na<span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])</span><span class="o">==</span><span class="k-Variable">F</span><span class="p">))[</span><span class="m">1</span><span class="p">])))</span>
-  names<span class="p">(</span>state<span class="p">)</span> <span class="o">&lt;-</span> names<span class="p">(</span>results<span class="p">)</span>
-  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">2</span><span class="o">:</span>dim<span class="p">(</span>state<span class="p">)[</span><span class="m">2</span><span class="p">]){</span>
-    state<span class="p">[,</span>i<span class="p">]</span> <span class="o">&lt;-</span> as.numeric<span class="p">(</span>as.character<span class="p">(</span>state<span class="p">[,</span>i<span class="p">]))</span>
+  state <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span><span class="kp">t</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span>Var1<span class="o">=</span><span class="s">&#39;Rhode Island&#39;</span><span class="p">,</span> 
+                          <span class="kp">prop.table</span><span class="p">(</span><span class="kp">table</span><span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])),</span>
+                          n<span class="o">=</span><span class="kp">dim</span><span class="p">(</span><span class="kp">subset</span><span class="p">(</span>data<span class="p">,</span><span class="kp">is.na</span><span class="p">(</span>data<span class="p">[[</span>quest<span class="p">]])</span><span class="o">==</span><span class="bp">F</span><span class="p">))[</span><span class="m">1</span><span class="p">])))</span>
+  <span class="kp">names</span><span class="p">(</span>state<span class="p">)</span> <span class="o">&lt;-</span> <span class="kp">names</span><span class="p">(</span>results<span class="p">)</span>
+  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">2</span><span class="o">:</span><span class="kp">dim</span><span class="p">(</span>state<span class="p">)[</span><span class="m">2</span><span class="p">]){</span>
+    state<span class="p">[,</span>i<span class="p">]</span> <span class="o">&lt;-</span> <span class="kp">as.numeric</span><span class="p">(</span><span class="kp">as.character</span><span class="p">(</span>state<span class="p">[,</span>i<span class="p">]))</span>
   <span class="p">}</span>
   <span class="c1"># Because the state data.frame has only one row, R coerces to type factor.</span>
   <span class="c1"># If I rbind() a factor to a numeric attribute, R will coerce them both to</span>
   <span class="c1"># characters and refuses to convert back to type numeric.</span>
-  results <span class="o">&lt;-</span> rbind<span class="p">(</span>results<span class="p">,</span> state<span class="p">)</span>
+  results <span class="o">&lt;-</span> <span class="kp">rbind</span><span class="p">(</span>results<span class="p">,</span> state<span class="p">)</span>
   results
 <span class="p">}</span>
 </pre></div>

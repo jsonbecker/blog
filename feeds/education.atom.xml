@@ -98,8 +98,8 @@ its stitches, or a soccer ball with its hexagon-pentagon&amp;nbsp;pattern.&lt;/p
 &lt;blockquote&gt;
 &lt;p&gt;&lt;span class="dquo"&gt;&amp;#8220;&lt;/span&gt;Everybody supports the idea that if a student isn&amp;#8217;t reading well in
 third grade that it&amp;#8217;s a signal that the child needs help. If you hold
-them back, you&amp;#8217;re going to spend roughly another \$10,000 per child
-for an extra year of schooling. If you spread out that \$10,000 over
+them back, you&amp;#8217;re going to spend roughly another \&lt;span class="math"&gt;\(10,000 per child
+for an extra year of schooling. If you spread out that \\)&lt;/span&gt;10,000 over
 the fourth and fifth grades for extra tutoring, in the long run you&amp;#8217;re
 going to get a better&amp;nbsp;outcome.&amp;#8221;&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -131,7 +131,34 @@ going to get a better&amp;nbsp;outcome.&amp;#8221;&lt;/p&gt;
 &lt;p&gt;In theory, at least. Of course many states are reducing their state aid formula in funky ways and there are loopholes in most maintenance of effort laws that are now being rigorously used to allow for per pupil decreases in local revenues&amp;#160;&lt;a class="footnote-backref" href="#fnref:7" rev="footnote" title="Jump back to footnote 7 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;</summary><category term="cost-benefit analysis"></category><category term="edpolicy"></category><category term="education"></category><category term="education funding"></category><category term="efficiency"></category><category term="intervention"></category><category term="MATCH"></category><category term="social promotion"></category><category term="standards-based reform"></category><category term="tutoring"></category></entry><entry><title>What if the technology revolution in schools is really about the simple stuff?</title><link href="http://blog.jsonbecker.com/2012/01/what-if-the-technology-revolution-in-schools-is-really-about-the-simple-stuff.html" rel="alternate"></link><updated>2012-01-18T22:23:00-05:00</updated><author><name>Jason</name></author><id>tag:blog.jsonbecker.com,2012-01-18:2012/01/what-if-the-technology-revolution-in-schools-is-really-about-the-simple-stuff.html</id><summary type="html">&lt;p&gt;The complicated school day is essentially designed so the minimum number of staff are away from kids at any given time. Some folks are trying to combat this with &lt;a href="http://www.allthingsplc.info/pdf/articles/make_time_for_collaboration.pdf"&gt;common planning time&lt;/a&gt; and other &lt;a href="http://www.erstools.org/Dream/district_es_a.cfm"&gt;scheduling gymnastics&lt;/a&gt;. These attempts are up against a strong opposing priority&amp;#8212; students must be with an adult essentially 100% of the time. Not only that, but the middle of a hectic day focused on teaching is not really conducive to reflection, strategizing, and deep planning on a tight schedule. The temptation to use this precious time to put out the days (or weeks) fires instead of the kind of collaboration and professional learning desired is just too&amp;nbsp;strong.&lt;/p&gt;
+&lt;/div&gt;
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</summary><category term="cost-benefit analysis"></category><category term="edpolicy"></category><category term="education"></category><category term="education funding"></category><category term="efficiency"></category><category term="intervention"></category><category term="MATCH"></category><category term="social promotion"></category><category term="standards-based reform"></category><category term="tutoring"></category></entry><entry><title>What if the technology revolution in schools is really about the simple stuff?</title><link href="http://blog.jsonbecker.com/2012/01/what-if-the-technology-revolution-in-schools-is-really-about-the-simple-stuff.html" rel="alternate"></link><updated>2012-01-18T22:23:00-05:00</updated><author><name>Jason</name></author><id>tag:blog.jsonbecker.com,2012-01-18:2012/01/what-if-the-technology-revolution-in-schools-is-really-about-the-simple-stuff.html</id><summary type="html">&lt;p&gt;The complicated school day is essentially designed so the minimum number of staff are away from kids at any given time. Some folks are trying to combat this with &lt;a href="http://www.allthingsplc.info/pdf/articles/make_time_for_collaboration.pdf"&gt;common planning time&lt;/a&gt; and other &lt;a href="http://www.erstools.org/Dream/district_es_a.cfm"&gt;scheduling gymnastics&lt;/a&gt;. These attempts are up against a strong opposing priority&amp;#8212; students must be with an adult essentially 100% of the time. Not only that, but the middle of a hectic day focused on teaching is not really conducive to reflection, strategizing, and deep planning on a tight schedule. The temptation to use this precious time to put out the days (or weeks) fires instead of the kind of collaboration and professional learning desired is just too&amp;nbsp;strong.&lt;/p&gt;
 &lt;p&gt;And quite honestly, I think teachers should get space in the day to vent, grade papers, setup their classroom, call parents, and do all the normal &amp;#8220;maintenance&amp;#8221; required to keep their classes running. The question then remains, how do we create this dynamic space for professional learning, coordination of services, collaboration on lesson delivery, creative thinking about school structures,&amp;nbsp;etc?&lt;/p&gt;
 &lt;p&gt;I really think that &lt;a href="http://www.storiesfromschool.org/travis.html"&gt;Travis&lt;/a&gt; on &lt;a href="http://www.storiesfromschool.org/"&gt;Stories from School&lt;/a&gt; has it right: &lt;a href="http://www.storiesfromschool.rg/2012/01/not-meeting.html"&gt;use technology to make it easy for teachers, administrators, and other staff to communicate and coordinate&lt;/a&gt;. There is no shortage of snake oil peddled to &amp;#8220;solve&amp;#8221; education in America and one of the most persistent memes is the technological revolution will alter classrooms forever. Technology&amp;#8217;s real promise is in &lt;em&gt;schools&lt;/em&gt; and not &lt;em&gt;classrooms&lt;/em&gt;&lt;sup id="fnref:1"&gt;&lt;a class="footnote-ref" href="#fn:1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;. Sharing assessment results and lesson plans, coordinating with interventions being offered to a student, talking to other teachers who have or have had the same student, and more can all be made much easier with technology. Rather than finding the time to meet face-to-face, faculty members can put energy into building relationships around teaching and learning when they have the time. The opportunity to breakaway the time constraints typically placed on synchronous conversation is huge. The opportunity for rich asynchronous sharing is virtually brand new.&lt;sup id="fnref:2"&gt;&lt;a class="footnote-ref" href="#fn:2" rel="footnote"&gt;2&lt;/a&gt;&lt;/sup&gt;I do not want this to sound like pushing for &amp;#8220;social media&amp;#8221; for teachers, mostly because the technological innovations involved are not a part of the current flavor of Web 2.0 networking. Even the old tools like email, instant messaging, and perhaps the oldest social tool of all, discussion boards, could be extremely helpful for&amp;nbsp;folks.&lt;/p&gt;
 &lt;p&gt;None of this is new, most of this has been said, yet it seems like too few schools have found a way to leverage existing and inexpensive technology to implement this kind of communication as an essential part of work culture. That seems like a massive missed opportunity that should not be lost while district officials are distracted by quick-and-dirty 4 week online courses for credit&amp;nbsp;recovery.&lt;/p&gt;

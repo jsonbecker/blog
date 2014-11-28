@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom"><title>jasonpbecker</title><link href="http://blog.jsonbecker.com/" rel="alternate"></link><link href="http://blog.jsonbecker.com/feeds/education-free-online-courses.atom.xml" rel="self"></link><id>http://blog.jsonbecker.com/</id><updated>2012-06-13T09:30:00-04:00</updated><entry><title>Algorithms: Design and Analysis Part I</title><link href="http://blog.jsonbecker.com/2012/06/algorithms-design-and-analysis-part-i.html" rel="alternate"></link><updated>2012-06-13T09:30:00-04:00</updated><author><name>Jason</name></author><id>tag:blog.jsonbecker.com,2012-06-13:2012/06/algorithms-design-and-analysis-part-i.html</id><summary type="html">&lt;p&gt;Tonight I started Coursera.org&amp;#8217;s &lt;a href="http://www.algo-class.org"&gt;Algorithms: Design and Analysis Part I&lt;/a&gt;. This class should pick up right about where I left off my computer science education. I took &lt;a href="http://www.cs.brown.edu/courses/csci0150.html"&gt;&lt;span class="caps"&gt;CS15&lt;/span&gt;&lt;/a&gt; as a sophomore in college but didn&amp;#8217;t have the time to take &lt;a href="http://www.cs.brown.du/courses/csci0160html"&gt;&lt;span class="caps"&gt;CS16&lt;/span&gt;: Introduction to Algorithms and Data Structures&lt;/a&gt;. So, while it&amp;#8217;s been almost 6 years since I have formally taken a computer science class, it is time to continue my&amp;nbsp;education.&lt;/p&gt;
 &lt;p&gt;I plan to write about once a week about my experience. This will serve both as an opportunity to work out ideas spurred by the course as well as a review of the growing area of free, online courses that started way back in 2002 with &lt;span class="caps"&gt;MIT&lt;/span&gt;&amp;#8217;s &lt;a href="http://ocw.mit.edu/index.htm"&gt;OpenCourseWare&lt;/a&gt; and continues today with upshots &lt;a href="http://udacity.com/"&gt;Udacity&lt;/a&gt; and &lt;a href="http://www.coursera.org"&gt;Coursera&lt;/a&gt;, among &lt;a href="http://www.codeacademy.com"&gt;other players&lt;/a&gt;. Given the emphasis being placed on the potential for technology as disruptive to classroom teaching over the last 50 years, the topic seems worthy of some experiential learning by a budding young education&amp;nbsp;researcher/wonk.&lt;/p&gt;
 &lt;h2&gt;Introduction and About the&amp;nbsp;Course&lt;/h2&gt;
-&lt;p&gt;The Introduction video was a bit scary. Although the content was simple, Professor Tim Roughgarden is a fast talker and he does seem to skip some of the small steps that really trip me up when learning math from lectures. For example, in discussing the first recursive method to $n$-digit multiplication, Professor Roughgarden suddenly throws in a $10^n$ and $10^{n/2}$ term that I just couldn&amp;#8217;t trace. I kept watching the video waiting for an explanation and pondering it in
+&lt;p&gt;The Introduction video was a bit scary. Although the content was simple, Professor Tim Roughgarden is a fast talker and he does seem to skip some of the small steps that really trip me up when learning math from lectures. For example, in discussing the first recursive method to &lt;span class="math"&gt;\(n\)&lt;/span&gt;-digit multiplication, Professor Roughgarden suddenly throws in a &lt;span class="math"&gt;\(10^n\)&lt;/span&gt; and &lt;span class="math"&gt;\(10^{n/2}\)&lt;/span&gt; term that I just couldn&amp;#8217;t trace. I kept watching the video waiting for an explanation and pondering it in
 my mind when a few minutes later it hit me; the two terms kept the place information lost when a number is split into its constituent digits &lt;sup id="fnref:constituent"&gt;&lt;a class="footnote-ref" href="#fn:constituent" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
 &lt;p&gt;The About this Course video, however, provided some good advice I intend on following; although there will be no code written as a part of this course to be language neutral, I will be attempting to code each of the described algorithms on my own. Professor Roughgarden&amp;#8217;s assumption is that this is within the skills of students taking this class. Generally, I believe I am capable of achieving this in at least &lt;em&gt;some&lt;/em&gt; language. Currently, I prefer to use R. This is not because R is best suited to this kind of work. Rather, it is because I am relatively new to R, and I think that learning to program some fundamental computational tasks will be good for learning the ins and outs of the&amp;nbsp;language.&lt;/p&gt;
 &lt;p&gt;However, I think I may switch over to using Python later in the course. Why? Because I feel like learning Python and Udacity happens to have a &lt;a href="http://www.udacity.com/view#Course/cs101/"&gt;course up already to do just that&lt;/a&gt;. My hope is to incorporate free online learning into my routine just like I include reading dead-tree books, Google Reader, and mess around on Twitter. So while I can&amp;#8217;t swear that I&amp;#8217;ll actually start moving through these two courses (and two more I&amp;#8217;m interested in starting June 25), I feel having complimentary, simultaneous course work will push me. Each class should reinforce the other and I should see the most benefit if I keep up with&amp;nbsp;both.&lt;/p&gt;
@@ -11,7 +11,34 @@ my mind when a few minutes later it hit me; the two terms kept the place inform
 &lt;hr /&gt;
 &lt;ol&gt;
 &lt;li id="fn:constituent"&gt;
-&lt;p&gt;The algorithm called to split an $n$ digit number $x$ into two, $n/2$ digit numbers. What was unstated, but of course true, is that this transformation must result in an expression that was equal to $x$. Of course, $x=10^n * a+10^\frac{n}{2} * b$ , because the leading digit of $a$ must be in the $n^{th}$ place and the leading digit of $b$ must be in the $\frac{n}{2}^{th}$ place. Nothing about this is complex to me, but it was not obvious at the speed of conversation. I think working out an actual example of a 4-digit number multiplication, as Professor Roughgarden had with the &amp;#8220;primitive&amp;#8221; multiplication algorithm, would have made this far clearer.&amp;#160;&lt;a class="footnote-backref" href="#fnref:constituent" rev="footnote" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The algorithm called to split an &lt;span class="math"&gt;\(n\)&lt;/span&gt; digit number &lt;span class="math"&gt;\(x\)&lt;/span&gt; into two, &lt;span class="math"&gt;\(n/2\)&lt;/span&gt; digit numbers. What was unstated, but of course true, is that this transformation must result in an expression that was equal to &lt;span class="math"&gt;\(x\)&lt;/span&gt;. Of course, &lt;span class="math"&gt;\(x=10^n * a+10^\frac{n}{2} * b\)&lt;/span&gt; , because the leading digit of &lt;span class="math"&gt;\(a\)&lt;/span&gt; must be in the &lt;span class="math"&gt;\(n^{th}\)&lt;/span&gt; place and the leading digit of &lt;span class="math"&gt;\(b\)&lt;/span&gt; must be in the &lt;span class="math"&gt;\(\frac{n}{2}^{th}\)&lt;/span&gt; place. Nothing about this is complex to me, but it was not obvious at the speed of conversation. I think working out an actual example of a 4-digit number multiplication, as Professor Roughgarden had with the &amp;#8220;primitive&amp;#8221; multiplication algorithm, would have made this far clearer.&amp;#160;&lt;a class="footnote-backref" href="#fnref:constituent" rev="footnote" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;</summary></entry></feed>
+&lt;/div&gt;
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</summary></entry></feed>

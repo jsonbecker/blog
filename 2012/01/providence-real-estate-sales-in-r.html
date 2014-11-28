@@ -49,31 +49,31 @@
 <p><img alt="Providence Home Sales 9-12-11 to 12-27-11" src="../../images/homesales.png" title="Providence Home Sales 9-12-11 to 12-27-11" /></p>
 <p>There were a few things that were kind of tricky for me. First, for sometime I couldn&#8217;t get latitude and longitude components for the addresses. I figured there was something wrong with the way I was using the *apply class of functions in R. apply() (and the related class of functions lapply, sapply, etc.) are really handy if a bit tricky for beginning R users. This function permits quickly &#8220;applying&#8221; a function across multiple elements. Traditionally this is done with a loop, but the apply() functions &#8220;vectorize&#8221; this process (R folks always talk about making your code more vectorized which has something to do with the structure of objects in R but is beyond my computer science skills&#8212; essentially, vectorized code runs much faster and more efficiency than loops because of some underlying feature of the language). After playing around with apply, lapply, and sapply, I decided to move back into my &#8220;old&#8221; way of thinking and just write a&nbsp;loop:</p>
 <div class="highlight"><pre>latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">){</span>
-  lat <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
-  lng <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
-  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>length<span class="p">(</span>address<span class="p">)){</span>
+  lat <span class="o">&lt;-</span> <span class="kt">vector</span><span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> <span class="kp">length</span><span class="p">(</span>address<span class="p">))</span>
+  lng <span class="o">&lt;-</span> <span class="kt">vector</span><span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> <span class="kp">length</span><span class="p">(</span>address<span class="p">))</span>
+  <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>address<span class="p">)){</span>
     latlong <span class="o">&lt;-</span> gGeoCode<span class="p">(</span>address<span class="p">[</span>i<span class="p">])</span>
     lat<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">1</span><span class="p">]</span>
     lng<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">2</span><span class="p">]</span>
   <span class="p">}</span>
-  <span class="kr">return</span><span class="p">(</span>cbind<span class="p">(</span>lat<span class="p">,</span>lng<span class="p">))</span>
+  <span class="kr">return</span><span class="p">(</span><span class="kp">cbind</span><span class="p">(</span>lat<span class="p">,</span>lng<span class="p">))</span>
 <span class="p">}</span>
 </pre></div>
 
 
 <p>This still didn&#8217;t work&#8212; I kept on getting a strange out-of-bounds call. So I decided to go down the rabbit hole of regular expressions and try and see if I could clean up my addresses any further (I couldn&#8217;t). So, now seemed as good a time as any to figure out how to print to the console while a loop is running to keep track of progress and where exactly my function was stopped. This turned out to be a bit tricky because I didn&#8217;t know you had to include a tricky line, <code>r flush.console()</code> in order to get the prints to work. When I figured this out I found out my loop was being caught on my 7th element, a perfectly well formed address. When I ran gGeoCode() on that address only it worked fine. So I thought, maybe Google is bouncing me out because I&#8217;m hitting it too fast? And bingo, the final (working&nbsp;version):</p>
 <div class="highlight"><pre>latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">){</span>
- lat <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
- lng <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
- <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>length<span class="p">(</span>address<span class="p">)){</span>
-  print<span class="p">(</span>i<span class="p">)</span>
+ lat <span class="o">&lt;-</span> <span class="kt">vector</span><span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> <span class="kp">length</span><span class="p">(</span>address<span class="p">))</span>
+ lng <span class="o">&lt;-</span> <span class="kt">vector</span><span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> <span class="kp">length</span><span class="p">(</span>address<span class="p">))</span>
+ <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>address<span class="p">)){</span>
+  <span class="kp">print</span><span class="p">(</span>i<span class="p">)</span>
   flush.console<span class="p">()</span>
   latlong <span class="o">&lt;-</span> gGeoCode<span class="p">(</span>address<span class="p">[</span>i<span class="p">])</span>
   lat<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">1</span><span class="p">]</span>
   lng<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">2</span><span class="p">]</span>
-  Sys.sleep<span class="p">(</span><span class="m">0.5</span><span class="p">)</span>
+  <span class="kp">Sys.sleep</span><span class="p">(</span><span class="m">0.5</span><span class="p">)</span>
  <span class="p">}</span>
- <span class="kr">return</span><span class="p">(</span>cbind<span class="p">(</span>lat<span class="p">,</span>lng<span class="p">))</span>
+ <span class="kr">return</span><span class="p">(</span><span class="kp">cbind</span><span class="p">(</span>lat<span class="p">,</span>lng<span class="p">))</span>
 <span class="p">}</span>
 </pre></div>
 
@@ -82,15 +82,15 @@
 <p>Finally, my full source for the&nbsp;above:</p>
 <div class="highlight"><pre><span class="c1"># Providence Real Estate Transactions over the last 40 days.</span>
 <span class="c1"># Required Packages</span>
-require<span class="p">(</span><span class="s">&#39;XML&#39;</span><span class="p">)</span>
-require<span class="p">(</span><span class="s">&#39;RCurl&#39;</span><span class="p">)</span>
-require<span class="p">(</span><span class="s">&#39;RJSONIO&#39;</span><span class="p">)</span>
-require<span class="p">(</span><span class="s">&quot;RgoogleMaps&quot;</span><span class="p">)</span>
+<span class="kn">require</span><span class="p">(</span><span class="s">&#39;XML&#39;</span><span class="p">)</span>
+<span class="kn">require</span><span class="p">(</span><span class="s">&#39;RCurl&#39;</span><span class="p">)</span>
+<span class="kn">require</span><span class="p">(</span><span class="s">&#39;RJSONIO&#39;</span><span class="p">)</span>
+<span class="kn">require</span><span class="p">(</span><span class="s">&quot;RgoogleMaps&quot;</span><span class="p">)</span>
 <span class="c1"># Functions</span>
 <span class="c1"># Construct URL required to get the Lat and Long from Google Maps</span>
 construct.geocode.url <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">,</span> return.call <span class="o">=</span> <span class="s">&quot;json&quot;</span><span class="p">,</span> sensor <span class="o">=</span> <span class="s">&quot;false&quot;</span>   <span class="p">)</span> <span class="p">{</span>
  root <span class="o">&lt;-</span> <span class="s">&quot;http://maps.google.com/maps/api/geocode/&quot;</span>
- u <span class="o">&lt;-</span> paste<span class="p">(</span>root<span class="p">,</span> return.call<span class="p">,</span> <span class="s">&quot;?address=&quot;</span><span class="p">,</span> address<span class="p">,</span> <span class="s">&quot;&amp;sensor=&quot;</span><span class="p">,</span> sensor<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;&quot;</span>   <span class="p">)</span>
+ u <span class="o">&lt;-</span> <span class="kp">paste</span><span class="p">(</span>root<span class="p">,</span> return.call<span class="p">,</span> <span class="s">&quot;?address=&quot;</span><span class="p">,</span> address<span class="p">,</span> <span class="s">&quot;&amp;sensor=&quot;</span><span class="p">,</span> sensor<span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;&quot;</span>   <span class="p">)</span>
  <span class="kr">return</span><span class="p">(</span>URLencode<span class="p">(</span>u<span class="p">))</span>
 <span class="p">}</span>
 <span class="c1"># Now that we have the proper Google Maps address, get the resulting latitude     and longitude</span>
@@ -100,18 +100,18 @@ gGeoCode <span class="o">&lt;-</span> <span class="kr">function</span><span clas
  x <span class="o">&lt;-</span> fromJSON<span class="p">(</span>doc<span class="p">,</span>simplify <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
  lat <span class="o">&lt;-</span> x<span class="o">$</span>results<span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span>geometry<span class="o">$</span>location<span class="o">$</span>lat
  lng <span class="o">&lt;-</span> x<span class="o">$</span>results<span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="o">$</span>geometry<span class="o">$</span>location<span class="o">$</span>lng
- <span class="kr">return</span><span class="p">(</span>c<span class="p">(</span>lat<span class="p">,</span> lng<span class="p">))</span>
+ <span class="kr">return</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span>lat<span class="p">,</span> lng<span class="p">))</span>
 <span class="p">}</span>
 <span class="c1"># Roll through addresses to create lat long</span>
 latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>address<span class="p">){</span>
 <span class="c1"># Initializing the length of a vector dramatically speeds up the code. Far </span>
 <span class="c1"># better than reassigning and resizing each time in the loop.</span>
- lat <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
- lng <span class="o">&lt;-</span> vector<span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> length<span class="p">(</span>address<span class="p">))</span>
- <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span>length<span class="p">(</span>address<span class="p">)){</span>
+ lat <span class="o">&lt;-</span> <span class="kt">vector</span><span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> <span class="kp">length</span><span class="p">(</span>address<span class="p">))</span>
+ lng <span class="o">&lt;-</span> <span class="kt">vector</span><span class="p">(</span>mode <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">,</span> length <span class="o">=</span> <span class="kp">length</span><span class="p">(</span>address<span class="p">))</span>
+ <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>address<span class="p">)){</span>
 <span class="c1"># I kept the print in because this function takes a long time to run so I </span>
 <span class="c1"># like  to watch its progress.</span>
- print<span class="p">(</span>i<span class="p">)</span>
+ <span class="kp">print</span><span class="p">(</span>i<span class="p">)</span>
  flush.console<span class="p">()</span>
 <span class="c1"># To reduce the calls, I chose to store lat and long locally before </span>
 <span class="c1"># separating the two whereas initially I hit Google for each separately</span>
@@ -120,32 +120,32 @@ latlongroll <span class="o">&lt;-</span> <span class="kr">function</span><span c
  lng<span class="p">[</span>i<span class="p">]</span><span class="o">&lt;-</span>latlong<span class="p">[</span><span class="m">2</span><span class="p">]</span>
 <span class="c1"># I&#39;ll have to experiment with the sleep time. I&#39;m certain 0.5 seconds is </span>
 <span class="c1"># too long (and this is the bulk of the time spent on the whole code).</span>
- Sys.sleep<span class="p">(</span><span class="m">0.5</span><span class="p">)</span>
+ <span class="kp">Sys.sleep</span><span class="p">(</span><span class="m">0.5</span><span class="p">)</span>
  <span class="p">}</span>
- <span class="kr">return</span><span class="p">(</span>cbind<span class="p">(</span>lat<span class="p">,</span>lng<span class="p">))</span>
+ <span class="kr">return</span><span class="p">(</span><span class="kp">cbind</span><span class="p">(</span>lat<span class="p">,</span>lng<span class="p">))</span>
 <span class="p">}</span>
 
 <span class="c1"># Open to the most recent real estate transactions for Providence on the </span>
 <span class="c1"># Projo</span>
 site <span class="o">&lt;-</span> <span class="s">&#39;http://www.providencejournal.com/homes/real-estate-transactions/assets/pages/real-estate-transactions-providence.htm&#39;</span>
 <span class="c1"># Read in the table with the header as variable names.</span>
-realestate.table<span class="o">&lt;-</span>readHTMLTable<span class="p">(</span>site<span class="p">,</span>header<span class="o">=</span><span class="k-Variable">T</span><span class="p">,</span>which<span class="o">=</span><span class="m">1</span><span class="p">,</span>stringsAsFactors<span class="o">=</span><span class="k-Variable">F</span><span class="p">)</span>
+realestate.table<span class="o">&lt;-</span>readHTMLTable<span class="p">(</span>site<span class="p">,</span>header<span class="o">=</span><span class="bp">T</span><span class="p">,</span>which<span class="o">=</span><span class="m">1</span><span class="p">,</span>stringsAsFactors<span class="o">=</span><span class="bp">F</span><span class="p">)</span>
 <span class="c1"># Remove the $ sign before the price</span>
-realestate.table<span class="o">$</span>Price <span class="o">&lt;-</span> gsub<span class="p">(</span><span class="s">&quot;([$]{1})([0-9]+)&quot;</span><span class="p">,</span> <span class="s">&quot;\\2&quot;</span><span class="p">,</span> 
+realestate.table<span class="o">$</span>Price <span class="o">&lt;-</span> <span class="kp">gsub</span><span class="p">(</span><span class="s">&quot;([$]{1})([0-9]+)&quot;</span><span class="p">,</span> <span class="s">&quot;\\2&quot;</span><span class="p">,</span> 
                                realestate.table<span class="o">$</span>Price<span class="p">)</span>
 <span class="c1"># Cast price character as numeric</span>
-realestate.table<span class="o">$</span>Price<span class="o">&lt;-</span>as.numeric<span class="p">(</span>realestate.table<span class="o">$</span>Price<span class="p">)</span>
+realestate.table<span class="o">$</span>Price<span class="o">&lt;-</span><span class="kp">as.numeric</span><span class="p">(</span>realestate.table<span class="o">$</span>Price<span class="p">)</span>
 <span class="c1"># Cast date string as date type (lowercase %y means 2-digit year, </span>
 <span class="c1"># uppercase is 4 digit)</span>
-realestate.table<span class="o">$</span>Date <span class="o">&lt;-</span> as.Date<span class="p">(</span>realestate.table<span class="o">$</span>Date<span class="p">,</span>format<span class="o">=</span><span class="s">&#39;%m/%d/%y&#39;</span><span class="p">)</span>
+realestate.table<span class="o">$</span>Date <span class="o">&lt;-</span> <span class="kp">as.Date</span><span class="p">(</span>realestate.table<span class="o">$</span>Date<span class="p">,</span>format<span class="o">=</span><span class="s">&#39;%m/%d/%y&#39;</span><span class="p">)</span>
 <span class="c1"># Dummy transactions or title changes have a price of $1, removing those </span>
 <span class="c1"># from data set</span>
-providence <span class="o">&lt;-</span> subset<span class="p">(</span>realestate.table<span class="p">,</span>Price<span class="o">&gt;</span><span class="m">1</span><span class="p">)</span>
+providence <span class="o">&lt;-</span> <span class="kp">subset</span><span class="p">(</span>realestate.table<span class="p">,</span>Price<span class="o">&gt;</span><span class="m">1</span><span class="p">)</span>
 <span class="c1"># Removing properties that do not have an address that start with a street </span>
 <span class="c1"># number</span>
-providence <span class="o">&lt;-</span> subset<span class="p">(</span>providence<span class="p">,</span> grepl<span class="p">(</span><span class="s">&quot;^[0-9]+&quot;</span><span class="p">,</span> providence<span class="o">$</span>Address<span class="p">))</span>
+providence <span class="o">&lt;-</span> <span class="kp">subset</span><span class="p">(</span>providence<span class="p">,</span> <span class="kp">grepl</span><span class="p">(</span><span class="s">&quot;^[0-9]+&quot;</span><span class="p">,</span> providence<span class="o">$</span>Address<span class="p">))</span>
 <span class="c1"># Add lat and lng coordinates to each address</span>
-providence<span class="o">&lt;-</span>cbind<span class="p">(</span>providence<span class="p">,</span> latlongroll<span class="p">(</span>providence<span class="p">[,</span><span class="m">3</span><span class="p">]))</span>
+providence<span class="o">&lt;-</span><span class="kp">cbind</span><span class="p">(</span>providence<span class="p">,</span> latlongroll<span class="p">(</span>providence<span class="p">[,</span><span class="m">3</span><span class="p">]))</span>
 <span class="c1"># Calculate boundary lat and long for map</span>
 bb <span class="o">&lt;-</span> qbbox<span class="p">(</span>providence<span class="o">$</span>lat<span class="p">,</span> providence<span class="o">$</span>lng<span class="p">)</span>
 <span class="c1"># Gets a map from Google Maps</span>
